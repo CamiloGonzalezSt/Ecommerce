@@ -1,0 +1,82 @@
+/* Estilo general de la página */
+ion-content {
+    position: relative;
+    --background: #b7bcca; /* Fondo gris claro */
+    color: #000000; /* Color de texto oscuro */
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    height: 100vh;
+    padding: 0;
+    
+  }
+  div{
+    margin-top: 100px;
+  }
+  
+  h3 {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: #000000; /* Color del texto gris oscuro */
+  }
+
+  form {
+    background-color: transparent;
+    margin:auto;
+    padding: 30px;
+    border-radius: 12px; /* Bordes redondeados */
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.475); /* Sombra suave */
+  }
+  
+  ion-item {
+    --background: transparent;
+    color: #000000;
+    margin-bottom: 20px;
+    border: 1px solid #000000; /* Borde gris negros */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px;
+  }
+  
+  ion-label {
+    color: #000000; /* Color de las etiquetas gris medio */
+    font-size: 14px;
+  }
+  
+  ion-input {
+    --color: #000000; /* Color del texto oscuro */
+    --placeholder-color: #000000; /* Color del placeholder gris */
+    padding-left: 5px; /* Espaciado interno */
+  }
+
+
+  
+  ion-button {
+    --background: #54798098;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #000000; /* Color de texto blanco */
+    box-shadow: 0 5px 10px rgb(0, 2, 2); /* Sombra ligera */
+  }
+  ion-toolbar {
+    text-transform: uppercase;
+    --background: #b7bcca; 
+    color: #000000; /* Color de texto blanco */
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .crear{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }
+  

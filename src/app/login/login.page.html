@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ingreso a tienda</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <div>
+    <h3>Inicio de Sesión</h3>
+  <form (ngSubmit)="ingresar()">
+    <ion-item>
+      <ion-label position="floating">Nombre de Usuario</ion-label>
+      <ion-input [(ngModel)]="user.usuario" name="username" required>
+        <ion-icon slot="end" name="person"></ion-icon>
+      </ion-input>
+  </ion-item>
+  
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input type="password" [(ngModel)]="user.password" name="password" required>
+        <ion-icon slot="end" name="lock-closed"></ion-icon>
+      </ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit" [routerLink]="['/home']">Iniciar Sesión</ion-button><br>
+    
+    <a class="crear" href="/create-user"><strong>crear cuenta</strong></a>
+  </form>
+</div>
+</ion-content>
+

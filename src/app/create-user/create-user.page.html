@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" href="/login"><ion-icon name="arrow-back"></ion-icon>
+    </ion-button>
+    <ion-title>Crea tu usuario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <h3><strong>Bienvenido</strong></h3>
+  <form>
+      <ion-item>
+        <ion-label position="floating" required>Ingresa tu nombre completo *</ion-label> <br>
+        <ion-input type="text" name="name" placeholder="Aqui tu nombre completo"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating" required>Ingresa tu rut sin punto ni guión *</ion-label> <br>
+        <ion-input type="number" name="password" placeholder="Aqui tu rut"></ion-input>
+      </ion-item>
+      <ion-item>
+      <ion-label position="floating" required>Ingresa un nombre de usuario *</ion-label> <br>
+      <ion-input type="text" name="username" placeholder="Aqui tu nombre de usuario"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating" required>Ingresa tu contraseña *</ion-label> <br>
+      <ion-input type="password" name="password" placeholder="Aqui tu contraseña"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating" required>Ingresa nuevamente tu contraseña *</ion-label> <br>
+      <ion-input type="password" name="password" placeholder="Aqui tu contraseña"></ion-input>
+    </ion-item>
+    <ion-button expand="full" type="submit" [routerLink]="['/login']">Crear</ion-button>
+  </form>
+</ion-content>
