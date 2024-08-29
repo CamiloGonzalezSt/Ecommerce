@@ -7,6 +7,14 @@
     </ion-header>
     <!--Aqui van las categorias que integraremos-->
     <ion-content class="ion-padding">
+      <ion-buttons>
+        <ion-list>
+          <ion-item>
+            <ion-button  href="/contacto">CONTACTO</ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-buttons>
+
     </ion-content>
     <!--integración de boton para poder volver a login-->
     <ion-footer>
@@ -19,15 +27,7 @@
   <!------------------------------------------------------------------------------->
 <div class="ion-page" id="main-content">
   <ion-content class="ion-padding"> </ion-content>
-  <ion-footer>
-    <ion-toolbar class="tab_nav">
-      <ion-buttons >
-        <ion-button><ion-icon name="home"></ion-icon></ion-button>
-        <ion-button><ion-icon name="person"></ion-icon></ion-button>
-        <ion-button><ion-icon name="settings"></ion-icon></ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-footer>
+
 </div>
   <ion-router-outlet id="main-content"></ion-router-outlet>
 </ion-app>
