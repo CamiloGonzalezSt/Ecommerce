@@ -1,26 +1,36 @@
 <ion-header id="main-content">
   <ion-toolbar>
-    <ion-title *ngIf="user"><strong>Bienvenido {{ user.usuario }}</strong> </ion-title>
+    <ion-title *ngIf="data"><strong>Bienvenido {{ data.usuario }}</strong></ion-title>
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content >
+<ion-content>
+  <!-- Slider de imágenes -->
+  <swiper-container [options]="slideOptions">
+    <swiper-slide *ngFor="let img of banners">
+      <img [src]="img" class="d-block w-100" alt="..." style="height: 270px; border-radius: 1rem !important;">
+    </swiper-slide>
+    <div class="swiper-pagination"></div> <!-- Paginación -->
+    <div class="swiper-button-next"></div> <!-- Botón siguiente -->
+    <div class="swiper-button-prev"></div> <!-- Botón anterior -->
+  </swiper-container>
+
   <h1 class="fav"><strong>FAVORITOS DE LOS USUARIOS</strong></h1>
   <ion-grid>
-    <ion-row >
+    <ion-row>
       <ion-col size="6" size-md="6" size-lg="4" *ngFor="let product of products">
         <ion-card>
-          <img [src]="product.image" alt="{{product.name}}">
+          <img [src]="product.image" alt="{{ product.name }}">
           <ion-card-header>
-          <ion-card-title>{{ product.name }} </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p>{{ product.description }} </p>
-          <ion-badge color="primary">${{ product.price }} </ion-badge>
-        </ion-card-content>
+            <ion-card-title>{{ product.name }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{ product.description }}</p>
+            <ion-badge color="primary">${{ product.price }}</ion-badge>
+          </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>

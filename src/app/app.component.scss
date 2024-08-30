@@ -15,7 +15,41 @@ ion-footer{
   background-color: rgb(72, 72, 78);
  }
 
-.tab_nav{
-    --background:#b7bcca;
-    color: #000000;
+ .custom-action-sheet {
+  --width: 80%;               /* Ajusta el ancho del ActionSheet */
+  --max-width: 360px;         /* Ancho máximo del ActionSheet */
+  --height: auto;             /* Ajusta la altura del ActionSheet */
+  --border-radius: 10px;     /* Radio del borde */
+  --box-shadow: none;         /* Sin sombra para un look más limpio */
+  --background: #ffffff;      /* Fondo blanco para mantener el estilo minimalista */
+  --color: #000000;           /* Color del texto */
 }
+
+ion-header {
+  --background: #f8f8f8;      /* Fondo muy claro para el header */
+  --color: #333333;           /* Color del texto en el header */
+}
+
+ion-toolbar {
+  --border-bottom: 1px solid #e0e0e0;  /* Línea delgada para separar el header del contenido */
+}
+
+ion-button {
+  --color: #007bff;           /* Color del texto del botón */
+  --background: transparent;  /* Fondo transparente para los botones */
+  --border: none;             /* Sin borde para los botones */
+  --padding: 12px;            /* Padding para un diseño más espacioso */
+}
+
+ion-button[role='destructive'] {
+  --color: #dc3545;           /* Color rojo para el botón de confirmación */
+}
+
+ion-content {
+  padding: 0;                 /* Sin padding adicional para un diseño más limpio */
+}
+
+ion-title {
+  font-size: 16px;            /* Tamaño de fuente para el título */
+}
+
