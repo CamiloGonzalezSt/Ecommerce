@@ -70,7 +70,9 @@ products =[
    
    
    
-]
+];
+// Estado para manejar la visibilidad del menú de inicio de sesión
+showLoginMenu = false;
 
 
 
@@ -78,6 +80,7 @@ products =[
     
   }
 
+  
   ngOnInit() {
     this.activeroute.queryParams.subscribe(params => {
       this.user = {
@@ -86,5 +89,8 @@ products =[
       };
       console.log("Received user data:", this.user);
     });
+  }
+  toggleLoginMenu() {
+    this.showLoginMenu = !this.showLoginMenu;
   }
 }
