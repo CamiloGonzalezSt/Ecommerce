@@ -8,6 +8,22 @@
 </ion-header>
 
 <ion-content>
+
+   <!-- Barra  -->
+   <ion-item lines="none">
+    <ion-searchbar 
+      animated="true" 
+      placeholder="Buscar" 
+      style="flex: 1; --padding-start: 0; --padding-end: 0; --background: #f0f0f0;" 
+    ></ion-searchbar>
+    <ion-button 
+      fill="clear" 
+      (click)="toggleLoginMenu()" 
+      style="margin-left: 10px;">
+      <ion-icon slot="icon-only" name="person-outline"></ion-icon>
+    </ion-button>
+  </ion-item>
+
   <!-- Slider de imágenes -->
   <swiper-container [options]="slideOptions">
     <swiper-slide *ngFor="let img of banners">
@@ -30,6 +46,7 @@
           <ion-card-content>
             <p>{{ product.description }}</p>
             <ion-badge color="primary">${{ product.price }}</ion-badge>
+            <ion-button color="success" [routerLink]="['/product-detail']" [queryParams]="{ id: product.id }">Ver detalles</ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>
