@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import SwiperCore from 'swiper';
 import { Autoplay, Pagination, Navigation, EffectCube } from 'swiper/modules';
@@ -12,7 +12,7 @@ SwiperCore.use([Autoplay, Pagination, Navigation, EffectCube]);
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit, AfterViewInit {
+export class HomePage implements OnInit {
   @ViewChild(IonContent, { static: false }) content: IonContent | undefined;
   data: any;
 
@@ -85,31 +85,9 @@ export class HomePage implements OnInit, AfterViewInit {
   ];
 
   slideOptions = {
-    initialSlide: 0,
-    slidesPerView: 1,
-    spaceBetween: 10,
-    effect: 'cube',
-    cubeEffect: {
-      shadow: true,
-      slideShadows: true,
-      shadowOffset: 20,
-      shadowScale: 0.94,
-    },
     autoplay: {
       delay: 3000,
       disableOnInteraction: false,
-    },
-    loop: true,
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    on: {
-      slideChange: () => this.changeBackgroundColor(),
     },
   };
 
@@ -122,31 +100,4 @@ export class HomePage implements OnInit, AfterViewInit {
       console.log('Datos del usuario recibidos:', this.data);
     }
   }
-
-  ngAfterViewInit() {
-    this.changeBackgroundColor();
   }
-
-  getRandomColor(): string {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
-
-  async changeBackgroundColor() {
-    const color = this.getRandomColor();
-
-    if (this.content) {
-      const scrollElement = await this.content.getScrollElement();
-      const animation = createAnimation()
-        .addElement(scrollElement)
-        .duration(500)
-        .fromTo('background-color', 'initial', color);
-
-      animation.play();
-    }
-  }
-}

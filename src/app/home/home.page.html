@@ -9,19 +9,13 @@
 
 <ion-content>
 
-   <!-- Barra  -->
-   <ion-item lines="none">
+  <!-- Barra  -->
+  <ion-item lines="none">
     <ion-searchbar 
       animated="true" 
       placeholder="Buscar" 
       style="flex: 1; --padding-start: 0; --padding-end: 0; --background: #f0f0f0;" 
     ></ion-searchbar>
-    <ion-button 
-      fill="clear" 
-      (click)="toggleLoginMenu()" 
-      style="margin-left: 10px;">
-      <ion-icon slot="icon-only" name="person-outline"></ion-icon>
-    </ion-button>
   </ion-item>
 
   <!-- Slider de imágenes -->
@@ -29,9 +23,6 @@
     <swiper-slide *ngFor="let img of banners">
       <img [src]="img" class="d-block w-100" alt="..." style="height: 270px; border-radius: 1rem !important;">
     </swiper-slide>
-    <div class="swiper-pagination"></div> <!-- Paginación -->
-    <div class="swiper-button-next"></div> <!-- Botón siguiente -->
-    <div class="swiper-button-prev"></div> <!-- Botón anterior -->
   </swiper-container>
 
   <h1 class="fav"><strong>FAVORITOS DE LOS USUARIOS</strong></h1>
