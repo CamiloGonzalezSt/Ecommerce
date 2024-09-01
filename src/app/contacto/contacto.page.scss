@@ -1,0 +1,62 @@
+
+  ion-toolbar {
+    text-transform: uppercase;
+    --background: #b7bcca; 
+    color: #000000; /* Color de texto blanco */
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .contact-page {
+    --ion-background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  
+    .contact-form {
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
+    }
+  
+    ion-card {
+      background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+  
+      ion-card-title {
+        color: black;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+  
+      ion-item {
+        --background: transparent;
+        --border-color: transparent;
+        --color-focused: black;
+      }
+  
+      ion-label {
+        color: black;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+  
+      ion-input, ion-textarea {
+        color: black;
+        border-bottom: 1px solid black;
+        --placeholder-color: rgba(0, 0, 0, 0.6);
+      }
+  
+      .submit-button {
+        --background: black;
+        --color: white;
+        border-radius: 20px;
+        margin-top: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+    }
+  }
+  

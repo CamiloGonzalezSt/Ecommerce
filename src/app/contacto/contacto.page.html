@@ -1,13 +1,33 @@
-<ion-header [translucent]="true">
+<ion-header >
   <ion-toolbar>
     <ion-title>contacto</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button default-href="/home"></ion-back-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">contacto</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="contact-page">
+  <div class="contact-form">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Contactanos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label position="floating">Nombre completo</ion-label>
+          <ion-input type="text" required placeholder="tu nombre"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="floating">Email</ion-label>
+          <ion-input type="email" required placeholder="tucorreo@gmail.com"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="floating">Mensaje</ion-label>
+          <ion-textarea rows="6" required placeholder="Ingresa un mensaje relacionado con lo que necesitas que te ayudemos"></ion-textarea>
+        </ion-item>
+        <ion-button expand="block" class="submit-button">Enviar</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
