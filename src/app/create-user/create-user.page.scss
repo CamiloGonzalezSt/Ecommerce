@@ -11,12 +11,17 @@ ion-content {
     padding: 0;
   }
   form{
-    background-color: #000000;
+    background:transparent;
     color: #000000;
-    padding: 0;
-    margin: 50px;
-    border: 10px;
-
+    padding: 30px;
+    margin: 40px;
+    box-shadow: 2px 2px 5px #000000;
+    border-radius: 15px;
+  }
+  ion-item{
+    color: #ffffff;
+    border-radius: 20px;
+    margin-top: 10px;
   }
   ion-toolbar {
     text-transform: uppercase;
@@ -27,15 +32,47 @@ ion-content {
     font-weight: bold;
   }
 
-  ion-title, h3{
+  ion-title{
     text-align: center;
     color: #000000;
   }
-
-  ion-button{
+  .back_button{
+    --background: transparent;
+  }
+  .login_button{
     --background:#b7bcca;
     box-shadow: 2px 2px 5px #000000;
+    margin-right: 100px;
+    margin-left: 100px;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    
   }
   ion-icon{
     color:rgb(0, 0, 0);
   }
+//date//
+
+  ion-datetime {
+    --background: rgb(245, 235, 247);
+    --background-rgb: 245, 235, 247;
+    --wheel-highlight-background: rgb(218, 216, 255);
+    --wheel-highlight-border-radius: 48px;
+    --wheel-fade-background-rgb: 245, 235, 247;
+    width: 100%;
+    height: auto;
+  }
+
+ion-col{
+  background-color: #b7bcca;
+  text-align: center;
+  color: #000000;
+  margin-top: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+  box-shadow: 1px 1px 5px #000000;
+  border-radius: 20px;
+  
+}

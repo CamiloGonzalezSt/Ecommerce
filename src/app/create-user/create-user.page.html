@@ -1,34 +1,51 @@
 <ion-header>
   <ion-toolbar>
-    <ion-button slot="start" href="/login"><ion-icon name="arrow-back"></ion-icon>
+    <ion-button class="back_button" slot="start" href="/login"><ion-icon name="arrow-back"></ion-icon>
     </ion-button>
-    <ion-title>Crea tu usuario</ion-title>
+    <ion-title>Creación de usuario</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <h3><strong>Bienvenido</strong></h3>
-  <form>
-      <ion-item>
-        <ion-label position="floating" required>Ingresa tu nombre completo *</ion-label> <br>
-        <ion-input type="text" name="name" placeholder="Aqui tu nombre completo"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating" required>Ingresa tu rut sin punto ni guión *</ion-label> <br>
-        <ion-input type="number" name="password" placeholder="Aqui tu rut"></ion-input>
-      </ion-item>
-      <ion-item>
-      <ion-label position="floating" required>Ingresa un nombre de usuario *</ion-label> <br>
-      <ion-input type="text" name="username" placeholder="Aqui tu nombre de usuario"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating" required>Ingresa tu contraseña *</ion-label> <br>
-      <ion-input type="password" name="password" placeholder="Aqui tu contraseña"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating" required>Ingresa nuevamente tu contraseña *</ion-label> <br>
-      <ion-input type="password" name="password" placeholder="Aqui tu contraseña"></ion-input>
-    </ion-item>
-    <ion-button expand="full" type="submit" [routerLink]="['/login']">Crear</ion-button>
-  </form>
+      <form [formGroup]="birthdateForm" (ngSubmit)="onSubmit()">
+        <ion-item>
+          <ion-input type="text" name="name" placeholder="Nombre de usuario"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="text" name="name" placeholder="Email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="password" name="name" placeholder="contraseña"></ion-input>
+        </ion-item><br>
+
+        <ion-grid>
+          <span><strong>Ingresa tu fecha de nacimiento</strong></span>
+        <ion-row>
+          <ion-col>
+            <ion-label>Día</ion-label>
+            <ion-select formControlName="day">
+              <ion-select-option *ngFor="let day of days" [value]="day">{{ day }}</ion-select-option>
+            </ion-select>
+          </ion-col>
+
+          <ion-col>
+          <ion-label>Mes</ion-label>
+          <ion-select formControlName="month">
+            <ion-select-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</ion-select-option>
+          </ion-select>
+      </ion-col>
+
+        <ion-col>
+          <ion-label>Año</ion-label>
+          <ion-select formControlName="year">
+            <ion-select-option *ngFor="let year of years" [value]="year">{{ year }}</ion-select-option>
+          </ion-select>
+      </ion-col>
+      </ion-row>
+      </ion-grid>
+      </form>
+
+      <ion-button class="login_button" type="submit" [routerLink]="['/login']">Crear</ion-button>
+
+  
 </ion-content>
