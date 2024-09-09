@@ -53,26 +53,7 @@ ion-content {
   ion-icon{
     color:rgb(0, 0, 0);
   }
-//date//
 
-  ion-datetime {
-    --background: rgb(245, 235, 247);
-    --background-rgb: 245, 235, 247;
-    --wheel-highlight-background: rgb(218, 216, 255);
-    --wheel-highlight-border-radius: 48px;
-    --wheel-fade-background-rgb: 245, 235, 247;
-    width: 100%;
-    height: auto;
-  }
-
-ion-col{
-  background-color: #b7bcca;
-  text-align: center;
-  color: #000000;
-  margin-top: 20px;
-  margin-left: 5px;
-  margin-right: 5px;
-  box-shadow: 1px 1px 5px #000000;
-  border-radius: 20px;
-  
+.datetime{
+  color: #b7bcca;
 }
