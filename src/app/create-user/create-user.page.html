@@ -17,32 +17,10 @@
         <ion-item>
           <ion-input type="password" name="name" placeholder="contraseña"></ion-input>
         </ion-item><br>
-
-        <ion-grid>
-          <span><strong>Ingresa tu fecha de nacimiento</strong></span>
-        <ion-row>
-          <ion-col>
-            <ion-label>Día</ion-label>
-            <ion-select formControlName="day">
-              <ion-select-option *ngFor="let day of days" [value]="day">{{ day }}</ion-select-option>
-            </ion-select>
-          </ion-col>
-
-          <ion-col>
-          <ion-label>Mes</ion-label>
-          <ion-select formControlName="month">
-            <ion-select-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</ion-select-option>
-          </ion-select>
-      </ion-col>
-
-        <ion-col>
-          <ion-label>Año</ion-label>
-          <ion-select formControlName="year">
-            <ion-select-option *ngFor="let year of years" [value]="year">{{ year }}</ion-select-option>
-          </ion-select>
-      </ion-col>
-      </ion-row>
-      </ion-grid>
+        <ion-label>Fecha de nacimiento</ion-label><br>
+        <ion-item>
+          <ion-input type="date"></ion-input>
+        </ion-item>
       </form>
 
       <ion-button class="login_button" type="submit" [routerLink]="['/login']">Crear</ion-button>
