@@ -7,7 +7,8 @@
 </ion-header>
 
 <ion-content>
-      <form [formGroup]="birthdateForm" (ngSubmit)="onSubmit()">
+  <!--creamos el formulario-->
+      <form>
         <ion-item>
           <ion-input type="text" name="name" placeholder="Nombre de usuario"></ion-input>
         </ion-item>
@@ -16,13 +17,21 @@
         </ion-item>
         <ion-item>
           <ion-input type="password" name="name" placeholder="contraseña"></ion-input>
+<<<<<<< HEAD
         </ion-item><br>
         <ion-label>Fecha de nacimiento</ion-label><br>
         <ion-item>
           <ion-input type="date"></ion-input>
         </ion-item>
+=======
+        </ion-item>
+        <ion-item>
+          <ion-input class="datetime" type="date">fecha de nacimiento</ion-input>
+        </ion-item>
+      
+>>>>>>> b1610dba833a558ce561260df46afdf06b0add0d
       </form>
-
+      <!--este boton nos reenviará a login page-->
       <ion-button class="login_button" type="submit" [routerLink]="['/login']">Crear</ion-button>
 
   
