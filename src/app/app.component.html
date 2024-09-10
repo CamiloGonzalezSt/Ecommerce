@@ -1,33 +1,33 @@
 <ion-app>
-  <ion-menu side="end" contentId="main-content">
+  <!-- Menú Lateral -->
+  <ion-menu side="start" contentId="main-content">
     <ion-header>
-      <ion-toolbar>
-        <ion-title>Categorías</ion-title>
+      <ion-toolbar color="primary">
+        <ion-title>Menú</ion-title>
       </ion-toolbar>
     </ion-header>
-    <!--Aqui van las categorias que integraremos-->
-    <ion-content class="ion-padding">
-      <ion-buttons>
-        <ion-list>
-          <ion-item>
-            <ion-button  href="/contacto">CONTACTO</ion-button>
-          </ion-item>
-        </ion-list>
-      </ion-buttons>
-
+    <ion-content>
+      <ion-list>
+        <!-- Enlaces a las páginas -->
+        <ion-item routerLink="/home">Inicio</ion-item>
+        <ion-item routerLink="/mujer">Mujer</ion-item>
+        <ion-item routerLink="/hombre">Hombre</ion-item>
+        <ion-item routerLink="/tecnologia"></ion-item>
+        <ion-item routerLink="/hogar"></ion-item>
+       
+      </ion-list>
     </ion-content>
-    <!--integración de boton para poder volver a login-->
+
+    <!-- Integración de botón para poder volver a login -->
     <ion-footer>
       <ion-buttons>
-        <ion-button expand="full" (click)="presentLogoutConfirmation()">Cerrar Sesión
-        </ion-button>
+        <ion-button expand="full" (click)="presentLogoutConfirmation()">Cerrar Sesión</ion-button>
       </ion-buttons>
     </ion-footer>
   </ion-menu>
-  <!------------------------------------------------------------------------------->
-<div class="ion-page" id="main-content">
-  <ion-content class="ion-padding"> </ion-content>
 
-</div>
-  <ion-router-outlet id="main-content"></ion-router-outlet>
+  <!-- Contenido Principal -->
+  <div class="ion-page" id="main-content">
+    <ion-router-outlet></ion-router-outlet>
+  </div>
 </ion-app>
