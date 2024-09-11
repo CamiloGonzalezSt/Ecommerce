@@ -31,10 +31,18 @@ ion-toolbar {
   }
 
 swiper-container {
-  text-align: center;
-  width: 100%;
-  height: 270px;
-  --swiper-theme-color: #ff9800;
+  margin-top: 10px;
+  height: auto;
+  img {
+    width: 100%;
+    transition: transform 0.5s ease-in-out;
 }
+  }
+  swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 
 
