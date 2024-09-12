@@ -25,11 +25,15 @@
   </ion-item>
 
   <!-- Slider de imágenes -->
-  <swiper-container [options]="slideOptions">
-    <swiper-slide *ngFor="let img of banners">
-      <img [src]="img" class="d-block w-100" alt="..." style="height: 270px; border-radius: 1rem !important;">
-    </swiper-slide>
-  </swiper-container>
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide" *ngFor="let img of banners">
+        <img [src]="img" style="height: 270px; width: 100%; object-fit: cover; margin-top:10px">
+      </div>
+    </div>
+  </div>
+  
+  
 
   <h1 class="fav"><strong>FAVORITOS DE LOS USUARIOS</strong></h1>
   <ion-grid>

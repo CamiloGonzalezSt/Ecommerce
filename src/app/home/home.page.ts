@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import SwiperCore from 'swiper';
 import { Autoplay, Pagination, Navigation, EffectCube } from 'swiper/modules';
-import { IonContent, createAnimation } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 
 // Configura los módulos que vas a utilizar
 SwiperCore.use([Autoplay, Pagination, Navigation, EffectCube]);
@@ -84,12 +84,19 @@ export class HomePage implements OnInit {
     'assets/images/products/mujer/zapatillas_mujer/vans1.webp',
   ];
 
-  slideOptions = {
-    autoplay: {
-      delay: 3000,
-      disableOnInteraction: false,
-    },
-  };
+  ngAfterViewInit() {
+    const swiper = new SwiperCore('.swiper-container', {
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false
+      },
+      loop: true,
+      pagination: { clickable: true },
+      navigation: true
+    });
+  }
+  
+  
 
   constructor(private activeroute: ActivatedRoute, private router: Router) {}
 
