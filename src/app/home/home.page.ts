@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import SwiperCore from 'swiper';
-import { Autoplay, Pagination, Navigation, EffectCube } from 'swiper/modules';
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { IonContent } from '@ionic/angular';
+import { AnimationController } from '@ionic/angular';
 
 // Configura los módulos que vas a utilizar
-SwiperCore.use([Autoplay, Pagination, Navigation, EffectCube]);
+SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 @Component({
   selector: 'app-home',
@@ -98,7 +99,25 @@ export class HomePage implements OnInit {
   
   
 
-  constructor(private activeroute: ActivatedRoute, private router: Router) {}
+  constructor(private activeroute: ActivatedRoute, private router: Router, private animationCtrl: AnimationController) {}
+  
+  animateCartButton() {
+    const button = document.getElementById('cartButton');
+    if (button) {
+      // Crear una animación usando AnimationController
+      const animation = this.animationCtrl.create()
+        .addElement(button)
+        .duration(200)
+        .iterations(1)
+        .fromTo('transform', 'scale(1)', 'scale(1.2)')
+        .fromTo('opacity', '1', '0.5')
+        .fromTo('transform', 'scale(1.2)', 'scale(1)')
+        .fromTo('opacity', '0.5', '1');
+      
+      // Iniciar la animación
+      animation.play();
+    }
+  }
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();

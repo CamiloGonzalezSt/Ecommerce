@@ -44,5 +44,7 @@ swiper-container {
     align-items: center;
   }
 
-
+  #cartButton {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
 
