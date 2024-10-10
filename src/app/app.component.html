@@ -1,6 +1,6 @@
 <ion-app>
   <!-- Menú Lateral -->
-  <ion-menu side="start" contentId="main-content">
+  <ion-menu side="end" contentId="main-content">
     <ion-header>
       <ion-toolbar color="primary">
         <ion-title>Menú</ion-title>
@@ -8,14 +8,27 @@
     </ion-header>
     <ion-content>
       <ion-list>
-        <!-- Enlaces a las páginas -->
-        <ion-item routerLink="/home">Inicio</ion-item>
-        <ion-item routerLink="/mujer">Mujer</ion-item>
-        <ion-item routerLink="/hombre">Hombre</ion-item>
-        <ion-item routerLink="/tecnologia"></ion-item>
-        <ion-item routerLink="/hogar"></ion-item>
-        <ion-item routerLink="/contacto">Contacto</ion-item>
-       
+        <!-- Enlaces a las páginas con cierre manual del menú -->
+        <ion-item routerLink="/home" (click)="closeMenu()">Inicio</ion-item>
+        <ion-item routerLink="/mujer" (click)="closeMenu()">Mujer</ion-item>
+        <ion-item routerLink="/hombre" (click)="closeMenu()">Hombre</ion-item>
+        <ion-item routerLink="/tecnologia" (click)="closeMenu()">Tecnología</ion-item>
+        <ion-item routerLink="/hogar" (click)="closeMenu()">Hogar</ion-item>
+        <ion-item routerLink="/contacto" (click)="closeMenu()">Contacto</ion-item>
+
+        <!-- Opción Productos con Submenú -->
+        <ion-item button (click)="toggleSubMenu()">
+          Productos
+          <ion-icon slot="end" [name]="subMenuOpen ? 'chevron-up' : 'chevron-down'"></ion-icon>
+        </ion-item>
+
+        <!-- Submenú de Productos -->
+        <ion-list *ngIf="subMenuOpen" class="submenu">
+          <ion-item routerLink="/crear" (click)="closeMenu()">crear productos</ion-item>
+          <ion-item routerLink="/actualizar" (click)="closeMenu()">actualizar productos</ion-item>
+          <ion-item routerLink="/eliminar" (click)="closeMenu()">eliminar productos</ion-item>
+          <ion-item routerLink="/listar" (click)="closeMenu()">lista de productos</ion-item>
+        </ion-list>
       </ion-list>
     </ion-content>
 

@@ -77,12 +77,10 @@ export class HomePage implements OnInit {
   ];
 
   banners: string[] = [
-    'assets/images/products/hombre/zapatillas_hombre/new1.webp',
-    'assets/images/products/hombre/zapatillas_hombre/nike1.webp',
-    'assets/images/products/hombre/zapatillas_hombre/vans1.webp',
-    'assets/images/products/mujer/zapatillas_mujer/new1.webp',
-    'assets/images/products/mujer/zapatillas_mujer/nike1.webp',
-    'assets/images/products/mujer/zapatillas_mujer/vans1.webp',
+    'assets/images/banner/banner1.webp',
+    'assets/images/banner/banner2.webp',
+    'assets/images/banner/banner3.webp',
+    
   ];
 
   ngAfterViewInit() {

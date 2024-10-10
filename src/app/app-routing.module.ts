@@ -18,7 +18,8 @@ const routes: Routes = [
   {
     path: 'create-user',
     loadChildren: () => import('./create-user/create-user.module').then( m => m.CreateUserPageModule)
-  },  {
+  },
+  {
     path: 'carro',
     loadChildren: () => import('./carro/carro.module').then( m => m.CarroPageModule)
   },
@@ -34,6 +35,23 @@ const routes: Routes = [
     path: 'restablecer',
     loadChildren: () => import('./restablecer/restablecer.module').then( m => m.RestablecerPageModule)
   },
+  {
+    path: 'crear',
+    loadChildren: () => import('./productos/crear/crear.module').then( m => m.CrearPageModule)
+  },
+  {
+    path: 'actualizar',
+    loadChildren: () => import('./productos/actualizar/actualizar.module').then( m => m.ActualizarPageModule)
+  },
+  {
+    path: 'eliminar',
+    loadChildren: () => import('./productos/eliminar/eliminar.module').then( m => m.EliminarPageModule)
+  },
+  {
+    path: 'listar',
+    loadChildren: () => import('./productos/listar/listar.module').then( m => m.ListarPageModule)
+  }
+  
 
 ];
 
