@@ -24,10 +24,16 @@
     ],
     "useDefineForClassFields": false
   },
+  
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  
+  "include": [
+    "src/**/*.ts",
+    "src/declarations/**/*.d.ts" // Esta línea debe estar aquí
+  ]
 }

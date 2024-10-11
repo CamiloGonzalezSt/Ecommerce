@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Lista de Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let user of users">
+     {{ user.usuario }} -
+     {{ user.password }} <!-- Muestra el nombre de usuario -->
+    </ion-item>
+  </ion-list>
+  <ion-fab-button slot="fixed" vertical="bottom" horizontal="end" (click)="closeModal()">
+    <ion-icon name="close"></ion-icon>
+  </ion-fab-button>
+
+</ion-content>
