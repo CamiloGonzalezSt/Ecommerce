@@ -1,0 +1,29 @@
+{
+    "user": [
+        {"userId": 121, "userName": "Alex"},
+        {"userId": 122, "userName": "Fer"},
+        {"userId": 123, "userName": "Santi"},
+        {"userId": 124, "userName": "Gaby"}
+    ],
+    "cityList": ["Santiago","Huechuraba","Pedro Fontova"],
+    "createUser": {
+        "result":true,
+        "data": { "userId": 121, "userName": "Alex"}
+    },
+    "updateUser": {
+        "result":true,
+        "data": { "userId": 121, "userName": "Alex"}
+    
+    },
+    "deleteUser": {
+        "result":true,
+        "data": { "userId": 121, "userName": "Alex"}
+
+
+
+    }
+
+
+
+
+}
