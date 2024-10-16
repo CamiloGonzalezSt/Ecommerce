@@ -2,11 +2,11 @@
   "productos": [
     {
       "id": "1",
-      "nombre": "ADIDAS",
-      "descripcion": " LALALLALALALALA V2",
+      "nombre": "ADIDAS con camilo prueba",
+      "descripcion": " LALALLALALALALA V2 mamsmasmmsauuuwwuuwuw",
       "precio": 100,
-      "fecha": "2024-10-15T05:48:34.257Z",
-      "cantidad": 200
+      "fecha": "2024-10-16T01:52:55.073Z",
+      "cantidad": 500
     },
     {
       "id": "2",
@@ -41,7 +41,7 @@
       "cantidad": 200
     },
     {
-      "id": 1511,
+      "id": "1511",
       "nombre": "Harrys el Magnifico",
       "descripcion": "nike mercurial uwu",
       "precio": 150,
@@ -49,7 +49,7 @@
       "cantidad": 400
     },
     {
-      "id": 5414,
+      "id": "5414",
       "nombre": "Nike",
       "descripcion": "Nike mercurial veloz",
       "precio": 500,
@@ -57,7 +57,7 @@
       "cantidad": 400
     },
     {
-      "id": 3237,
+      "id": "3237",
       "nombre": "Nike air force one",
       "descripcion": "nike que te hacen correr rapido",
       "precio": 200,
@@ -65,12 +65,28 @@
       "cantidad": 5
     },
     {
-      "id": 7084,
+      "id": "7084",
       "nombre": "NIkee ",
       "descripcion": "hola estoy cansado",
       "precio": 700,
       "fecha": "2024-10-15T05:44:22.720Z",
       "cantidad": 1
+    },
+    {
+      "id": 2169,
+      "nombre": "Levis",
+      "descripcion": "Pantaloón para verse ficha",
+      "precio": 0,
+      "fecha": "2024-10-16T01:53:42.313Z",
+      "cantidad": 1
+    },
+    {
+      "id": 3433,
+      "nombre": "Levis",
+      "descripcion": "pantalon de mina",
+      "precio": 0,
+      "fecha": "2024-10-16T01:53:42.313Z",
+      "cantidad": 0
     }
   ]
 }
