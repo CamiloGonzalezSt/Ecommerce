@@ -35,7 +35,11 @@ const routes: Routes = [
     loadChildren: () => import('./contacto/contacto.module').then( m => m.ContactoPageModule),
     canActivate:[ingresadoGuard]
   },
-  
+  {
+    path: 'detalle-producto',
+    loadChildren: () => import('./detalle-producto/detalle-producto.module').then( m => m.DetalleProductoPageModule),
+    canActivate:[ingresadoGuard]
+  },
   
   {
     path: 'restablecer',
@@ -75,7 +79,11 @@ const routes: Routes = [
   { path: 'product-edit/:id', loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule) },
   { path: 'product-all', loadChildren: () => import('./producto/product-all/product-all.module').then(m => m.ProductAllPageModule) },
   
-  { path: '**', component: NotFoundPage } // Manejo de ruta 404
+  { path: '**', component: NotFoundPage },   {
+    path: 'detalle-producto',
+    loadChildren: () => import('./detalle-producto/detalle-producto.module').then( m => m.DetalleProductoPageModule)
+  }
+// Manejo de ruta 404
   
 
 ];

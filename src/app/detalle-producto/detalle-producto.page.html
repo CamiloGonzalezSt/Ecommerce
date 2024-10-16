@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button default-href="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalles del Producto</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Verificar  -->
+  <ion-card *ngIf="product">
+    <img [src]="product.image" alt="{{product.name}}">
+    <ion-card-header>
+      <ion-card-title>{{ product.name }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ product.description }}</p>
+      
+      <ion-badge color="primary">${{ product.price }}</ion-badge>
+      
+      <div style="display: flex; align-items: center; margin-top: 10px;">
+        <ion-buttons>
+          <ion-button *ngFor="let color of product.colors" 
+                      shape="round" 
+                      (click)="onColorSelect(color)" 
+                      [ngStyle]="{'background-color': color.toLowerCase()}"
+                      class="color-button">
+            {{ color }}
+          </ion-button>
+        </ion-buttons>
+      </div>
+      
+      <p *ngIf="selectedColor">Color seleccionado: {{ selectedColor }}</p>
+      
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,9 +1,11 @@
+/// <reference types="@types/google.maps" />
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import SwiperCore from 'swiper';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { IonContent } from '@ionic/angular';
 import { AnimationController } from '@ionic/angular';
+import { GoogleMap } from '@capacitor/google-maps';  // Importa GoogleMap para el mapa
 
 // Configura los módulos que vas a utilizar
 SwiperCore.use([Autoplay, Pagination, Navigation]);
@@ -74,14 +76,24 @@ export class HomePage implements OnInit {
       price: 25990,
       image: 'assets/images/products/hombre/poleron_hombre/hoddie1.webp'
     },
+  
+
+    // (El resto de los productos)
   ];
 
   banners: string[] = [
     'assets/images/banner/banner1.webp',
     'assets/images/banner/banner2.webp',
     'assets/images/banner/banner3.webp',
-    
   ];
+
+  map: GoogleMap | undefined;  // Variable para el mapa
+
+  constructor(
+    private activeroute: ActivatedRoute, 
+    private router: Router, 
+    private animationCtrl: AnimationController
+  ) {}
 
   ngAfterViewInit() {
     const swiper = new SwiperCore('.swiper-container', {
@@ -94,11 +106,7 @@ export class HomePage implements OnInit {
       navigation: true
     });
   }
-  
-  
 
-  constructor(private activeroute: ActivatedRoute, private router: Router, private animationCtrl: AnimationController) {}
-  
   animateCartButton() {
     const button = document.getElementById('cartButton');
     if (button) {
@@ -117,11 +125,40 @@ export class HomePage implements OnInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras.state) {
       this.data = navigation.extras.state['user'];
       console.log('Datos del usuario recibidos:', this.data);
     }
+
+    // Llama a la función para crear el mapa cuando la página se inicialice
+    await this.createMap();
   }
+
+  // Función para inicializar el mapa
+  async createMap() {
+    this.map = await GoogleMap.create({
+      id: 'my-map',  // Un ID único para el mapa
+      element: document.getElementById('map') as HTMLElement,  // Contenedor del mapa en el footer
+      apiKey: 'AIzaSyDgfNxLkMV22dNHMMQH3arPyO7vt5CsxC8',  // Reemplaza con tu API key
+      config: {
+        center: {
+          lat: -33.4489,  // Latitud inicial
+          lng: -70.6693,  // Longitud inicial
+        },
+        zoom: 12,  // Nivel de zoom
+      },
+    });
+
+    // Opcional: Agregar un marcador en el mapa
+    await this.map.addMarker({
+      coordinate: {
+        lat: -33.4489,
+        lng: -70.6693,
+      },
+      title: "Santiago",
+      snippet: "Capital de Chile",
+    });
   }
+}
