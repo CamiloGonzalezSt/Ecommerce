@@ -1,14 +1,6 @@
 {
   "productos": [
     {
-      "id": "1",
-      "nombre": "ADIDAS",
-      "descripcion": " LALALLALALALALA V2",
-      "precio": 100,
-      "fecha": "2024-10-15T05:48:34.257Z",
-      "cantidad": 200
-    },
-    {
       "id": "2",
       "nombre": "PANTALON",
       "descripcion": "LEVIS",
@@ -41,7 +33,7 @@
       "cantidad": 200
     },
     {
-      "id": 1511,
+      "id": "1511",
       "nombre": "Harrys el Magnifico",
       "descripcion": "nike mercurial uwu",
       "precio": 150,
@@ -49,7 +41,7 @@
       "cantidad": 400
     },
     {
-      "id": 5414,
+      "id": "5414",
       "nombre": "Nike",
       "descripcion": "Nike mercurial veloz",
       "precio": 500,
@@ -57,7 +49,7 @@
       "cantidad": 400
     },
     {
-      "id": 3237,
+      "id": "3237",
       "nombre": "Nike air force one",
       "descripcion": "nike que te hacen correr rapido",
       "precio": 200,
@@ -65,11 +57,43 @@
       "cantidad": 5
     },
     {
-      "id": 7084,
+      "id": "7084",
       "nombre": "NIkee ",
       "descripcion": "hola estoy cansado",
       "precio": 700,
       "fecha": "2024-10-15T05:44:22.720Z",
+      "cantidad": 1
+    },
+    {
+      "id": "8610",
+      "nombre": "camilo gonzalez",
+      "descripcion": "prueba",
+      "precio": 10,
+      "fecha": "2024-10-16T02:50:46.850Z",
+      "cantidad": 1
+    },
+    {
+      "id": "9998",
+      "nombre": "123",
+      "descripcion": "qwadsasdasda",
+      "precio": 5000,
+      "fecha": "2024-10-16T02:52:06.392Z",
+      "cantidad": 1
+    },
+    {
+      "id": "8962",
+      "nombre": "camilonga para bailar la botonga",
+      "descripcion": "a.sdmbadbajsdjasjx asx",
+      "precio": 8000,
+      "fecha": "2024-10-16T02:53:24.247Z",
+      "cantidad": 9000
+    },
+    {
+      "id": 923,
+      "nombre": "camilo11111",
+      "descripcion": "asasasasas",
+      "precio": 11111,
+      "fecha": "2024-10-16T03:20:39.645Z",
       "cantidad": 1
     }
   ]

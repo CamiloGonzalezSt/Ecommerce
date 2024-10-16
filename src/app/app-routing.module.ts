@@ -8,7 +8,7 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),
-    canActivate:[ingresadoGuard]
+    //canActivate:[ingresadoGuard]
   },
   {
     path: '',
@@ -28,17 +28,17 @@ const routes: Routes = [
   {
     path: 'carro',
     loadChildren: () => import('./carro/carro.module').then( m => m.CarroPageModule),
-    canActivate:[ingresadoGuard]
+    //canActivate:[ingresadoGuard]
   },
   {
     path: 'contacto',
     loadChildren: () => import('./contacto/contacto.module').then( m => m.ContactoPageModule),
-    canActivate:[ingresadoGuard]
+    //canActivate:[ingresadoGuard]
   },
   {
     path: 'detalle-producto',
     loadChildren: () => import('./detalle-producto/detalle-producto.module').then( m => m.DetalleProductoPageModule),
-    canActivate:[ingresadoGuard]
+    //canActivate:[ingresadoGuard]
   },
   
   {
@@ -49,28 +49,28 @@ const routes: Routes = [
   {
     path: 'crear',
     loadChildren: () => import('./productos/crear/crear.module').then( m => m.CrearPageModule),
-    canActivate:[ingresadoGuard]
+    //canActivate:[ingresadoGuard]
   },
   {
     path: 'actualizar',
     loadChildren: () => import('./productos/actualizar/actualizar.module').then( m => m.ActualizarPageModule),
-    canActivate:[ingresadoGuard]
+    //canActivate:[ingresadoGuard]
   },
   {
     path: 'eliminar',
     loadChildren: () => import('./productos/eliminar/eliminar.module').then( m => m.EliminarPageModule),
-    canActivate:[ingresadoGuard]
+    //canActivate:[ingresadoGuard]
   },
   {
     path: 'listar',
     loadChildren: () => import('./productos/listar/listar.module').then( m => m.ListarPageModule),
-    canActivate:[ingresadoGuard]
+    //canActivate:[ingresadoGuard]
   },
 
   {
     path: 'users',
     component: UsersComponent,
-    canActivate: [ingresadoGuard] // Ajusta según sea necesario
+    //canActivate: [ingresadoGuard] // Ajusta según sea necesario
   },
   
   { path: 'product-add', loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule) },
