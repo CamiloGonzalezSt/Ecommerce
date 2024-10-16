@@ -141,7 +141,7 @@ export class HomePage implements OnInit {
     this.map = await GoogleMap.create({
       id: 'my-map',  // Un ID único para el mapa
       element: document.getElementById('map') as HTMLElement,  // Contenedor del mapa en el footer
-      apiKey: 'AIzaSyDgfNxLkMV22dNHMMQH3arPyO7vt5CsxC8',  // Reemplaza con tu API key
+      apiKey: 'AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU',  // Reemplaza con tu API key
       config: {
         center: {
           lat: -33.4489,  // Latitud inicial

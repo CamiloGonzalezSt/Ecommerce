@@ -43,12 +43,18 @@ export class LoginPage {
   }
 
   async ingresar() {
-    if (this.isPasswordValid(this.user.password) && await this.sqliteService.login(this.user.usuario, this.user.password)) {
-      this.saveUserToLocalStorage(); // Guardar los datos de usuario en localStorage al iniciar sesión
-      let navigationExtras: NavigationExtras = {
-        state: { user: this.user }
-      };
-      this.router.navigate(['/home'], navigationExtras);
+    if (this.isPasswordValid(this.user.password)) {
+      const token = await this.sqliteService.login(this.user.usuario, this.user.password);
+      if (token) {
+        localStorage.setItem('auth_token', token); // Guardar el token en localStorage
+        this.saveUserToLocalStorage(); // Guardar el usuario
+        let navigationExtras: NavigationExtras = {
+          state: { user: this.user }
+        };
+        this.router.navigate(['/home'], navigationExtras);
+      } else {
+        this.passwordValid = false; // Indica que la validación falló
+      }
     } else {
       this.passwordValid = false; // Indica que la validación falló
     }

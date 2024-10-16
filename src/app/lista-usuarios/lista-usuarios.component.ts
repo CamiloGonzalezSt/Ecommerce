@@ -12,7 +12,7 @@ export class ListaUsuariosComponent  implements OnInit {
 
   constructor(private sqliteService: SqliteService, private modalController: ModalController) { }
 
-  ngOnInit() {
+   ngOnInit() {
     this.users = this.sqliteService.getUsers();
     
   }

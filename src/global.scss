@@ -8,6 +8,10 @@
  * For more information on global stylesheets, visit the documentation:
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
+
+ body {
+    background: transparent !important;
+ }
  @import 'swiper/css';
 
 

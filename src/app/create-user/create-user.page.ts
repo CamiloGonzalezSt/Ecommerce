@@ -21,11 +21,11 @@ export class CreateUserPage implements OnInit {
   ngOnInit() {}
 
   // Método para crear un usuario
-  createUser() {
+  async createUser() {
     console.log('Username:', this.usuario);
     console.log('Password:', this.password);
     if (this.usuario && this.password) {
-      const success = this.sqliteService.createUser(this.usuario, this.password);
+      const success = await this.sqliteService.createUser(this.usuario, this.password);
       if (success) {
         alert('Usuario creado exitosamente');
         this.router.navigate(['/login']);

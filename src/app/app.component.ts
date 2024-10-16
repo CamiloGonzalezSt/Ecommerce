@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActionSheetController, MenuController } from '@ionic/angular'; // Asegúrate de importar MenuController
 import { register } from 'swiper/element/bundle';
+import { SqliteService } from './services/sqlite.service';
 
 register();
 
@@ -15,8 +16,19 @@ export class AppComponent {
 
   constructor(
     private actionSheetCtrl: ActionSheetController,
-    private menuCtrl: MenuController // Inyectamos el MenuController
-  ) {}
+    private menuCtrl: MenuController, // Inyectamos el MenuController
+    private service: SqliteService
+  ) {
+
+    this.initializeApp();
+  }
+
+  async initializeApp() {
+    await this.service.init();
+    this.service.syncWithJsonServer();
+    this.service.syncWithJsonServer ();
+    this.service.getProducts();
+  }
 
   toggleSubMenu() {
     this.subMenuOpen = !this.subMenuOpen;
