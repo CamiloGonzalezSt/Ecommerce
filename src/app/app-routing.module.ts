@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { noIngresadoGuard } from './no-ingresado.guard';
 import { ingresadoGuard } from './ingresado.guard';
 import { NotFoundPage } from './not-found/not-found.page';
-import { UsersComponent } from './users/users.component'; // Ruta correcta
 const routes: Routes = [
   {
     path: 'home',
@@ -17,13 +15,11 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule),
-    canActivate:[noIngresadoGuard] //Aquí decimos que la pagina login se mostrará a todos, no necesitan estar registrados para ver esta pagina
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'create-user',
-    loadChildren: () => import('./create-user/create-user.module').then( m => m.CreateUserPageModule),
-    canActivate:[noIngresadoGuard] //Aquí decimos que la pagina login se mostrará a todos, no necesitan estar registrados para ver esta pagina
+    loadChildren: () => import('./create-user/create-user.module').then( m => m.CreateUserPageModule)
   },
   {
     path: 'carro',
@@ -43,45 +39,19 @@ const routes: Routes = [
   
   {
     path: 'restablecer',
-    loadChildren: () => import('./restablecer/restablecer.module').then( m => m.RestablecerPageModule),
-    canActivate:[noIngresadoGuard] //Aquí decimos que la pagina login se mostrará a todos, no necesitan estar registrados para ver esta pagina
-  },
-  {
-    path: 'crear',
-    loadChildren: () => import('./productos/crear/crear.module').then( m => m.CrearPageModule),
-    canActivate:[ingresadoGuard]
-  },
-  {
-    path: 'actualizar',
-    loadChildren: () => import('./productos/actualizar/actualizar.module').then( m => m.ActualizarPageModule),
-    canActivate:[ingresadoGuard]
-  },
-  {
-    path: 'eliminar',
-    loadChildren: () => import('./productos/eliminar/eliminar.module').then( m => m.EliminarPageModule),
-    canActivate:[ingresadoGuard]
-  },
-  {
-    path: 'listar',
-    loadChildren: () => import('./productos/listar/listar.module').then( m => m.ListarPageModule),
-    canActivate:[ingresadoGuard]
+    loadChildren: () => import('./restablecer/restablecer.module').then( m => m.RestablecerPageModule)
   },
 
-  {
-    path: 'users',
-    component: UsersComponent,
-    canActivate: [ingresadoGuard] // Ajusta según sea necesario
-  },
   
-  { path: 'product-add', loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule) },
-  { path: 'product-list', loadChildren: () => import('./producto/product-list/product-list.module').then(m => m.ProductListPageModule) },
-  { path: 'product-detail/:id', loadChildren: () => import('./producto/product-detail/product-detail.module').then(m => m.ProductDetailPageModule) },
-  { path: 'product-edit/:id', loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule) },
-  { path: 'product-all', loadChildren: () => import('./producto/product-all/product-all.module').then(m => m.ProductAllPageModule) },
+  { path: 'product-add', loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule),canActivate: [ingresadoGuard]  },
+  { path: 'product-list', loadChildren: () => import('./producto/product-list/product-list.module').then(m => m.ProductListPageModule), canActivate: [ingresadoGuard]  },
+  { path: 'product-detail/:id', loadChildren: () => import('./producto/product-detail/product-detail.module').then(m => m.ProductDetailPageModule), canActivate: [ingresadoGuard]  },
+  { path: 'product-edit/:id', loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule), canActivate: [ingresadoGuard]  },
+  { path: 'product-all', loadChildren: () => import('./producto/product-all/product-all.module').then(m => m.ProductAllPageModule), canActivate: [ingresadoGuard]  },
   
   { path: '**', component: NotFoundPage },   {
     path: 'detalle-producto',
-    loadChildren: () => import('./detalle-producto/detalle-producto.module').then( m => m.DetalleProductoPageModule)
+    loadChildren: () => import('./detalle-producto/detalle-producto.module').then( m => m.DetalleProductoPageModule), canActivate: [ingresadoGuard] 
   }
 // Manejo de ruta 404
   

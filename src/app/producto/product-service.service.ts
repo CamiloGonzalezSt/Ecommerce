@@ -7,7 +7,7 @@ import { catchError, tap, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
 // creamos Constantes que utilizaremos en el envio
-const apiUrl = "http://localhost:3000/productos";
+const apiUrl = "http://10.0.2.2:3000/productos";
 const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
 
 @Injectable({
@@ -52,14 +52,15 @@ export class ProductServiceService {
 
 
   //  Obtener un Producto
-  getProduct(id: String): Observable<ClProducto> {
-    //const url = '${apiUrl}/${id}';
-    //return this.http.get<Producto>(url).pipe(
-    console.log("getProduct ID:" + id);
-    return this.http.get<ClProducto>(apiUrl + "/" + id)
+  getProduct(id: string): Observable<ClProducto> {
+    if (!id) {
+      return throwError('ID de producto no válido'); // Manejo de error si el ID no es válido
+    }
+    console.log(`getProduct ID: ${id}`);
+    return this.http.get<ClProducto>(`${apiUrl}/${id}`)
       .pipe(
-        tap(_ => console.log('fetched product id=${id}')),
-        catchError(this.handleError<ClProducto>('getProduct id=${id}'))
+        tap(_ => console.log(`fetched product id=${id}`)),
+        catchError(this.handleError<ClProducto>(`getProduct id=${id}`))
       );
   }
 

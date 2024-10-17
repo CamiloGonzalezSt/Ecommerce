@@ -13,6 +13,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+        "fast-deep-equal"
+    ],
             "outputPath": "www",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -86,7 +89,7 @@
               "buildTarget": "app:build:development"
             },
             "ci": {
-              "progress": false
+              "watch": false
             }
           },
           "defaultConfiguration": "development"

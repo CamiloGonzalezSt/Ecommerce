@@ -1,14 +1,6 @@
 {
   "productos": [
     {
-      "id": "1",
-      "nombre": "ADIDAS con camilo prueba",
-      "descripcion": " LALALLALALALALA V2 mamsmasmmsauuuwwuuwuw",
-      "precio": 100,
-      "fecha": "2024-10-16T01:52:55.073Z",
-      "cantidad": 500
-    },
-    {
       "id": "2",
       "nombre": "PANTALON",
       "descripcion": "LEVIS",
@@ -73,20 +65,96 @@
       "cantidad": 1
     },
     {
-      "id": 2169,
-      "nombre": "Levis",
-      "descripcion": "Pantaloón para verse ficha",
-      "precio": 0,
-      "fecha": "2024-10-16T01:53:42.313Z",
+      "id": "9998",
+      "nombre": "123",
+      "descripcion": "qwadsasdasda",
+      "precio": 5000,
+      "fecha": "2024-10-16T02:52:06.392Z",
       "cantidad": 1
     },
     {
-      "id": 3433,
-      "nombre": "Levis",
-      "descripcion": "pantalon de mina",
-      "precio": 0,
-      "fecha": "2024-10-16T01:53:42.313Z",
-      "cantidad": 0
+      "id": "8962",
+      "nombre": "camilonga para bailar la botonga",
+      "descripcion": "a.sdmbadbajsdjasjx asx",
+      "precio": 8000,
+      "fecha": "2024-10-16T02:53:24.247Z",
+      "cantidad": 9000
+    },
+    {
+      "id": "5596",
+      "nombre": "camilo",
+      "descripcion": "prueba 16-10-2024",
+      "precio": 750,
+      "fecha": "2024-10-16T16:04:06.074Z",
+      "cantidad": 1
+    },
+    {
+      "id": "6616",
+      "nombre": "acacaaac",
+      "descripcion": "dasdasda",
+      "precio": 666,
+      "fecha": "2024-10-16T23:10:59.490Z",
+      "cantidad": 1
+    },
+    {
+      "id": "7639",
+      "nombre": "Pepiño interview",
+      "descripcion": "pepe a inrumpido",
+      "precio": 555,
+      "fecha": "2024-10-17T14:51:29.909Z",
+      "cantidad": 1
+    },
+    {
+      "id": "8674",
+      "nombre": "asasa",
+      "descripcion": "sasa",
+      "precio": 1111222,
+      "fecha": "2024-10-17T15:38:33.502Z",
+      "cantidad": 1
+    },
+    {
+      "id": "9014",
+      "nombre": "jose soto",
+      "descripcion": "trabajador urban",
+      "precio": 10000,
+      "fecha": "2024-10-17T15:51:43.506Z",
+      "cantidad": 1
+    },
+    {
+      "id": "8334",
+      "nombre": "pantalon azul",
+      "descripcion": "pantalon",
+      "precio": 5990,
+      "fecha": "2024-10-17T15:59:25.043Z",
+      "cantidad": 1
+    },
+    {
+      "id": "4778",
+      "nombre": "urban",
+      "descripcion": "urban comercial spa",
+      "precio": 10,
+      "fecha": "2024-10-17T16:07:34.009Z",
+      "cantidad": 2
+    },
+    {
+      "id": 1032,
+      "nombre": "asidhaishda",
+      "descripcion": "asas",
+      "precio": 800,
+      "fecha": "2024-10-17T18:03:21.017Z",
+      "cantidad": 1
+    }
+  ],
+  "users": [
+    {
+      "usuario": "camilo gonzalez",
+      "password": "Cami3740",
+      "id": "0803"
+    },
+    {
+      "usuario": "alexander patiño",
+      "password": "Alex2024",
+      "id": "fad3"
     }
   ]
 }
