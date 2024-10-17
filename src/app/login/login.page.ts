@@ -3,6 +3,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { SqliteService } from '../services/sqlite.service';
 import { ListaUsuariosComponent } from '../lista-usuarios/lista-usuarios.component';
 import { ModalController } from '@ionic/angular';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class LoginPage implements OnInit {
   errorMessage: string = ''; // Para mostrar mensajes de error
   isAuthenticated: boolean = false; // Bandera para verificar si ya está autenticado
 
-  constructor(private router: Router, private sqliteService: SqliteService, private modalController: ModalController) {
+  constructor(private router: Router, private sqliteService: SqliteService, private modalController: ModalController, private http: HttpClient) {
     this.loadUserFromLocalStorage(); // Cargar datos de usuario si existen en localStorage
   }
 
@@ -117,4 +118,19 @@ async cerrarSesion() {
   this.sqliteService.logout(); // Llamar al método de cierre de sesión del servicio
   this.router.navigate(['/login']); // Redirigir a la página de inicio de sesión
 }
+
+ // Método para verificar la conexión al JSON Server
+ async checkServerConnection() {
+  this.http.get('http://10.0.2.2:3000').subscribe(
+    (data) => {
+      console.log('Datos obtenidos del JSON Server:', data);
+      alert('Datos obtenidos: ' + JSON.stringify(data));
+    },
+    (error) => {
+      console.error('Error al conectarse al JSON Server', error);
+      alert('No se pudo conectar al JSON Server');
+    }
+  );
+}
+
 }

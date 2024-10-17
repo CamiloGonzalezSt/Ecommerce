@@ -159,17 +159,17 @@ export class HomePage implements OnInit {
     this.map = await GoogleMap.create({
       id: 'my-map',  // Un ID único para el mapa
       element: document.getElementById('map') as HTMLElement,  // Contenedor del mapa en el footer
-      apiKey: 'AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU',  // Reemplaza con tu API key
+      apiKey: 'AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU',  // nuestra key
       config: {
         center: {
-          lat: -33.4489,  // Latitud inicial
-          lng: -70.6693,  // Longitud inicial
+          lat: -33.4489, 
+          lng: -70.6693,  
         },
-        zoom: 12,  // Nivel de zoom
+        zoom: 12,  
       },
     });
 
-    // Opcional: Agregar un marcador en el mapa
+    //Agregar un marcador en el mapa
     await this.map.addMarker({
       coordinate: {
         lat: -33.4489,

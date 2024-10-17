@@ -16,19 +16,21 @@ export class CreateUserPage implements OnInit {
 
   constructor(private sqliteService: SqliteService, private router: Router) { }
 
-  ngOnInit() {}
+  async ngOnInit() {
+    await this.sqliteService.init();
+  }
 
   // Método para crear un usuario
   async createUser() {
     console.log('Username:', this.usuario);
     console.log('Password:', this.password);
-    
+   
     // Validar que los campos no estén vacíos
     if (this.usuario && this.password) {
       // Crear el usuario usando el servicio
-      const success = this.sqliteService.createUser(this.usuario, this.password);
-      if (await success) {
-        alert('Usuario creado exitosamente');
+      const success = await this.sqliteService.createUser(this.usuario, this.password);
+      if (success) {
+        alert('Usuario creado exitosamente y agregado a la API');
         this.router.navigate(['/login']); // Redirigir al usuario a la página de login
       } else {
         alert('El usuario ya existe');
@@ -38,7 +40,7 @@ export class CreateUserPage implements OnInit {
     }
   }
 
-  // Método para crear un producto (opcional, si deseas incluirlo aquí)
+  // Método para crear un producto
   async createProduct() {
     if (this.product.nombre && this.product.descripcion && this.product.precio > 0 && this.product.cantidad) {
       await this.sqliteService.addProduct(this.product); // Asegúrate de que este método exista en el servicio

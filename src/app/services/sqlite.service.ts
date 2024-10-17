@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class SqliteService {
-  private apiUrl = 'http://localhost:3000/users';
+  private apiUrl = 'http://10.0.2.2:3000/users';
   private db!: SQLiteConnection;
   private usersSubject = new BehaviorSubject<any[]>([]); // Observable para la lista de usuarios
   users$ = this.usersSubject.asObservable(); // Exponer el observable
@@ -33,6 +33,20 @@ export class SqliteService {
       console.log('Error durante la inicialización de la base de datos', error);
     }
   }
+  // Método para verificar la conexión al JSON Server
+  async checkServerConnection() {
+    this.http.get('http://10.0.2.2:3000/users').subscribe(
+      (data) => {
+        console.log('Datos obtenidos del JSON Server:', data);
+        alert('Datos obtenidos: ' + JSON.stringify(data));
+      },
+      (error) => {
+        console.error('Error al conectarse al JSON Server', error);
+        alert('No se pudo conectar al JSON Server');
+      }
+    );
+  }
+
 
   private async createDatabase() {
     try {
@@ -175,9 +189,9 @@ export class SqliteService {
   // Sincronizar usuarios con JSON Server
   async syncUsersWithJsonServer() {
     try {
-      const users = this.getUsers(); 
+      const users = this.getUsers();
       const syncPromises = users.map(user =>
-        axios.post('http://10.0.2.2:3000/users', user)
+        this.http.post(this.apiUrl, user).toPromise() // Llamar al apiUrl
       );
       await Promise.all(syncPromises);
       console.log('Sincronización de usuarios completa');
@@ -229,5 +243,30 @@ export class SqliteService {
       this.saveUserToDb(updatedUser); // Guarda el usuario en la base de datos (implementa esta lógica si es necesario)
     }
   }
+// Obtener usuarios desde el servidor (usando apiUrl)
+getUsersFromApi() {
+  this.http.get<any[]>(this.apiUrl).subscribe(
+    (users) => {
+      this.usersSubject.next(users); // Actualiza el observable con los usuarios obtenidos
+      console.log('Usuarios obtenidos desde el API:', users);
+    },
+    (error) => {
+      console.log('Error al obtener usuarios desde el API', error);
+    }
+  );
+}
+
+// Guardar un usuario en el servidor (usando apiUrl)
+addUserToApi(user: any) {
+  this.http.post(this.apiUrl, user).subscribe(
+    (response) => {
+      console.log('Usuario guardado en el servidor:', response);
+    },
+    (error) => {
+      console.log('Error al guardar el usuario en el servidor', error);
+    }
+  );
+}
+  
 
 }
