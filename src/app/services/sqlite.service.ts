@@ -2,45 +2,38 @@ import { Injectable } from '@angular/core';
 import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
 import { ClProducto } from '../producto/model/ClProducto';
 import axios from 'axios';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs'; // Importar BehaviorSubject
+import { HttpClient } from '@angular/common/http';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class SqliteService {
-  [x: string]: any;
+  private apiUrl = 'http://localhost:3000/users';
   private db!: SQLiteConnection;
-
-  private users = [
-    { usuario: 'camilo gonzalez', password: 'Cami3740' },
-    { usuario: 'alexander patiño', password: 'Alex2024' },
-  ];
-
+  private usersSubject = new BehaviorSubject<any[]>([]); // Observable para la lista de usuarios
+  users$ = this.usersSubject.asObservable(); // Exponer el observable
   private authenticated: boolean = false;
 
-  constructor() {
+  // Inicializa con algunos usuarios
+  constructor(private router: Router, private http: HttpClient) {
     this.init();
-
+    this.loadInitialUsers(); // Cargar usuarios iniciales
   }
 
-
-
-  // Método init que incluye la creación de la base de datos
   async init() {
     try {
-      // Abre la conexión con la base de datos
-      this.db = new SQLiteConnection(CapacitorSQLite); // Inicializa la conexión SQLite
+      this.db = new SQLiteConnection(CapacitorSQLite);
       await this.db.open('ecommerce.db');
       console.log('Base de datos abierta correctamente');
-
-      // Crear la tabla de productos si no existe
       await this.createDatabase();
     } catch (error) {
       console.log('Error durante la inicialización de la base de datos', error);
     }
   }
 
-  // Crear la base de datos
   private async createDatabase() {
     try {
       await this.db.execute(`CREATE TABLE IF NOT EXISTS productos (
@@ -51,10 +44,88 @@ export class SqliteService {
         cantidad INTEGER,
         fecha DATE
       )`);
+      
       console.log("Tabla productos creada");
     } catch (error) {
       console.log("Error al crear la base de datos", error);
     }
+  }
+
+  private loadInitialUsers() {
+    // Cargar usuarios iniciales al BehaviorSubject
+    this.usersSubject.next([
+      { usuario: 'camilo gonzalez', password: 'Cami3740' },
+      { usuario: 'alexander patiño', password: 'Alex2024' },
+    ]);
+  }
+
+  // Método para añadir un nuevo usuario
+   async createUser(usuario: string, password: string): Promise  <boolean> {
+    const exists = this.usersSubject.getValue().some(u => u.usuario === usuario);
+    if (exists) {
+      return false; // El usuario ya existe
+    }
+
+    const newUser = { usuario, password };
+    const currentUsers = this.usersSubject.getValue();
+    currentUsers.push(newUser); // Agregar nuevo usuario
+    this.usersSubject.next(currentUsers); // Actualizar el observable
+
+    await this.saveUserToDb(newUser); // Guardar el usuario en la base de datos
+
+    return true;
+  }
+
+  // Método para guardar el usuario en la base de datos
+  private async saveUserToDb(user: any): Promise<void> {
+    try {
+      await this.db.run(`INSERT INTO usuarios (usuario, password) VALUES (?, ?)`, [
+        user.usuario,
+        user.password,
+      ]);
+      console.log('Usuario guardado en la base de datos:', user);
+    } catch (error) {
+      console.log('Error al guardar el usuario en la base de datos', error);
+    }
+  }
+
+  // Obtener la lista de usuarios
+  getUsers() {
+    return this.usersSubject.getValue();
+  }
+
+  // Método para verificar el estado de autenticación
+  isAuthenticated(): boolean {
+    const isAuth = localStorage.getItem('isAuthenticated');
+    return isAuth === 'true';
+  }
+
+  // Método para verificar credenciales
+  login(usuario: string, password: string): string | null {
+    const user = this.usersSubject.getValue().find(u => u.usuario === usuario && u.password === password);
+    
+    if (user) {
+      this.authenticated = true;
+      const token = this.generateToken(usuario);
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('isAuthenticated', 'true');
+      return token;
+    }
+    
+    return null; // Devuelve null si las credenciales son incorrectas
+  }
+
+  // Método para generar un token
+  generateToken(usuario: string): string {
+    return btoa(`${usuario}:${new Date().getTime()}`);
+  }
+
+  // Método para cerrar sesión
+  logout() {
+    this.authenticated = false;
+    localStorage.removeItem('authenticated');
+    localStorage.removeItem('auth_token');
+    this.router.navigate(['/login']);
   }
 
   // Añadir productos a la base de datos
@@ -115,45 +186,8 @@ export class SqliteService {
     }
   }
 
-  getUsers() {
-    return this.users;
-  }
-
-  // Método para verificar el estado de autenticación
-  isAuthenticated(): boolean {
-    return this.authenticated;
-  }
-
-  // Método para verificar credenciales
-  login(usuario: string, password: string): string | null {
-    const user = this.users.find(u => u.usuario === usuario && u.password === password);
-    if (user) {
-      this.authenticated = true; // Establecer el estado de autenticación
-      localStorage.setItem('authenticated', 'true'); // Guardar el estado en localStorage
-      return 'generated_token'; // Reemplazar por el token real
-    }
-    return null; // Devuelve null si las credenciales son incorrectas
-  }
-
-  // Método para cerrar sesión
-  logout() {
-    this.authenticated = false; 
-    localStorage.removeItem('authenticated'); 
-  }
-
-  // Crear un nuevo usuario
-  createUser(usuario: string, password: string): boolean {
-    const exists = this.users.some(u => u.usuario === usuario);
-    if (exists) {
-      return false; // El usuario ya existe
-    }
-
-    this.users.push({ usuario, password }); // Agregar nuevo usuario
-    return true;
-  }
-
-   // Actualiza un producto en la base de datos
-   async updateProduct(id: number, product: ClProducto): Promise<void> {
+  // Actualiza un producto en la base de datos
+  async updateProduct(id: number, product: ClProducto): Promise<void> {
     try {
         await this.db.run(`UPDATE productos SET nombre = ?, precio = ?, description = ?, cantidad = ?, fecha = ? WHERE id = ?`, [
             product.nombre,
@@ -165,9 +199,8 @@ export class SqliteService {
         ]);
         console.log(`Producto con id ${id} actualizado`);
 
-      
-      // Sincronizar después de actualizar el producto
-      await this.syncWithJsonServer();
+        // Sincronizar después de actualizar el producto
+        await this.syncWithJsonServer();
     } catch (error) {
       console.log('Error al actualizar el producto en la base de datos', error);
     }
@@ -186,4 +219,15 @@ export class SqliteService {
     }
   }
 
- }
+  updateUser(updatedUser: any) {
+    const currentUsers = this.usersSubject.getValue();
+    const index = currentUsers.findIndex(user => user.usuario === updatedUser.usuario);
+    
+    if (index !== -1) {
+      currentUsers[index] = updatedUser; // Actualiza el usuario
+      this.usersSubject.next(currentUsers); // Actualiza el observable
+      this.saveUserToDb(updatedUser); // Guarda el usuario en la base de datos (implementa esta lógica si es necesario)
+    }
+  }
+
+}

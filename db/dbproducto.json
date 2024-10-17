@@ -65,14 +65,6 @@
       "cantidad": 1
     },
     {
-      "id": "8610",
-      "nombre": "camilo gonzalez",
-      "descripcion": "prueba",
-      "precio": 10,
-      "fecha": "2024-10-16T02:50:46.850Z",
-      "cantidad": 1
-    },
-    {
       "id": "9998",
       "nombre": "123",
       "descripcion": "qwadsasdasda",
@@ -89,14 +81,6 @@
       "cantidad": 9000
     },
     {
-      "id": "923",
-      "nombre": "camilo11111",
-      "descripcion": "asasasasas",
-      "precio": 11111,
-      "fecha": "2024-10-16T03:20:39.645Z",
-      "cantidad": 1
-    },
-    {
       "id": "5596",
       "nombre": "camilo",
       "descripcion": "prueba 16-10-2024",
@@ -105,11 +89,59 @@
       "cantidad": 1
     },
     {
-      "id": 6616,
+      "id": "6616",
       "nombre": "acacaaac",
       "descripcion": "dasdasda",
       "precio": 666,
       "fecha": "2024-10-16T23:10:59.490Z",
+      "cantidad": 1
+    },
+    {
+      "id": "7639",
+      "nombre": "Pepiño interview",
+      "descripcion": "pepe a inrumpido",
+      "precio": 555,
+      "fecha": "2024-10-17T14:51:29.909Z",
+      "cantidad": 1
+    },
+    {
+      "id": "8674",
+      "nombre": "asasa",
+      "descripcion": "sasa",
+      "precio": 1111222,
+      "fecha": "2024-10-17T15:38:33.502Z",
+      "cantidad": 1
+    },
+    {
+      "id": "9014",
+      "nombre": "jose soto",
+      "descripcion": "trabajador urban",
+      "precio": 10000,
+      "fecha": "2024-10-17T15:51:43.506Z",
+      "cantidad": 1
+    },
+    {
+      "id": "8334",
+      "nombre": "pantalon azul",
+      "descripcion": "pantalon",
+      "precio": 5990,
+      "fecha": "2024-10-17T15:59:25.043Z",
+      "cantidad": 1
+    },
+    {
+      "id": "4778",
+      "nombre": "urban",
+      "descripcion": "urban comercial spa",
+      "precio": 10,
+      "fecha": "2024-10-17T16:07:34.009Z",
+      "cantidad": 2
+    },
+    {
+      "id": 1032,
+      "nombre": "asidhaishda",
+      "descripcion": "asas",
+      "precio": 800,
+      "fecha": "2024-10-17T18:03:21.017Z",
       "cantidad": 1
     }
   ],

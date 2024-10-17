@@ -8,8 +8,8 @@ import { ClProducto } from '../producto/model/ClProducto';
   providedIn: 'root'
 })
 export class ProductoService {
-  //private apiUrl = 'http://localhost:3000/productos';
-  private apiUrl = 'http://10.0.2.2:3000/productos';
+  private apiUrl = 'http://localhost:3000/productos';
+  //private apiUrl = 'http://10.0.2.2:3000/productos';
 
   constructor(private http: HttpClient, private sqliteService: SqliteService) {
 
@@ -18,12 +18,12 @@ export class ProductoService {
 
 
 
-  getProductos(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getProductos(): Observable<ClProducto[]> {
+    return this.http.get<ClProducto[]>(this.apiUrl);
   } 
 
-  getProducto(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getProduct(id: number): Observable<ClProducto> {
+    return this.http.get<ClProducto>(`${this.apiUrl}/productos/${id}`);
   }
 
   async addProducto(product: ClProducto): Promise<void> {
