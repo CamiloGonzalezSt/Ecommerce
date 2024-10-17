@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { ingresadoGuard } from './ingresado.guard';
 import { NotFoundPage } from './not-found/not-found.page';
-import { UsersComponent } from './users/users.component'; // Ruta correcta
 const routes: Routes = [
   {
     path: 'home',
@@ -43,11 +42,6 @@ const routes: Routes = [
     loadChildren: () => import('./restablecer/restablecer.module').then( m => m.RestablecerPageModule)
   },
 
-  {
-    path: 'users',
-    component: UsersComponent,
-    canActivate: [ingresadoGuard] // Ajusta según sea necesario
-  },
   
   { path: 'product-add', loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule),canActivate: [ingresadoGuard]  },
   { path: 'product-list', loadChildren: () => import('./producto/product-list/product-list.module').then(m => m.ProductListPageModule), canActivate: [ingresadoGuard]  },
