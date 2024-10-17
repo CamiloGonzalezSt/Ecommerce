@@ -17,7 +17,7 @@ SwiperCore.use([Autoplay, Pagination, Navigation]);
 })
 export class HomePage implements OnInit {
   @ViewChild(IonContent, { static: false }) content: IonContent | undefined;
-  data: any;
+  data: {usuario: string, password: string} = {usuario: '', password: ''};
 
   products = [
     {
@@ -93,7 +93,25 @@ export class HomePage implements OnInit {
     private activeroute: ActivatedRoute, 
     private router: Router, 
     private animationCtrl: AnimationController
-  ) {}
+    
+  ) {
+    this.loadData();  
+  }
+
+  loadData() {
+    const storedDataString = localStorage.getItem('data'); // Verifica si existe 'data'
+    if (storedDataString) {
+      try {
+        const storedData = JSON.parse(storedDataString); // Solo intenta parsear si existe
+        console.log('Datos obtenidos:', storedData);
+        this.data = storedData;
+      } catch (e) {
+        console.error('Error al parsear storedData:', e);
+      }
+    } else {
+      console.log('No se encontró data en localStorage');
+    }
+  }
 
   ngAfterViewInit() {
     const swiper = new SwiperCore('.swiper-container', {

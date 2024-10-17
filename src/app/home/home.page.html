@@ -1,6 +1,6 @@
 <ion-header id="main-content">
   <ion-toolbar>
-    <ion-title *ngIf="data"><strong>Bienvenido {{ data.usuario }}</strong></ion-title>
+    <ion-title *ngIf="data && data.usuario"><strong>Bienvenido {{ data.usuario }}</strong></ion-title>
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
