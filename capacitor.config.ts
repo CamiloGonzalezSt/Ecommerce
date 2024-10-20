@@ -1,6 +1,11 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
+  server:{
+   // url:"http://192.168.1.15:8100",
+    cleartext: true
+  },
+
   appId: 'io.ionic.starter',
   appName: 'shop',
   webDir: 'www',

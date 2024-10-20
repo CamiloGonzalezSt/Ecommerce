@@ -1,30 +1,23 @@
 <ion-header>
   <ion-toolbar>
-    <ion-button class="back_button" slot="start" href="/login"><ion-icon name="arrow-back"></ion-icon>
+    <ion-button class="back_button" slot="start" href="/login">
+      <ion-icon name="arrow-back"></ion-icon>
     </ion-button>
     <ion-title>Creación de usuario</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!--creamos el formulario-->
-      <form>
-        <ion-item>
-          <ion-input type="text" name="name" placeholder="Nombre de usuario" required></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-input type="text" name="name" placeholder="Email" required email></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-input type="password" name="name" placeholder="contraseña" required></ion-input>
-        </ion-item><br>
-        <ion-label>Fecha de nacimiento</ion-label><br>
-        <ion-item>
-          <ion-input type="date"></ion-input>
-        </ion-item>
-      </form>
-      <!--este boton nos reenviará a login page-->
-      <ion-button class="login_button" type="submit" [routerLink]="['/login']">Crear</ion-button>
-
+  <!-- Creamos el formulario -->
+  <form>
+    <ion-item>
+      <ion-input type="text" placeholder="Nombre de usuario" [(ngModel)]="usuario" name="usuario" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" placeholder="Contraseña" [(ngModel)]="password"  name="password" required></ion-input>
+    </ion-item>
+  </form>
   
+  <!-- Botón para crear el usuario -->
+  <ion-button class="login_button" (click)="createUser()">Crear</ion-button>
 </ion-content>

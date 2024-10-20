@@ -1,1 +1,1 @@
-json-server --watch dbProductos.json 
+json-server --watch db/dbProductos.json 

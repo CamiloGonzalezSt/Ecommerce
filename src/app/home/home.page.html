@@ -1,6 +1,6 @@
 <ion-header id="main-content">
   <ion-toolbar>
-    <ion-title *ngIf="data"><strong>Bienvenido {{ data.usuario }}</strong></ion-title>
+    <ion-title *ngIf="data && data.usuario"><strong>Bienvenido {{ data.usuario }}</strong></ion-title>
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -61,6 +61,6 @@
   </ion-fab>
 
   <ion-footer>
-    <div id="map" style="height: 200px; width: 100%;"></div>
+    <capacitor-google-map id="map" style="height: 200px; width: 100%;"></capacitor-google-map>
   </ion-footer>
 </ion-content>

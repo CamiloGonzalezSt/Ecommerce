@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -8,12 +8,15 @@ import { ModalController } from '@ionic/angular';
 })
 export class ModalEnviadoComponent  implements OnInit {
 
+
   constructor(public modalController: ModalController) { }
+  @Input()
+  mensaje!: string;
 
   ngOnInit() {
     setTimeout(() => {
       this.modalController.dismiss();
-    }, 2000); // El modal se cerrará después de 2 segundos
+    }, 1000); // El modal se cerrará después de 1 segundos
   }
 
 }

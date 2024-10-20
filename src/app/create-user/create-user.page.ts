@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
-
+import { SqliteService } from '../services/sqlite.service'; // Asegúrate de importar correctamente el servicio
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -9,11 +9,33 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./create-user.page.scss'],
 })
 export class CreateUserPage implements OnInit {
+  usuario: string = ''; // Nombre de usuario
+  password: string = ''; // Contraseña
 
-  constructor() { }
+  constructor(private sqliteService: SqliteService, private router: Router) { }
 
-  ngOnInit() {
-    
+  async ngOnInit() {
+    await this.sqliteService.init();
+  }
+
+  // Método para crear un usuario
+  async createUser() {
+    console.log('Username:', this.usuario);
+    console.log('Password:', this.password);
+   
+    // Validar que los campos no estén vacíos
+    if (this.usuario && this.password) {
+      // Crear el usuario usando el servicio
+      const success = await this.sqliteService.createUser(this.usuario, this.password);
+      if (success) {
+        alert('Usuario creado exitosamente y agregado a la API');
+        this.router.navigate(['/login']); // Redirigir al usuario a la página de login
+      } else {
+        alert('El usuario ya existe');
+      }
+    } else {
+      alert('Por favor ingresa todos los campos');
+    }
   }
 
 }

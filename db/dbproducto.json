@@ -1,76 +1,30 @@
 {
   "productos": [
     {
-      "id": "1",
-      "nombre": "ADIDAS",
-      "descripcion": " LALALLALALALALA V2",
-      "precio": 100,
-      "fecha": "2024-10-15T05:48:34.257Z",
-      "cantidad": 200
-    },
-    {
-      "id": "2",
-      "nombre": "PANTALON",
-      "descripcion": "LEVIS",
-      "precio": 100,
-      "fecha": "2023-08-31T04:12:51.951Z",
-      "cantidad": 200
-    },
-    {
-      "id": "3",
-      "nombre": "ZAPATOS",
-      "descripcion": "MARTUCHI",
-      "precio": 100,
-      "fecha": "2023-08-31T04:14:07.139Z",
-      "cantidad": 200
-    },
-    {
-      "id": "4",
-      "nombre": "nike air force one",
-      "descripcion": "nike desde hoy la mejor",
-      "precio": 100,
-      "fecha": "2024-10-15T05:40:56.538Z",
-      "cantidad": 200
-    },
-    {
-      "id": "5",
-      "nombre": "Harrys el Magnifico",
-      "descripcion": "El Ingenioso",
-      "precio": 100,
-      "fecha": "2024-10-15T04:10:57.836Z",
-      "cantidad": 200
-    },
-    {
-      "id": 1511,
-      "nombre": "Harrys el Magnifico",
-      "descripcion": "nike mercurial uwu",
-      "precio": 150,
-      "fecha": "2024-10-15T05:19:34.365Z",
-      "cantidad": 400
-    },
-    {
-      "id": 5414,
-      "nombre": "Nike",
-      "descripcion": "Nike mercurial veloz",
-      "precio": 500,
-      "fecha": "2024-10-15T05:33:05.781Z",
-      "cantidad": 400
-    },
-    {
-      "id": 3237,
-      "nombre": "Nike air force one",
-      "descripcion": "nike que te hacen correr rapido",
-      "precio": 200,
-      "fecha": "2024-10-15T05:43:05.242Z",
-      "cantidad": 5
-    },
-    {
-      "id": 7084,
-      "nombre": "NIkee ",
-      "descripcion": "hola estoy cansado",
-      "precio": 700,
-      "fecha": "2024-10-15T05:44:22.720Z",
+      "id": "d80a",
+      "nombreProducto": "camilo prueba json",
+      "precio": 20000,
+      "descripcion": "prueba del json en la web",
       "cantidad": 1
+    },
+    {
+      "id": "13fd",
+      "nombreProducto": "qwert",
+      "precio": 1,
+      "descripcion": "qwert",
+      "cantidad": 1
+    }
+  ],
+  "users": [
+    {
+      "usuario": "camilo gonzalez",
+      "password": "Cami3740",
+      "id": "0803"
+    },
+    {
+      "usuario": "alexander patiño",
+      "password": "Alex2024",
+      "id": "fad3"
     }
   ]
 }
