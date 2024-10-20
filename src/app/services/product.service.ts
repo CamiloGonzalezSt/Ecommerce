@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SqliteService } from './sqlite.service';
-import { ClProducto } from '../producto/model/ClProducto';
+import { productos } from '../producto/model/productos';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,7 @@ export class ProductoService {
     return this.http.get(`${this.apiUrl}/productos/${id}`);
   }
 
-  async addProducto(product: ClProducto): Promise<void> {
+  async addProducto(product: productos): Promise<void> {
     // Primero, se agrega a SQLite
     await this.sqliteService.addProduct(product);
     try {
@@ -54,7 +54,7 @@ export class ProductoService {
 
   
 
-    async updateProducto(id: number, producto: ClProducto): Promise<void> {
+    async updateProducto(id: number, producto: productos): Promise<void> {
       await this.sqliteService.updateProduct(id, producto); // Debes implementar este método en SqliteService
       await this.http.put(`${this.apiUrl}/${id}`, producto).toPromise();
   }

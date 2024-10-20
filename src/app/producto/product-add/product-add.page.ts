@@ -1,85 +1,73 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { LoadingController } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { ClProducto } from '../model/ClProducto';
-import { ProductServiceService } from '../product-service.service';
-
+import { SqliteService } from 'src/app/services/sqlite.service';
+import { AlertController } from '@ionic/angular'; // Importar AlertController
+import { productos } from '../model/ClProducto';
 @Component({
   selector: 'app-product-add',
   templateUrl: './product-add.page.html',
   styleUrls: ['./product-add.page.scss'],
 })
 export class ProductAddPage implements OnInit {
-  productForm!: FormGroup;
+  id: number;
+  nombreProducto: string;
+  precio: number;
+  descripcion:  string;
+  cantidad: number;
 
-  // Definimos la propiedad producto aquí
-  producto: ClProducto = {
-    id: 0, // Este valor se reemplazará cuando se agregue el producto
-    nombre: '',
-    descripcion: '',
-    precio: 0,
-    fecha: new Date(),
-    cantidad: 0
-  };
+  producto: productos []=[];
 
   constructor(
-    private formBuilder: FormBuilder,
-    private loadingController: LoadingController,
-    private restApi: ProductServiceService,
-    private router: Router
-  ) {}
+   private sqlite: SqliteService,
+   private alertController: AlertController
+    ) {}
 
-  ngOnInit() {
-    this.productForm = this.formBuilder.group({
-      prod_name: [null, Validators.required],
-      prod_desc: [null, Validators.required],
-      prod_price: [null, Validators.required],
-      prod_cantidad: [null, Validators.required],
+  async ngOnInit() {
+    this.sqlite.createOpenDatabase();
+    this.sqlite.createTable();
+    this.producto = await this.sqlite.selectData(); // Cargar los productos
+  }
+
+  // Insertar un nuevo producto
+  async addProduct() {
+    try {
+      await this.sqlite.insertData(this.nombreProducto, this.descripcion, this.precio, this.cantidad);
+      this.producto = await this.sqlite.selectData(); // Actualizar lista de productos
+      this.presentAlert('Éxito', 'El producto ha sido agregado con éxito.'); // Mostrar alerta de éxito
+    } catch (error) {
+      console.error('Error al agregar el producto:', error);
+      this.presentAlert('Error', 'No se pudo agregar el producto.'); // Mostrar alerta de error
+    }
+  }
+
+  // Mostrar alerta
+  async presentAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK']
     });
+
+    await alert.present();
+  }
+  // Eliminar un producto
+  async deleteProduct(nombreProducto: string) {
+    await this.sqlite.deleteRecord(nombreProducto);
+    this.producto = await this.sqlite.selectData(); // Actualizar lista de productos
   }
 
-  async onFormSubmit(form: NgForm) {
-    console.log("onFormSubmit del Product ADD");
-
-    // Creamos un Loading Controller
-    const loading = await this.loadingController.create({
-      message: 'Loading...'
-    });
-    await loading.present();
-
-    // Actualiza la propiedad producto con los valores del formulario
-    this.producto.id = this.generateId(); // Llama a la función para generar un nuevo ID
-    this.producto.nombre = this.productForm.value.prod_name;
-    this.producto.descripcion = this.productForm.value.prod_desc;
-    this.producto.precio = this.productForm.value.prod_price;
-    this.producto.cantidad = this.productForm.value.prod_cantidad;
-
-    // Ejecuta el método del servicio y los suscribe
-    await this.restApi.addProduct(this.producto)
-      .subscribe({
-        next: (res) => {
-          console.log("Next AddProduct Page", res);
-          loading.dismiss(); // Elimina la espera
-          if (res == null) { // No viene respuesta del registro
-            console.log("Next No Agrego, Ress Null ");
-            return;
-          }
-          // Si viene respuesta
-          console.log("Next Agrego SIIIIII Router saltaré ;", this.router);
-          this.router.navigate(['/product-list']);
-        },
-        complete: () => {},
-        error: (err) => {
-          console.log("Error AddProduct Página", err);
-          loading.dismiss(); // Elimina la espera
-        }
-      });
-    console.log("Observe que todo lo del suscribe sale después de este mensaje");
+  // Actualizar un producto
+  async updateProduct() {
+    await this.sqlite.updateRecord(this.nombreProducto, this.descripcion, this.precio, this.cantidad);
+    this.producto = await this.sqlite.selectData(); // Actualizar lista de productos
   }
 
-  // Método para generar un ID único
-  private generateId(): number {
-    return Math.floor(Math.random() * 10000); // Genera un ID aleatorio entre 0 y 9999
+  async seeProduct(){
+    this.sqlite.selectData().then(data => console.log(data));
   }
+
+  
 }
+  
+ 
+
+

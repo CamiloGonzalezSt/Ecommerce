@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-
 // Importamos Librerías
-import { LoadingController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ClProducto } from '../model/ClProducto';
-//import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { LoadingController, AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { ProductServiceService } from '../product-service.service';
-
+import { SqliteService } from 'src/app/services/sqlite.service';
+import { SincronizarService } from 'src/app/services/sincronizar.service';
+import { productos } from '../model/ClProducto';
 
 @Component({
   selector: 'app-product-list',
@@ -15,50 +14,87 @@ import { ProductServiceService } from '../product-service.service';
 })
 export class ProductListPage implements OnInit {
   // Creamos la Variable para el Html
-  productos: ClProducto[] = [];
-  // Injectamos Librerias
-  constructor(public restApi: ProductServiceService
-    , public loadingController: LoadingController
-    , public router: Router) { }
+  productos: productos[] = []; // Cambia 'producto' a 'productos' para reflejar que es un array
+
+  // Injectamos Librerías
+  constructor(
+    public restApi: ProductServiceService,
+    public loadingController: LoadingController,
+    public router: Router,
+    private sqlite: SqliteService,
+    private alertController: AlertController,
+    private sincronizar: SincronizarService
+  ) {}
 
   // LLamamos al método que rescata los productos  
-  ngOnInit() {
-    this.getProducts();
+  async ngOnInit() {
+    await this.sqlite.createOpenDatabase();
+    await this.sqlite.createTable();
+    await this.syncProducts(); // Sincronizar al iniciar
   }
 
-  // Método  que rescta los productos
+  async syncProducts() {
+    await this.sincronizar.syncProducts();
+    // Después de sincronizar, cargar los productos desde SQLite para mostrarlos
+    await this.loadProducts();
+  }
+
+  async loadProducts() {
+    try {
+      // Cargar los productos desde SQLite
+      this.productos =  await this.sqlite.selectData();
+    } catch (error) {
+      console.error('Error al cargar los productos desde SQLite:', error);
+      // Aquí podrías manejar el error, por ejemplo, mostrando un mensaje al usuario
+    }
+  }
+
+  // Método que rescata los productos desde el servidor
   async getProducts() {
-    console.log("Entrando :getProducts");
-    // Crea un Wait (Esperar)
     const loading = await this.loadingController.create({
-      message: 'Harrys Loading...'
+      message: 'Cargando...',
     });
-    // Muestra el Wait
     await loading.present();
-    console.log("Entrando :");
-    // Obtiene el Observable del servicio
-    await this.restApi.getProducts()
-      .subscribe({
-        next: (res) => { 
-          console.log("Res:" + res);
-  // Si funciona asigno el resultado al arreglo productos
-          this.productos = res;
-          console.log("thisProductos:",this.productos);
-          loading.dismiss();
-        }
-        , complete: () => { }
-        , error: (err) => {
-  // Si da error, imprimo en consola.
-          console.log("Err:" + err);
-          loading.dismiss();
-        }
-      })
+
+    this.restApi.getProducts().subscribe({
+      next: (res) => { 
+        console.log("Res:", res);
+        this.productos = res; // Asignar el resultado al arreglo productos
+        loading.dismiss();
+      },
+      error: (err) => {
+        console.error("Error:", err);
+        loading.dismiss();
+      },
+    });
   }
 
+  // Método para listar los productos desde SQLite
+  async listProducts() {
+    this.productos = await this.sqlite.selectData(); // Obtener productos desde la base de datos
+    console.log('Lista de productos:', this.productos); // Mostrar en la consola
+  }
 
-  
-  // drop(event: CdkDragDrop<string[]>) {
-  //   console.log("Moviendo Item Array Drop ***************:");
-  //   moveItemInArray(this.productos, event.previousIndex, event.currentIndex);
-  // }
+  async seeProduct() {
+    this.sqlite.selectData().then(data => console.log(data));
+  }
+
+  // Método para modificar un producto
+  async editProduct(producto: productos) {
+    // Navegar a la página de edición, pasando el producto como parámetro
+    this.router.navigate(['/product-edit', { nombre: producto.nombreProducto }]);
+  }
+
+  // Método para eliminar un producto
+  async deleteProduct(nombreProducto: string) {
+    const loading = await this.loadingController.create({
+      message: 'Eliminando...',
+    });
+    await loading.present();
+
+    await this.sqlite.deleteRecord(nombreProducto); // Eliminar producto
+    await this.listProducts(); // Actualizar la lista de productos
+
+    loading.dismiss();
+  }
 }

@@ -12,28 +12,16 @@
 </ion-header>
 
 <ion-content>
+  <ion-list *ngIf="productos.length > 0">
+    <ion-item *ngFor="let product of productos">
+      <ion-label>
+        <h2>{{ product.nombreProducto }}</h2>
+      </ion-label><ion-button (click)="editProduct(product)">editar</ion-button>
+      <ion-button  (click)="deleteProduct(product.nombreProducto)">eliminar</ion-button>
 
-  <ion-item>
-    <ion-label>
-      <font color="red">Utilizando un Accesador
-        <ion-button [routerLink]="['/product-add']">Agregar</ion-button>
-      </font>
-    </ion-label>
-  </ion-item>
-  <ion-list padding>
-    <!-- Recorremos el arreglo de registros utilizando item-->
-    <ion-item *ngFor="let p of productos">
-      <!-- Icono al inicio (start)-->
-      <ion-icon name="star" slot="start"></ion-icon>
-      <!-- Campos de item -->
-      <ion-label> <h2>{{p.nombre}}</h2></ion-label>
-      <!-- Icono al final -->
-      <ion-icon name="information-circle" slot="end"></ion-icon>
-      <!-- routerlink salta a otra pagina-->
-      <ion-button [routerLink]="['/product-edit/',p.id]">Edit</ion-button><br />
-      <!-- routerlink salta a otra pagina, pero con id del item-->
-      <ion-button [routerLink]="['/product-detail',p.id]">Detail</ion-button><br />
     </ion-item>
   </ion-list>
-
+  <ion-item *ngIf="productos.length === 0">
+    <ion-label>No hay productos disponibles.</ion-label>
+  </ion-item>
 </ion-content>

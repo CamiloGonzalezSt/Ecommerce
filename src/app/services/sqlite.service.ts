@@ -1,41 +1,41 @@
 import { Injectable } from '@angular/core';
 import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
-import { ClProducto } from '../producto/model/ClProducto';
 import axios from 'axios';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs'; // Importar BehaviorSubject
 import { HttpClient } from '@angular/common/http';
+import { SQLite, SQLiteObject} from '@awesome-cordova-plugins/sqlite/ngx'
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class SqliteService {
-  private apiUrl = 'http://10.0.2.2:3000/users';
-  private db!: SQLiteConnection;
+  private apiUrl = environment.apiUrl;
+  private db: SQLiteObject;
   private usersSubject = new BehaviorSubject<any[]>([]); // Observable para la lista de usuarios
   users$ = this.usersSubject.asObservable(); // Exponer el observable
   private authenticated: boolean = false;
+ 
+
+
+  
 
   // Inicializa con algunos usuarios
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(private router: Router, private http: HttpClient, private sqlite: SQLite) {
     this.init();
     this.loadInitialUsers(); // Cargar usuarios iniciales
   }
 
   async init() {
-    try {
-      this.db = new SQLiteConnection(CapacitorSQLite);
-      await this.db.open('ecommerce.db');
-      console.log('Base de datos abierta correctamente');
-      await this.createDatabase();
-    } catch (error) {
-      console.log('Error durante la inicialización de la base de datos', error);
-    }
+    await this.createOpenDatabase(); // Asegurarse de que la base de datos esté abierta
+    await this.createTable(); // Crear tabla si no existe
+
   }
   // Método para verificar la conexión al JSON Server
   async checkServerConnection() {
-    this.http.get('http://10.0.2.2:3000/users').subscribe(
+    this.http.get(this.apiUrl).subscribe(
       (data) => {
         console.log('Datos obtenidos del JSON Server:', data);
         alert('Datos obtenidos: ' + JSON.stringify(data));
@@ -47,23 +47,7 @@ export class SqliteService {
     );
   }
 
-
-  private async createDatabase() {
-    try {
-      await this.db.execute(`CREATE TABLE IF NOT EXISTS productos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT,
-        precio INTEGER,
-        description TEXT,
-        cantidad INTEGER,
-        fecha DATE
-      )`);
-      
-      console.log("Tabla productos creada");
-    } catch (error) {
-      console.log("Error al crear la base de datos", error);
-    }
-  }
+  
 
   private loadInitialUsers() {
     // Cargar usuarios iniciales al BehaviorSubject
@@ -93,7 +77,7 @@ export class SqliteService {
   // Método para guardar el usuario en la base de datos
   private async saveUserToDb(user: any): Promise<void> {
     try {
-      await this.db.run(`INSERT INTO usuarios (usuario, password) VALUES (?, ?)`, [
+      await this.db.executeSql(`INSERT INTO usuarios (usuario, password) VALUES (?, ?)`, [
         user.usuario,
         user.password,
       ]);
@@ -142,97 +126,6 @@ export class SqliteService {
     this.router.navigate(['/login']);
   }
 
-  // Añadir productos a la base de datos
-  async addProduct(product: ClProducto): Promise<void> {
-    try {
-      await this.db.run(`INSERT INTO productos (nombre, precio, description, cantidad, fecha) VALUES (?, ?, ?, ?, ?)`, [
-        product.nombre,
-        product.precio,
-        product.descripcion,
-        product.cantidad,
-        product.fecha,
-      ]);
-      console.log("Producto añadido:", JSON.stringify(product));
-
-      // Sincronizar después de agregar el producto
-      await this.syncWithJsonServer(); 
-    } catch (error) {
-      console.log('Error al agregar producto a la base de datos', error);
-    }
-  }
-
-  // Obtener todos los productos
-  async getProducts(): Promise<ClProducto[]> {
-    try {
-      const result = await this.db.query('SELECT * FROM productos');
-      return result.values as ClProducto[];
-    } catch (error) {
-      console.log('Error al obtener productos', error);
-      return []; // Retorna un arreglo vacío en caso de error
-    }
-  }
-
-  // Sincronizar productos con JSON Server
-  async syncWithJsonServer() {
-    try {
-      const products = await this.getProducts(); 
-      const syncPromises = products.map(product =>
-        axios.post('http://10.0.2.2:3000/products', product)
-      );
-      await Promise.all(syncPromises);
-      console.log('Sincronización completa con JSON Server');
-    } catch (error) {
-      console.error('Error al sincronizar con JSON Server', error);
-    }
-  }
-
-  // Sincronizar usuarios con JSON Server
-  async syncUsersWithJsonServer() {
-    try {
-      const users = this.getUsers();
-      const syncPromises = users.map(user =>
-        this.http.post(this.apiUrl, user).toPromise() // Llamar al apiUrl
-      );
-      await Promise.all(syncPromises);
-      console.log('Sincronización de usuarios completa');
-    } catch (error) {
-      console.error('Error al sincronizar usuarios con JSON Server', error);
-    }
-  }
-
-  // Actualiza un producto en la base de datos
-  async updateProduct(id: number, product: ClProducto): Promise<void> {
-    try {
-        await this.db.run(`UPDATE productos SET nombre = ?, precio = ?, description = ?, cantidad = ?, fecha = ? WHERE id = ?`, [
-            product.nombre,
-            product.precio,
-            product.descripcion,
-            product.cantidad,
-            product.fecha,
-            id,
-        ]);
-        console.log(`Producto con id ${id} actualizado`);
-
-        // Sincronizar después de actualizar el producto
-        await this.syncWithJsonServer();
-    } catch (error) {
-      console.log('Error al actualizar el producto en la base de datos', error);
-    }
-  }
-
-  // Elimina un producto de la base de datos
-  async deleteProduct(id: number): Promise<void> {
-    try {
-      await this.db.run(`DELETE FROM productos WHERE id = ?`, [id]);
-      console.log(`Producto con id ${id} eliminado`);
-      
-      // Sincronizar después de eliminar el producto
-      await this.syncWithJsonServer();
-    } catch (error) {
-      console.log('Error al eliminar el producto de la base de datos', error);
-    }
-  }
-
   updateUser(updatedUser: any) {
     const currentUsers = this.usersSubject.getValue();
     const index = currentUsers.findIndex(user => user.usuario === updatedUser.usuario);
@@ -267,6 +160,97 @@ addUserToApi(user: any) {
     }
   );
 }
-  
+  //aqui creamos la base de datos
+createOpenDatabase(){
+  try {
+    this.sqlite.create({
+      name: 'data.db',
+      location: 'default'
+    })
+    .then((db: SQLiteObject) => {
+      this.db=db;
+      alert('base de datos creada');
+       })
+       .catch(e => alert(JSON.stringify(e)));
+  } catch(err: any)
+  { 
+    alert(err);
+  }
+}
+ 
+ 
+// aqui vamos a crear la tabla con los atributos que necesitemos para esta pagina
+createTable(){
+  this.db.executeSql('create table IF NOT EXISTS productos(name VARCHAR(30),  descripcion VARCHAR(100), precio REAL, cantidad INTEGER)',[])
+  .then((result) => alert('tabla creada con exito'))
+  .catch(e  => alert(JSON.stringify(e)));
+}
+
+// Insertar un producto
+async insertData(nombreProducto: string, descripcion: string, precio: number, cantidad: number) {
+  const query = 'INSERT INTO productos (name, descripcion, precio, cantidad) VALUES (?, ?, ?, ?)';
+  try {
+    await this.db.executeSql(query, [nombreProducto, descripcion, precio, cantidad]);
+    console.log('Producto agregado con éxito');
+  } catch (error) {
+    console.error('Error al insertar el producto', error);
+  }
+}
+
+ // Seleccionar todos los productos
+ async selectData(): Promise<productos[]> {
+  const productosList: productos[] = [];
+  try {
+    const result = await this.db.executeSql('SELECT * FROM productos', []);
+    for (let i = 0; i < result.rows.length; i++) {
+      productosList.push({
+        nombreProducto: result.rows.item(i).name,
+        descripcion: result.rows.item(i).descripcion,
+        precio: result.rows.item(i).precio,
+        cantidad: result.rows.item(i).cantidad,
+      });
+    }
+    return productosList;
+  } catch (error) {
+    console.error('Error al obtener los productos', error);
+    return [];
+  }
+}
+
+
+// Actualizar un producto
+async updateRecord(nombreProducto: string, descripcion: string, precio: number, cantidad: number) {
+  const query = 'UPDATE productos SET descripcion = ?, precio = ?, cantidad = ? WHERE name = ?';
+  try {
+    await this.db.executeSql(query, [descripcion, precio, cantidad, nombreProducto]);
+    console.log('Producto actualizado con éxito');
+  } catch (error) {
+    console.error('Error al actualizar el producto', error);
+  }
+}
+
+// Eliminar un producto
+async deleteRecord(nombreProducto: string) {
+  const query = 'DELETE FROM productos WHERE name = ?';
+  try {
+    await this.db.executeSql(query, [nombreProducto]);
+    console.log('Producto eliminado con éxito');
+  } catch (error) {
+    console.error('Error al eliminar el producto', error);
+  }
+}
+}
+
+
+
+//las clases se deben hacer afuera de todo
+class productos{
+public  nombreProducto: string;
+public descripcion: string; 
+public precio: number;
+public cantidad: number;
 
 }
+
+
+
