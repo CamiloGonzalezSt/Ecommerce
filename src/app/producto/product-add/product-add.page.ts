@@ -1,41 +1,51 @@
 import { Component, OnInit } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { AlertController } from '@ionic/angular'; // Importar AlertController
+import { AlertController } from '@ionic/angular';
 import { productos } from '../model/ClProducto';
+import { ProductoService } from 'src/app/services/product.service';
+
 @Component({
   selector: 'app-product-add',
   templateUrl: './product-add.page.html',
   styleUrls: ['./product-add.page.scss'],
 })
 export class ProductAddPage implements OnInit {
-  id: number;
-  nombreProducto: string;
-  precio: number;
-  descripcion:  string;
-  cantidad: number;
-
-  producto: productos []=[];
+  producto: productos = {
+    nombreProducto: '',
+    precio: 0,
+    descripcion: '',
+    cantidad: 0
+  };
 
   constructor(
-   private sqlite: SqliteService,
-   private alertController: AlertController
-    ) {}
+    private sqlite: SqliteService,
+    private alertController: AlertController,
+    private productoService: ProductoService
+  ) {
+    this.sqlite.createOpenDatabase().then(() => {
+      console.log('Base de datos lista para usarse');
+    }).catch(error => {
+      console.error('Error al inicializar la base de datos', error);
+    });
+  }
 
   async ngOnInit() {
     this.sqlite.createOpenDatabase();
     this.sqlite.createTable();
-    this.producto = await this.sqlite.selectData(); // Cargar los productos
   }
 
   // Insertar un nuevo producto
   async addProduct() {
     try {
-      await this.sqlite.insertData(this.nombreProducto, this.descripcion, this.precio, this.cantidad);
-      this.producto = await this.sqlite.selectData(); // Actualizar lista de productos
-      this.presentAlert('Éxito', 'El producto ha sido agregado con éxito.'); // Mostrar alerta de éxito
+      await this.productoService.addProducto(this.producto);
+      console.log('Producto agregado con éxito');
+      // Mostrar alerta de éxito
+      await this.presentAlert('Éxito', 'Producto agregado con éxito.');
+      // Reiniciar el formulario
+      this.resetForm();
     } catch (error) {
       console.error('Error al agregar el producto:', error);
-      this.presentAlert('Error', 'No se pudo agregar el producto.'); // Mostrar alerta de error
+      await this.presentAlert('Error', 'No se pudo agregar el producto.');
     }
   }
 
@@ -46,28 +56,47 @@ export class ProductAddPage implements OnInit {
       message: message,
       buttons: ['OK']
     });
-
     await alert.present();
   }
+
   // Eliminar un producto
   async deleteProduct(nombreProducto: string) {
-    await this.sqlite.deleteRecord(nombreProducto);
-    this.producto = await this.sqlite.selectData(); // Actualizar lista de productos
+    try {
+      await this.sqlite.deleteRecord(nombreProducto);
+      console.log('Producto eliminado con éxito');
+      await this.presentAlert('Éxito', 'Producto eliminado con éxito.');
+      // Puedes actualizar la lista de productos aquí si es necesario
+    } catch (error) {
+      console.error('Error al eliminar el producto:', error);
+      await this.presentAlert('Error', 'No se pudo eliminar el producto.');
+    }
   }
 
   // Actualizar un producto
   async updateProduct() {
-    await this.sqlite.updateRecord(this.nombreProducto, this.descripcion, this.precio, this.cantidad);
-    this.producto = await this.sqlite.selectData(); // Actualizar lista de productos
+    try {
+      await this.sqlite.updateRecord(this.producto.nombreProducto, this.producto.descripcion, this.producto.precio, this.producto.cantidad);
+      console.log('Producto actualizado con éxito');
+      await this.presentAlert('Éxito', 'Producto actualizado con éxito.');
+      // Puedes actualizar la lista de productos aquí si es necesario
+    } catch (error) {
+      console.error('Error al actualizar el producto:', error);
+      await this.presentAlert('Error', 'No se pudo actualizar el producto.');
+    }
   }
 
-  async seeProduct(){
+  // Reiniciar el formulario
+  resetForm() {
+    this.producto = {
+      nombreProducto: '',
+      precio: 0,
+      descripcion: '',
+      cantidad: 0
+    };
+  }
+
+  // Ver productos
+  async seeProduct() {
     this.sqlite.selectData().then(data => console.log(data));
   }
-
-  
 }
-  
- 
-
-

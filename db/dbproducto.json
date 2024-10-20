@@ -1,11 +1,18 @@
 {
   "productos": [
     {
-      "id": 1,
-      "nombre": "PANTALON",
-      "descripcion": "LEVIS",
-      "precio": 100,
-      "cantidad": 200
+      "id": "d80a",
+      "nombreProducto": "camilo prueba json",
+      "precio": 20000,
+      "descripcion": "prueba del json en la web",
+      "cantidad": 1
+    },
+    {
+      "id": "13fd",
+      "nombreProducto": "qwert",
+      "precio": 1,
+      "descripcion": "qwert",
+      "cantidad": 1
     }
   ],
   "users": [

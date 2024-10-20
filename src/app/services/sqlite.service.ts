@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
-import axios from 'axios';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs'; // Importar BehaviorSubject
 import { HttpClient } from '@angular/common/http';
@@ -14,25 +12,25 @@ import { environment } from 'src/environments/environment';
 export class SqliteService {
   private apiUrl = environment.apiUrl;
   private db: SQLiteObject;
-  private usersSubject = new BehaviorSubject<any[]>([]); // Observable para la lista de usuarios
+  private usersSubject = new BehaviorSubject<any[]>([]); // Observable para la lista de usuarios}
   users$ = this.usersSubject.asObservable(); // Exponer el observable
   private authenticated: boolean = false;
  
 
 
-  
-
   // Inicializa con algunos usuarios
   constructor(private router: Router, private http: HttpClient, private sqlite: SQLite) {
     this.init();
-    this.loadInitialUsers(); // Cargar usuarios iniciales
+    this.loadInitialUsers(); 
   }
+
 
   async init() {
     await this.createOpenDatabase(); // Asegurarse de que la base de datos esté abierta
     await this.createTable(); // Crear tabla si no existe
 
   }
+
   // Método para verificar la conexión al JSON Server
   async checkServerConnection() {
     this.http.get(this.apiUrl).subscribe(
@@ -161,85 +159,83 @@ addUserToApi(user: any) {
   );
 }
   //aqui creamos la base de datos
-createOpenDatabase(){
-  try {
-    this.sqlite.create({
-      name: 'data.db',
-      location: 'default'
-    })
-    .then((db: SQLiteObject) => {
-      this.db=db;
-      alert('base de datos creada');
-       })
-       .catch(e => alert(JSON.stringify(e)));
-  } catch(err: any)
-  { 
-    alert(err);
+  async createOpenDatabase() {
+    try {
+      this.db = await this.sqlite.create({
+        name: 'data.db',
+        location: 'default'
+      });
+      console.log('Base de datos creada');
+    } catch (err) {
+      console.error('Error al crear la base de datos', err);
+    }
   }
-}
  
  
 // aqui vamos a crear la tabla con los atributos que necesitemos para esta pagina
-createTable(){
-  this.db.executeSql('create table IF NOT EXISTS productos(name VARCHAR(30),  descripcion VARCHAR(100), precio REAL, cantidad INTEGER)',[])
-  .then((result) => alert('tabla creada con exito'))
-  .catch(e  => alert(JSON.stringify(e)));
+async createTable() {
+  try {
+    await this.db.executeSql(`
+      CREATE TABLE IF NOT EXISTS productos (
+        name VARCHAR(30),
+        descripcion VARCHAR(100),
+        precio REAL,
+        cantidad INTEGER
+      )`, []);
+    console.log('Tabla creada');
+  } catch (e) {
+    console.error('Error al crear la tabla', e);
+  }
 }
+ 
 
 // Insertar un producto
 async insertData(nombreProducto: string, descripcion: string, precio: number, cantidad: number) {
   const query = 'INSERT INTO productos (name, descripcion, precio, cantidad) VALUES (?, ?, ?, ?)';
+  await this.db.executeSql(query, [nombreProducto, descripcion, precio, cantidad]);
+}
+
+async ejecutData(query: string, params: any[] = []): Promise<any> {
   try {
-    await this.db.executeSql(query, [nombreProducto, descripcion, precio, cantidad]);
-    console.log('Producto agregado con éxito');
+    if (!this.db) {
+      throw new Error('Base de datos no inicializada');
+    }
+    return await this.db.executeSql(query, params);
   } catch (error) {
-    console.error('Error al insertar el producto', error);
+    console.error('Error al ejecutar consulta SQL', error);
+    throw error;
   }
 }
 
  // Seleccionar todos los productos
  async selectData(): Promise<productos[]> {
   const productosList: productos[] = [];
-  try {
-    const result = await this.db.executeSql('SELECT * FROM productos', []);
-    for (let i = 0; i < result.rows.length; i++) {
-      productosList.push({
-        nombreProducto: result.rows.item(i).name,
-        descripcion: result.rows.item(i).descripcion,
-        precio: result.rows.item(i).precio,
-        cantidad: result.rows.item(i).cantidad,
-      });
-    }
-    return productosList;
-  } catch (error) {
-    console.error('Error al obtener los productos', error);
-    return [];
+  const result = await this.db.executeSql('SELECT * FROM productos', []);
+  for (let i = 0; i < result.rows.length; i++) {
+    productosList.push({
+      nombreProducto: result.rows.item(i).name,
+      descripcion: result.rows.item(i).descripcion,
+      precio: result.rows.item(i).precio,
+      cantidad: result.rows.item(i).cantidad,
+    });
   }
+  return productosList;
 }
 
 
 // Actualizar un producto
 async updateRecord(nombreProducto: string, descripcion: string, precio: number, cantidad: number) {
   const query = 'UPDATE productos SET descripcion = ?, precio = ?, cantidad = ? WHERE name = ?';
-  try {
-    await this.db.executeSql(query, [descripcion, precio, cantidad, nombreProducto]);
-    console.log('Producto actualizado con éxito');
-  } catch (error) {
-    console.error('Error al actualizar el producto', error);
-  }
+  await this.db.executeSql(query, [descripcion, precio, cantidad, nombreProducto]);
 }
 
 // Eliminar un producto
 async deleteRecord(nombreProducto: string) {
   const query = 'DELETE FROM productos WHERE name = ?';
-  try {
-    await this.db.executeSql(query, [nombreProducto]);
-    console.log('Producto eliminado con éxito');
-  } catch (error) {
-    console.error('Error al eliminar el producto', error);
-  }
+  await this.db.executeSql(query, [nombreProducto]);
 }
 }
+
 
 
 

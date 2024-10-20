@@ -33,7 +33,7 @@ export class SincronizarService {
             precio: localProduct.precio,
             cantidad: localProduct.cantidad
           };
-          await this.productoService.addProduct(productToAdd).toPromise();
+          await this.productoService.addProduct(productToAdd);
         }
       }
 
@@ -56,21 +56,22 @@ export class SincronizarService {
   }
 
   // Sincronizar al crear un producto
-  async syncAddProduct(producto: any) {
-    await this.sqlite.insertData(producto.nombre, producto.descripcion, producto.precio, producto.cantidad);
-    await this.productoService.addProduct(producto).toPromise();
+  async syncAddProduct(producto: productos) {
+    await this.sqlite.insertData(producto.nombreProducto, producto.descripcion, producto.precio, producto.cantidad);
+    await this.productoService.addProduct(producto);
   }
 
   // Sincronizar al actualizar un producto
-  async syncUpdateProduct(producto: any) {
-    await this.sqlite.updateRecord(producto.nombre, producto.descripcion, producto.precio, producto.cantidad);
-    await this.productoService.addProduct(producto).toPromise(); // En tu servidor, `addProduct` debería actualizar si el producto ya existe.
+  async syncUpdateProduct(producto: productos) {
+    await this.sqlite.updateRecord(producto.nombreProducto, producto.descripcion, producto.precio, producto.cantidad);
+    await this.productoService.updateProduct( 1, producto);
+
   }
 
   // Sincronizar al eliminar un producto
-  async syncDeleteProduct(producto: string) {
-    await this.sqlite.deleteRecord(producto);
-    await this.productoService.deleteProduct( producto).toPromise();
-
+  async syncDeleteProduct(nombreProducto: string) {
+    await this.sqlite.deleteRecord(nombreProducto);
+    await this.productoService.deleteProduct(nombreProducto);
   }
 }
+
