@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, AlertController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ProductServiceService } from '../product-service.service';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { lastValueFrom } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-product-edit',
@@ -13,114 +9,39 @@ import { lastValueFrom } from 'rxjs';
 })
 export class ProductEditPage implements OnInit {
 
-  productForm: FormGroup;
-  productId: any;
+  nombreProducto: string;
+  precio: number;
+  descripcion: string;
+  cantidad: number;
 
-  // Injectamos librerías
   constructor(
-    private formBuilder: FormBuilder,
-    public restApi: ProductServiceService,
-    public loadingController: LoadingController,
-    public alertController: AlertController,
-    private route: ActivatedRoute, 
-    private sqlite: SqliteService, 
-    private router: Router
-  ) { 
-    // Inicializar el formulario
-    this.productForm = this.formBuilder.group({
-      prod_name: ['', Validators.required],
-      prod_desc: [''],
-      prod_price: [null, [Validators.required, Validators.min(0)]],
-      prod_cantidad: [null, [Validators.required, Validators.min(0)]],
-    });
-  }
+    private sqlite: SqliteService,
+    private router: Router,
+    private route: ActivatedRoute // Para obtener el parámetro de la ruta
+  ) { }
 
   ngOnInit() {
-    // Obtener los parámetros del producto
-    this.route.paramMap.subscribe(params => {
-      const nombreProducto = params.get('nombre');
-      if (nombreProducto) {
-        this.getProduct(nombreProducto); // Llama a getProduct para cargar los datos
-      } else {
-        console.error('El nombre del producto es nulo');
-      }
+    // Obtener parámetros de la ruta
+    this.route.params.subscribe(params => {
+      const nombre = params['nombre']; // Obtiene el nombre del producto de los parámetros
+      this.cargarProducto(nombre); // Carga los datos del producto
     });
+
   }
 
-  async getProduct(nombreProducto: string) {
-    const loading = await this.loadingController.create({
-      message: 'Loading...'
-    });
-    await loading.present();
-
-    this.restApi.getProducts().subscribe({
-      next: (data) => {
-        console.log("getProduct nombre data****", data);
-        // Rescata los datos
-        this.productForm.patchValue({
-          prod_name: data.nombreProducto,
-          prod_desc: data.descripcion,
-          prod_price: data.precio,
-          prod_cantidad: data.cantidad,
-        });
-        loading.dismiss();
-      },
-      error: async (err) => {
-        console.log("getProductID Errr****", err);
-        loading.dismiss();
-        await this.presentAlert('Error al cargar el producto. Intente nuevamente.');
-      }
-    });
-  }
-
-  async saveChanges() {
-    if (this.productForm.valid) {
-      const { prod_name, prod_desc, prod_price, prod_cantidad } = this.productForm.value;
-      try {
-        await this.sqlite.updateRecord(prod_name, prod_desc, prod_price, prod_cantidad);
-        this.router.navigate(['/product-list']); // Regresar a la lista de productos
-      } catch (error) {
-        console.error('Error al guardar cambios:', error);
-        await this.presentAlert('Error al guardar cambios. Intente nuevamente.');
-      }
-    } else {
-      console.error('No se puede guardar, hay campos vacíos');
-      await this.presentAlert('Por favor, complete todos los campos.');
+  async cargarProducto(nombre: string) {
+    const producto = await this.sqlite.selectDataByName(nombre); // Método para obtener el producto por nombre
+    if (producto) {
+      this.nombreProducto = producto.nombre;
+      this.descripcion = producto.descripcion;
+      this.precio = producto.precio;
+      this.cantidad = producto.cantidad;
     }
   }
 
-  async presentAlert(message: string) {
-    const alert = await this.alertController.create({
-      header: 'Atención',
-      message: message,
-      buttons: ['OK']
-    });
-    await alert.present();
+  async guardarCambios() {
+    await this.sqlite.updateRecord(this.nombreProducto, this.descripcion, this.precio, this.cantidad);
+    alert('Producto actualizado con éxito');
+    this.router.navigate(['/product-list']); // Navega a la lista de productos
   }
-  async onFormSubmit() {
-    if (this.productForm.valid) {
-      const { prod_name, prod_desc, prod_price, prod_cantidad } = this.productForm.value;
-      
-      // Suponiendo que ya tienes el ID del producto para actualizar
-      const productId = this.productId;  // Asegúrate de tener el ID del producto en tu componente
-      const updatedProduct = {
-        nombre: prod_name,
-        descripcion: prod_desc,
-        precio: prod_price,
-        cantidad: prod_cantidad
-      };
-  
-      try {
-        // Esperar la respuesta de la actualización del producto
-        const res = await lastValueFrom(this.restApi.updateProduct(productId, updatedProduct));
-        
-        // Suponiendo que la respuesta tiene un `id`
-        const id = res['id'];  
-        this.router.navigate(['/product-detail/', id]);  // Navegar a la página de detalles del producto
-      } catch (error) {
-        console.error('Error al actualizar el producto:', error);
-        await this.presentAlert('Error al actualizar el producto. Intente nuevamente.');
-      }
-    }
-  }
-   }
+}

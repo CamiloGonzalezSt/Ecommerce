@@ -46,7 +46,7 @@ const routes: Routes = [
   { path: 'product-add', loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule),canActivate: [ingresadoGuard]  },
   { path: 'product-list', loadChildren: () => import('./producto/product-list/product-list.module').then(m => m.ProductListPageModule), canActivate: [ingresadoGuard]  },
   { path: 'product-detail/:id', loadChildren: () => import('./producto/product-detail/product-detail.module').then(m => m.ProductDetailPageModule), canActivate: [ingresadoGuard]  },
-  { path: 'product-edit/:id', loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule), canActivate: [ingresadoGuard]  },
+  { path: 'product-edit/:nombre', loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule), canActivate: [ingresadoGuard]  },
   { path: 'product-all', loadChildren: () => import('./producto/product-all/product-all.module').then(m => m.ProductAllPageModule), canActivate: [ingresadoGuard]  },
   
   { path: '**', component: NotFoundPage },   {
