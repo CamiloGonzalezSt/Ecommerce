@@ -24,6 +24,7 @@ export class AppComponent {
   }
 
   async initializeApp() {
+    await this.service.init();
   }
 
   toggleSubMenu() {

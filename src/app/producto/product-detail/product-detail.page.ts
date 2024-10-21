@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingController, AlertController } from '@ionic/angular';
-import { ClProducto } from '../model/ClProducto';
+
 import { ProductServiceService } from '../product-service.service';
+import { productos } from '../model/ClProducto';
 
 @Component({
   selector: 'app-product-detail',
@@ -10,12 +11,10 @@ import { ProductServiceService } from '../product-service.service';
   styleUrls: ['./product-detail.page.scss'],
 })
 export class ProductDetailPage implements OnInit {
-  producto: ClProducto = {
-    id: 0,
-    nombre: '',
+  producto: productos = {
+    nombreProducto: '',
     descripcion: '',
     precio: 0,
-    fecha: new Date(),
     cantidad: 0
   };
 
@@ -32,11 +31,11 @@ export class ProductDetailPage implements OnInit {
   }
 
   async getProduct() {
-    const productId = this.route.snapshot.paramMap.get('id');
-    console.log("ID del producto recibido:", productId); // Verifica el ID recibido
+    const productName = this.route.snapshot.paramMap.get('nombreProducto');
+    console.log("nombre del producto recibido:", productName); // Verifica el ID recibido
     const loading = await this.loadingController.create({ message: 'Loading...' });
     await loading.present();
-    await this.restApi.getProduct(productId!)
+    await this.restApi.getProducts()
       .subscribe({
         next: (res) => {
           console.log("Datos del producto:", res); // Verifica los datos recibidos
@@ -50,19 +49,19 @@ export class ProductDetailPage implements OnInit {
       });
   }
 
-  async delete(id: number) {
-    this.presentAlertConfirm(id, 'Confirme la Eliminación, De lo contrario Cancele');
+  async delete(nombreProducto: string) {
+    this.presentAlertConfirm(nombreProducto, 'Confirme la Eliminación, De lo contrario Cancele');
   }
 
-  async presentAlertConfirm(id: number, msg: string) {
+  async presentAlertConfirm(nombreProducto: string, msg: string) {
     const alert = await this.alertController.create({
       header: 'Warning!',
       message: msg,
       buttons: [
         {
-          text: 'Eliminar : ' + id + " OK",
+          text: 'Eliminar : ' + nombreProducto + " OK",
           handler: () => {
-            this.deleteConfirmado(id);
+            this.deleteConfirmado(nombreProducto);
           }
         }
       ]
@@ -70,11 +69,11 @@ export class ProductDetailPage implements OnInit {
     await alert.present();
   }
 
-  async deleteConfirmado(id: number) {
-    alert("Eliminando " + id);
+  async deleteConfirmado(nombreProducto: string) {
+    alert("Eliminando " + nombreProducto);
     const loading = await this.loadingController.create({ message: 'Loading...' });
     await loading.present();
-    await this.restApi.deleteProduct(id)
+    await this.restApi.deleteProduct( nombreProducto )
       .subscribe({
         next: (res) => {
           console.log("Producto eliminado:", res);

@@ -6,30 +6,16 @@
 </ion-header>
 
 <ion-content>
-  <!-- Verificamos si hay productos -->
-  <ion-list>
-    <ion-item *ngFor="let producto of productos; let i = index">
+  <ion-list *ngIf="productos.length > 0">
+    <ion-item *ngFor="let product of productos">
       <ion-label>
-        <h2>{{ producto.nombre }}</h2>
-        <p>Precio: {{ producto.precio }} CLP</p>
-      </ion-label>
+        <h2>{{ product.nombreProducto }}</h2>
+      </ion-label><ion-button (click)="editProduct(product)">editar</ion-button>
+      <ion-button  (click)="deleteProduct(product.nombreProducto)">eliminar</ion-button>
 
-      <!-- Botón para editar el producto -->
-      <ion-button slot="end" color="primary" (click)="editarProducto(producto)">
-        Editar
-      </ion-button>
-
-      <!-- Botón para eliminar el producto -->
-      <ion-button slot="end" color="danger" (click)="eliminarProducto(producto.nombre)">
-        Eliminar
-      </ion-button>
     </ion-item>
   </ion-list>
-
-  <!-- Mensaje de productos no encontrados -->
-  <ng-template>
-    <ion-item>
-      <ion-label>No hay productos disponibles</ion-label>
-    </ion-item>
-  </ng-template>
+  <ion-item *ngIf="productos.length === 0">
+    <ion-label>No hay productos disponibles.</ion-label>
+  </ion-item>
 </ion-content>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SqliteService } from '../services/sqlite.service'; // Asegúrate de importar correctamente el servicio
 import { Router } from '@angular/router';
-import { ClProducto } from '../producto/model/ClProducto';
+
 
 @Component({
   selector: 'app-create-user',
@@ -9,8 +9,6 @@ import { ClProducto } from '../producto/model/ClProducto';
   styleUrls: ['./create-user.page.scss'],
 })
 export class CreateUserPage implements OnInit {
-  // Variables para enlazar con los inputs
-  product: ClProducto = { id: 0, nombre: '', descripcion: '', precio: 0, fecha: new Date(), cantidad: 0 };
   usuario: string = ''; // Nombre de usuario
   password: string = ''; // Contraseña
 
