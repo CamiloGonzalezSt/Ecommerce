@@ -40,15 +40,4 @@ export class CreateUserPage implements OnInit {
     }
   }
 
-  // Método para crear un producto
-  async createProduct() {
-    if (this.product.nombre && this.product.descripcion && this.product.precio > 0 && this.product.cantidad) {
-      await this.sqliteService.addProduct(this.product); // Asegúrate de que este método exista en el servicio
-      console.log('Producto creado');
-      alert('Producto creado exitosamente'); // Mensaje de éxito
-    } else {
-      console.log('Por favor, complete todos los campos');
-      alert('Por favor, complete todos los campos');
-    }
-  }
 }

@@ -26,10 +26,10 @@
         <!-- Submenú de Productos -->
         <ion-list *ngIf="subMenuOpen" class="submenu">
           <ion-item routerLink="/product-add" (click)="closeMenu()">Agregar Producto</ion-item>
-          <ion-item routerLink="/product-edit/:id" (click)="closeMenu()">Editar Producto</ion-item> <!-- Reemplaza :id con el ID específico si es necesario -->
+          <!--<ion-item routerLink="/product-edit/:id" (click)="closeMenu()">Editar Producto</ion-item>-->
           <ion-item routerLink="/product-list" (click)="closeMenu()">Lista de Productos</ion-item>
-          <ion-item routerLink="/product-detail/:id" (click)="closeMenu()">Detalle del Producto</ion-item> <!-- Reemplaza :id con el ID específico si es necesario -->
-          <ion-item routerLink="/product-all" (click)="closeMenu()">Todos los Productos</ion-item>
+          <!--<ion-item routerLink="/product-detail/:id" (click)="closeMenu()">Detalle del Producto</ion-item> 
+          <ion-item routerLink="/product-all" (click)="closeMenu()">Todos los Productos</ion-item>-->
         </ion-list>
       </ion-list>
     </ion-content>

@@ -1,11 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SqliteService, productos } from 'src/app/services/sqlite.service';
 
-// Importamos Librerías
-import { LoadingController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ClProducto } from '../model/ClProducto';
-//import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ProductServiceService } from '../product-service.service';
 
 
 @Component({
@@ -14,51 +9,50 @@ import { ProductServiceService } from '../product-service.service';
   styleUrls: ['./product-list.page.scss'],
 })
 export class ProductListPage implements OnInit {
-  // Creamos la Variable para el Html
-  productos: ClProducto[] = [];
-  // Injectamos Librerias
-  constructor(public restApi: ProductServiceService
-    , public loadingController: LoadingController
-    , public router: Router) { }
 
+  productos: productos[]= [];
+ 
+  constructor(private sqlite: SqliteService) { }
+ 
   // LLamamos al método que rescata los productos  
   ngOnInit() {
-    this.getProducts();
-  }
-
-  // Método  que rescta los productos
-  async getProducts() {
-    console.log("Entrando :getProducts");
-    // Crea un Wait (Esperar)
-    const loading = await this.loadingController.create({
-      message: 'Harrys Loading...'
+    this.sqlite.createOpenDatabase().then(()=>{
+      this.cargarProductos();
     });
-    // Muestra el Wait
-    await loading.present();
-    console.log("Entrando :");
-    // Obtiene el Observable del servicio
-    await this.restApi.getProducts()
-      .subscribe({
-        next: (res) => { 
-          console.log("Res:" + res);
-  // Si funciona asigno el resultado al arreglo productos
-          this.productos = res;
-          console.log("thisProductos:",this.productos);
-          loading.dismiss();
-        }
-        , complete: () => { }
-        , error: (err) => {
-  // Si da error, imprimo en consola.
-          console.log("Err:" + err);
-          loading.dismiss();
-        }
-      })
+  }
+  
+  ionViewDidEnter() {
+    this.cargarProductos();
+  }
+
+  async cargarProductos() {
+    this.sqlite.selectData()
+    .then((productos) => {
+      this.productos = productos;
+    });
+}
+
+ // Método para eliminar un producto
+ async eliminarProducto(nombre: string) {
+  try {
+    await this.sqlite.deleteRecord(nombre);
+    alert('Producto eliminado con éxito');
+    this.cargarProductos();  // Recargar la lista después de eliminar
+  } catch (error) {
+    console.error('Error al eliminar el producto', error);
+  }
+}
+
+// Método para editar un producto
+async editarProducto(producto: productos) {
+  // Aquí puedes redirigir a una página de edición o abrir un modal para editar el producto
+  // Ejemplo de redirección a una página de edición:
+  // this.router.navigate(['/editar-producto', producto.nombre]);
+  alert(`Editar producto: ${producto.nombre}`);
+  // Implementa la lógica para la edición del producto.
+}
   }
 
 
-  
-  // drop(event: CdkDragDrop<string[]>) {
-  //   console.log("Moviendo Item Array Drop ***************:");
-  //   moveItemInArray(this.productos, event.previousIndex, event.currentIndex);
-  // }
-}
+
+

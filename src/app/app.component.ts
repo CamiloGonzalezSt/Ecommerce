@@ -24,10 +24,6 @@ export class AppComponent {
   }
 
   async initializeApp() {
-    await this.service.init();
-    this.service.syncWithJsonServer();
-    this.service.syncWithJsonServer ();
-    this.service.getProducts();
   }
 
   toggleSubMenu() {

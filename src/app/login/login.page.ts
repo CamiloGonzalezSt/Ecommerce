@@ -121,7 +121,7 @@ async cerrarSesion() {
 
  // Método para verificar la conexión al JSON Server
  async checkServerConnection() {
-  this.http.get('http://10.0.2.2:3000').subscribe(
+  this.http.get('http://192.168.4.97:3000/').subscribe(
     (data) => {
       console.log('Datos obtenidos del JSON Server:', data);
       alert('Datos obtenidos: ' + JSON.stringify(data));

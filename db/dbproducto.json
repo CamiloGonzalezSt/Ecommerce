@@ -1,94 +1,6 @@
 {
   "productos": [
     {
-      "id": "2",
-      "nombre": "PANTALON",
-      "descripcion": "LEVIS",
-      "precio": 100,
-      "fecha": "2023-08-31T04:12:51.951Z",
-      "cantidad": 200
-    },
-    {
-      "id": "3",
-      "nombre": "ZAPATOS",
-      "descripcion": "MARTUCHI",
-      "precio": 100,
-      "fecha": "2023-08-31T04:14:07.139Z",
-      "cantidad": 200
-    },
-    {
-      "id": "4",
-      "nombre": "nike air force one",
-      "descripcion": "nike desde hoy la mejor",
-      "precio": 100,
-      "fecha": "2024-10-15T05:40:56.538Z",
-      "cantidad": 200
-    },
-    {
-      "id": "5",
-      "nombre": "Harrys el Magnifico",
-      "descripcion": "El Ingenioso",
-      "precio": 100,
-      "fecha": "2024-10-15T04:10:57.836Z",
-      "cantidad": 200
-    },
-    {
-      "id": "1511",
-      "nombre": "Harrys el Magnifico",
-      "descripcion": "nike mercurial uwu",
-      "precio": 150,
-      "fecha": "2024-10-15T05:19:34.365Z",
-      "cantidad": 400
-    },
-    {
-      "id": "5414",
-      "nombre": "Nike",
-      "descripcion": "Nike mercurial veloz",
-      "precio": 500,
-      "fecha": "2024-10-15T05:33:05.781Z",
-      "cantidad": 400
-    },
-    {
-      "id": "3237",
-      "nombre": "Nike air force one",
-      "descripcion": "nike que te hacen correr rapido",
-      "precio": 200,
-      "fecha": "2024-10-15T05:43:05.242Z",
-      "cantidad": 5
-    },
-    {
-      "id": "7084",
-      "nombre": "NIkee ",
-      "descripcion": "hola estoy cansado",
-      "precio": 700,
-      "fecha": "2024-10-15T05:44:22.720Z",
-      "cantidad": 1
-    },
-    {
-      "id": "9998",
-      "nombre": "123",
-      "descripcion": "qwadsasdasda",
-      "precio": 5000,
-      "fecha": "2024-10-16T02:52:06.392Z",
-      "cantidad": 1
-    },
-    {
-      "id": "8962",
-      "nombre": "camilonga para bailar la botonga",
-      "descripcion": "a.sdmbadbajsdjasjx asx",
-      "precio": 8000,
-      "fecha": "2024-10-16T02:53:24.247Z",
-      "cantidad": 9000
-    },
-    {
-      "id": "5596",
-      "nombre": "camilo",
-      "descripcion": "prueba 16-10-2024",
-      "precio": 750,
-      "fecha": "2024-10-16T16:04:06.074Z",
-      "cantidad": 1
-    },
-    {
       "id": "6616",
       "nombre": "acacaaac",
       "descripcion": "dasdasda",
@@ -137,12 +49,12 @@
       "cantidad": 2
     },
     {
-      "id": 1032,
-      "nombre": "asidhaishda",
-      "descripcion": "asas",
-      "precio": 800,
-      "fecha": "2024-10-17T18:03:21.017Z",
-      "cantidad": 1
+      "id": 691,
+      "nombre": "asdasda",
+      "descripcion": "sas",
+      "precio": 0,
+      "fecha": "2024-10-18T19:25:06.269Z",
+      "cantidad": 0
     }
   ],
   "users": [

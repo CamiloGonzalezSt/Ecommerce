@@ -12,24 +12,23 @@
 </ion-header>
 
 <ion-content padding>
-  <form [formGroup]="productForm" (ngSubmit)="onFormSubmit(productForm.value)">
+  <form>
     <ion-item>
       <ion-label position="floating">Nombre</ion-label>
-      <ion-input type="text" [(ngModel)]="producto.nombre" formControlName="prod_name"></ion-input>
+      <ion-input type="text" [(ngModel)]="nombreProducto"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label position="floating">Precio</ion-label>
-      <ion-input type="number" [(ngModel)]="producto.precio" formControlName="prod_price"></ion-input>
+      <ion-input type="number"  [(ngModel)]="precio"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="floating">Descripción</ion-label>
-      <ion-textarea [(ngModel)]="producto.descripcion" formControlName="prod_desc"></ion-textarea>
+      <ion-label position="floating" >Descripción</ion-label>
+      <ion-input type="text"  [(ngModel)]="descripcion"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label position="floating">Cantidad</ion-label>
-      <ion-input type="number" [(ngModel)]="producto.cantidad" formControlName="prod_cantidad"></ion-input>
+      <ion-input type="number"  [(ngModel)]="cantidad"></ion-input>
     </ion-item>
-    <ion-button type="submit" shape="round" color="primary" expand="block"
-      [disabled]="!productForm.valid">Submit</ion-button>
+    <ion-button type="submit" (click)="agregarProducto()">Agregar producto</ion-button>
   </form>
 </ion-content>

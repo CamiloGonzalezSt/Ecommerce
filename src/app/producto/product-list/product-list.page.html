@@ -1,39 +1,35 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Productos</ion-title>
-    <ion-buttons slot="end">
-      <ion-back-button defaultHref="/"></ion-back-button>
-    </ion-buttons>
-
+    <ion-title>Lista de Productos</ion-title>
+    <ion-back-button slot="start" href="/home"></ion-back-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <!-- Verificamos si hay productos -->
+  <ion-list>
+    <ion-item *ngFor="let producto of productos; let i = index">
+      <ion-label>
+        <h2>{{ producto.nombre }}</h2>
+        <p>Precio: {{ producto.precio }} CLP</p>
+      </ion-label>
 
-  <ion-item>
-    <ion-label>
-      <font color="red">Utilizando un Accesador
-        <ion-button [routerLink]="['/product-add']">Agregar</ion-button>
-      </font>
-    </ion-label>
-  </ion-item>
-  <ion-list padding>
-    <!-- Recorremos el arreglo de registros utilizando item-->
-    <ion-item *ngFor="let p of productos">
-      <!-- Icono al inicio (start)-->
-      <ion-icon name="star" slot="start"></ion-icon>
-      <!-- Campos de item -->
-      <ion-label> <h2>{{p.nombre}}</h2></ion-label>
-      <!-- Icono al final -->
-      <ion-icon name="information-circle" slot="end"></ion-icon>
-      <!-- routerlink salta a otra pagina-->
-      <ion-button [routerLink]="['/product-edit/',p.id]">Edit</ion-button><br />
-      <!-- routerlink salta a otra pagina, pero con id del item-->
-      <ion-button [routerLink]="['/product-detail',p.id]">Detail</ion-button><br />
+      <!-- Botón para editar el producto -->
+      <ion-button slot="end" color="primary" (click)="editarProducto(producto)">
+        Editar
+      </ion-button>
+
+      <!-- Botón para eliminar el producto -->
+      <ion-button slot="end" color="danger" (click)="eliminarProducto(producto.nombre)">
+        Eliminar
+      </ion-button>
     </ion-item>
   </ion-list>
 
+  <!-- Mensaje de productos no encontrados -->
+  <ng-template>
+    <ion-item>
+      <ion-label>No hay productos disponibles</ion-label>
+    </ion-item>
+  </ng-template>
 </ion-content>

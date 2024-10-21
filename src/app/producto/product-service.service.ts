@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ClProducto } from './model/ClProducto';
-
-// Importamos  las librerías necesarias
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+
+
 
 // creamos Constantes que utilizaremos en el envio
-const apiUrl = "http://10.0.2.2:3000/productos";
+const apiUrl = environment.apiUrl
 const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
 
 @Injectable({
@@ -19,8 +20,20 @@ export class ProductServiceService {
 
   // Controla y enviará un mensaje a consola para todos los errores
   private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error("handleError Harrys", error); // log to console instead
+    return (error: HttpErrorResponse): Observable<T> => {
+      // Imprime información detallada del error
+      console.error(`Error en ${operation}:`, error.message);
+      
+      if (error.error instanceof ErrorEvent) {
+        // Error del lado del cliente o de red
+        console.error('Ocurrió un error:', error.error.message);
+      } else {
+        // El backend devolvió un código de estado de error
+        console.error(`Backend retornó código ${error.status}, ` + 
+                      `cuerpo fue: ${error.error}`);
+      }
+  
+      // Retorna un resultado vacío para que la app siga funcionando
       return of(result as T);
     };
   }
@@ -65,19 +78,17 @@ export class ProductServiceService {
   }
 
   deleteProduct(id: number): Observable<ClProducto> {
-    //const url = '${apiUrl}/${id}';
-    //return this.http.delete<Producto>(url, httpOptions).pipe(
-    return this.http.delete<ClProducto>(apiUrl + "/" + id, httpOptions)
+    return this.http.delete<ClProducto>(`${apiUrl}/${id}`, httpOptions)
       .pipe(
-        tap(_ => console.log('deleted product id=${id}')),
+        tap(_ => console.log(`deleted product id=${id}`)), // Corrección en el uso de backticks
         catchError(this.handleError<ClProducto>('deleteProduct'))
       );
   }
-
+  
   updateProduct(id: number, producto: ClProducto): Observable<ClProducto> {
-    return this.http.put<ClProducto>(apiUrl + "/" + id, producto, httpOptions)
+    return this.http.put<ClProducto>(`${apiUrl}/${id}`, producto, httpOptions)
       .pipe(
-        tap(_ => console.log('updated product id=${id}')),
+        tap(_ => console.log(`updated product id=${id}`)), // Corrección en el uso de backticks
         catchError(this.handleError<any>('updateProduct'))
       );
   }
