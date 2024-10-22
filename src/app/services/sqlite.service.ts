@@ -136,6 +136,7 @@ export class SqliteService {
     if (this.db) {
       return this.db.executeSql(query, [nombre, descripcion, precio, cantidad])
         .then(async () => {
+          await this.saveProductToJsonServer({ nombre, descripcion, precio, cantidad }); // Guarda en JSON Server
           alert('Producto agregado con éxito');
           await this.selectData(); // Llama a selectData para actualizar la lista de productos
         })
@@ -145,6 +146,16 @@ export class SqliteService {
         });
     } else {
       return Promise.reject('Base de datos no inicializada');
+    }
+  }
+
+  // Nueva función para guardar en JSON Server
+  private async saveProductToJsonServer(producto: productos): Promise<void> {
+    try {
+      await this.http.post(`${this.apiUrl}/productos`, producto).toPromise();
+      console.log('Producto guardado en JSON Server:', producto);
+    } catch (error) {
+      console.error('Error al guardar el producto en JSON Server', error);
     }
   }
 
@@ -195,13 +206,35 @@ export class SqliteService {
   async updateRecord(nombre: string, descripcion: string, precio: number, cantidad: number) {
     const query = 'UPDATE productos SET descripcion = ?, precio = ?, cantidad = ? WHERE name = ?';
     await this.db.executeSql(query, [descripcion, precio, cantidad, nombre]);
+    await this.updateProductInJsonServer({ nombre, descripcion, precio, cantidad }); // Actualiza en JSON Server
     await this.selectData(); // Llama al método que actualiza el BehaviorSubject
+  }
+
+   // Nueva función para actualizar en JSON Server
+   private async updateProductInJsonServer(producto: productos): Promise<void> {
+    try {
+      await this.http.put(`${this.apiUrl}/productos/${producto.nombre}`, producto).toPromise();
+      console.log('Producto actualizado en JSON Server:', producto);
+    } catch (error) {
+      console.error('Error al actualizar el producto en JSON Server', error);
+    }
   }
 
   async deleteRecord(nombre: string) {
     const query = 'DELETE FROM productos WHERE name = ?';
     await this.db.executeSql(query, [nombre]);
+    await this.deleteProductFromJsonServer(nombre); // Elimina de JSON Server
     await this.selectData(); // Actualiza la lista de productos después de eliminar
+  }
+
+  // Nueva función para eliminar en JSON Server
+  private async deleteProductFromJsonServer(nombre: string): Promise<void> {
+    try {
+      await this.http.delete(`${this.apiUrl}/productos/${nombre}`).toPromise();
+      console.log('Producto eliminado de JSON Server:', nombre);
+    } catch (error) {
+      console.error('Error al eliminar el producto de JSON Server', error);
+    }
   }
 
   

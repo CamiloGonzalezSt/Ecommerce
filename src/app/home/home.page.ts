@@ -6,6 +6,11 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { IonContent } from '@ionic/angular';
 import { AnimationController } from '@ionic/angular';
 import { GoogleMap } from '@capacitor/google-maps';  // Importa GoogleMap para el mapa
+import { SqliteService } from '../services/sqlite.service';
+import { SyncService } from '../services/sync.service';
+
+
+
 
 // Configura los módulos que vas a utilizar
 SwiperCore.use([Autoplay, Pagination, Navigation]);
@@ -92,7 +97,9 @@ export class HomePage implements OnInit {
   constructor(
     private activeroute: ActivatedRoute, 
     private router: Router, 
-    private animationCtrl: AnimationController
+    private animationCtrl: AnimationController,
+    private sqliteService: SqliteService, 
+    private syncService: SyncService
     
   ) {
     this.loadData();  
@@ -152,6 +159,12 @@ export class HomePage implements OnInit {
 
     // Llama a la función para crear el mapa cuando la página se inicialice
     await this.createMap();
+    await this.sqliteService.init();
+    this.syncService.syncData().then(() => {
+      console.log('Datos sincronizados');
+  }).catch(error => {
+      console.error('Error en la sincronización inicial', error);
+  });
   }
 
   // Función para inicializar el mapa

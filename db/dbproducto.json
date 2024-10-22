@@ -8,66 +8,46 @@
       "cantidad": 1
     },
     {
-      "id": "13fd",
-      "nombreProducto": "qwert",
+      "id": "df8b",
+      "nombre": "sasasasdasdasd",
+      "descripcion": "asdadsa",
+      "precio": 12212121212,
+      "cantidad": 2121212112
+    },
+    {
+      "id": "e042",
+      "nombre": "loco",
+      "descripcion": "asasda",
+      "precio": 12,
+      "cantidad": 1
+    },
+    {
+      "id": "0801",
+      "nombre": "eduardo",
+      "descripcion": "caca",
       "precio": 1,
-      "descripcion": "qwert",
-      "cantidad": 1
-    {
-      "id": "6616",
-      "nombre": "acacaaac",
-      "descripcion": "dasdasda",
-      "precio": 666,
-      "fecha": "2024-10-16T23:10:59.490Z",
       "cantidad": 1
     },
     {
-      "id": "7639",
-      "nombre": "Pepiño interview",
-      "descripcion": "pepe a inrumpido",
-      "precio": 555,
-      "fecha": "2024-10-17T14:51:29.909Z",
+      "id": "b024",
+      "nombre": "porfis",
+      "descripcion": "siiiiiiiiiiiiiiiiiiiiiiii",
+      "precio": 1,
       "cantidad": 1
     },
     {
-      "id": "8674",
-      "nombre": "asasa",
-      "descripcion": "sasa",
-      "precio": 1111222,
-      "fecha": "2024-10-17T15:38:33.502Z",
-      "cantidad": 1
-    },
-    {
-      "id": "9014",
-      "nombre": "jose soto",
-      "descripcion": "trabajador urban",
-      "precio": 10000,
-      "fecha": "2024-10-17T15:51:43.506Z",
-      "cantidad": 1
-    },
-    {
-      "id": "8334",
+      "id": "2180",
       "nombre": "pantalon azul",
-      "descripcion": "pantalon",
-      "precio": 5990,
-      "fecha": "2024-10-17T15:59:25.043Z",
+      "descripcion": "asdasdads",
+      "precio": 12121,
       "cantidad": 1
     },
     {
-      "id": "4778",
-      "nombre": "urban",
-      "descripcion": "urban comercial spa",
-      "precio": 10,
-      "fecha": "2024-10-17T16:07:34.009Z",
-      "cantidad": 2
-    },
-    {
-      "id": 691,
-      "nombre": "asdasda",
-      "descripcion": "sas",
-      "precio": 0,
-      "fecha": "2024-10-18T19:25:06.269Z",
-      "cantidad": 0
+      "id": "5642",
+      "nombre": "qwqwqw",
+      "descripcion": "qwqwqwqw",
+      "precio": 121212,
+      "cantidad": 121212
     }
   ],
   "users": [
