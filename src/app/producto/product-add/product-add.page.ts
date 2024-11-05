@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { SqliteService } from 'src/app/services/sqlite.service';
+// add.page.ts
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { SqliteService } from 'src/app/services/sqlite.service';
+import { Producto } from 'src/app/services/sqlite.service'
 
 
 @Component({
@@ -8,33 +10,29 @@ import { Router } from '@angular/router';
   templateUrl: './product-add.page.html',
   styleUrls: ['./product-add.page.scss'],
 })
-export class ProductAddPage implements OnInit {
-  
-  nombreProducto: string;
-  precio: number;
-  descripcion: string;
-  cantidad: number;
+export class ProductAddPage  {
+  producto: Producto = {
+    id: '',
+    nombre: '',
+    descripcion: '',
+    precio: 0,
+    cantidad: 0
+  };
 
+  constructor(private sqliteService: SqliteService, private router: Router) {}
 
-  constructor(
-    private sqlite: SqliteService,
-    private router: Router
-  ) {  }
-
-  async ngOnInit() {
-    this.sqlite.createOpenDatabase();
+  async agregarProducto() {
+    if (this.producto.nombre && this.producto.descripcion && this.producto.precio && this.producto.cantidad) {
+      try {
+        await this.sqliteService.createProduct(this.producto);
+        alert('Producto agregado exitosamente');
+        this.router.navigate(['/product-list']); // Navega a la página de lista después de agregar
+      } catch (error) {
+        console.error('Error al agregar el producto:', error);
+        alert('Error al agregar el producto');
+      }
+    } else {
+      alert('Por favor, complete todos los campos');
+    }
   }
-
-  agregarProducto() {
-    this.sqlite.insertData(this.nombreProducto, this.descripcion, this.precio, this.cantidad)
-      .then(() => {
-        alert('Producto agregado con éxito');
-        this.router.navigate(['/product-list']);  // Navega a la lista de productos después de agregar
-      })
-      .catch((error) => {
-        console.error('Error al agregar el producto', error);
-      });
-  }
-
-  
 }

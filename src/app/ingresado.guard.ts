@@ -17,10 +17,10 @@ export class ingresadoGuard implements CanActivate {
     const isAuthenticatedSqlite = this.sqliteService.isAuthenticated();
 
     if (token && isAuthenticatedSqlite) {
-      // Si hay un token y el servicio dice que está autenticado, permite el acceso
+      
       return true;
     } else {
-      // Redirigir a la página de login si no está autenticado
+      
       this.router.navigate(['/login']);
       return false;
     }

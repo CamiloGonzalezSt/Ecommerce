@@ -20,13 +20,13 @@
   <ion-item>
     <ion-label>ID:</ion-label>
     <!-- Objeto producto creado en TypeScript -->
-    <ion-label>{{producto.nombreProducto}}</ion-label>
+    <ion-label>{{producto.nombre}}</ion-label>
   </ion-item>
 
   <ion-item>
     <ion-label>Nombre:</ion-label>
     <!-- ngModel, Objeto producto del TypeScript -->
-    <ion-input type="text" [(ngModel)]="producto.nombreProducto">
+    <ion-input type="text" [(ngModel)]="producto.nombre">
     </ion-input>
   </ion-item>
   <ion-item>
@@ -59,7 +59,7 @@
         Registro</ion-button>
 
 
-      <ion-button *ngIf="producto.nombreProducto" ion-button full color="danger" item-end icon-right (click)="eliminar()">
+      <ion-button *ngIf="producto.nombre" ion-button full color="danger" item-end icon-right (click)="eliminar()">
         Remove
         <ion-icon name="trash"></ion-icon>
         <!-- deleteProducto por medio del ID del producto-->

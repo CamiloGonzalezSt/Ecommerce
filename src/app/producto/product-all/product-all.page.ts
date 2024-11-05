@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { productos } from '../model/ClProducto';
+import { producto } from '../model/ClProducto';
 
 @Component({
   selector: 'app-product-all',
@@ -12,11 +12,11 @@ export class ProductAllPage implements OnInit {
   buttonLeerDisabled = false
   buttonActualizarDisabled = false
   buttonCrearDisabled = false
-  producto: productos = {  nombreProducto: '', descripcion: '', precio: 0, cantidad:0 };;
+  producto: producto = { id: '',  nombre: '', descripcion: '', precio: 0, cantidad:0 };;
 
   constructor() { }
   ngOnInit() {  }
-  public id: string = '';
+
 
 
   leer() {}

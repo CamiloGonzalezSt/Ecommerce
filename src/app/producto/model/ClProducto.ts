@@ -1,10 +1,10 @@
 //
-export class productos {
-  nombreProducto: string;
+export class producto {
+  id:string;
+  nombre: string;
   descripcion: string;
   precio: number;
   cantidad: number;
-  static nombreProducto: string;
 }
 
 

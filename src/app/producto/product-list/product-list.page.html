@@ -1,7 +1,7 @@
+<!-- list.page.html -->
 <ion-header>
   <ion-toolbar>
     <ion-title>Lista de Productos</ion-title>
-    <ion-back-button slot="start" href="/home"></ion-back-button>
   </ion-toolbar>
 </ion-header>
 
@@ -11,11 +11,17 @@
       <ion-label>
         <h2>{{ producto.nombre }}</h2>
         <p>{{ producto.descripcion }}</p>
-        <p>Precio: {{ producto.precio }}</p>
+        <p>Precio: {{ producto.precio | currency }}</p>
         <p>Cantidad: {{ producto.cantidad }}</p>
       </ion-label>
-      <ion-button (click)="editarProducto(producto)">Editar</ion-button>
-      <ion-button color="danger" (click)="eliminarProducto(producto.nombre)">Eliminar</ion-button>
+      <ion-button color="danger" (click)="eliminarProducto(producto.id)">Eliminar</ion-button>
+      <ion-button (click)="editarProducto(producto.id)">Editar</ion-button>
     </ion-item>
   </ion-list>
+
+  <ng-template #noProducts>
+    <ion-item>
+      <ion-label>No hay productos disponibles</ion-label>
+    </ion-item>
+  </ng-template>
 </ion-content>
