@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ProductServiceService } from '../product-service.service';
+import { producto } from '../model/ClProducto';
 
 @Component({
   selector: 'app-product-edit',
@@ -8,8 +10,8 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./product-edit.page.scss'],
 })
 export class ProductEditPage implements OnInit {
-
-  nombreProducto: string;
+  id: string; // ID del producto como string
+  nombre: string;
   precio: number;
   descripcion: string;
   cantidad: number;
@@ -17,31 +19,61 @@ export class ProductEditPage implements OnInit {
   constructor(
     private sqlite: SqliteService,
     private router: Router,
-    private route: ActivatedRoute // Para obtener el parámetro de la ruta
-  ) { }
+    private route: ActivatedRoute,
+    private productService: ProductServiceService // Inyecta el servicio de productos
+  ) {}
 
   ngOnInit() {
-    // Obtener parámetros de la ruta
+    // Obtenemos el ID del producto desde los parámetros de la ruta
     this.route.params.subscribe(params => {
-      const nombre = params['nombre']; // Obtiene el nombre del producto de los parámetros
-      this.cargarProducto(nombre); // Carga los datos del producto
+      this.id = params['id']; // Mantener como string
+      this.cargarProducto(this.id); // Carga el producto usando el ID
     });
-
   }
 
-  async cargarProducto(nombre: string) {
-    const producto = await this.sqlite.selectDataByName(nombre); // Método para obtener el producto por nombre
-    if (producto) {
-      this.nombreProducto = producto.nombre;
-      this.descripcion = producto.descripcion;
-      this.precio = producto.precio;
-      this.cantidad = producto.cantidad;
+  async cargarProducto(id: string) { 
+    try {
+      const productos: producto[] = await this.productService.getProducts().toPromise() || [];
+      const productoEncontrado = productos.find(p => p.id === id); // Compara como número
+      
+      if (productoEncontrado) {
+        this.nombre = productoEncontrado.nombre;
+        this.descripcion = productoEncontrado.descripcion;
+        this.precio = productoEncontrado.precio;
+        this.cantidad = productoEncontrado.cantidad;
+      } else {
+        console.error('Producto no encontrado');
+        alert('Producto no encontrado');
+      }
+    } catch (error) {
+      console.error('Error al cargar el producto:', error);
+      alert('Error al cargar el producto: ' + error);
     }
   }
+  
+  
 
   async guardarCambios() {
-    await this.sqlite.updateRecord(this.nombreProducto, this.descripcion, this.precio, this.cantidad);
-    alert('Producto actualizado con éxito');
-    this.router.navigate(['/product-list']); // Navega a la lista de productos
+    const updatedProduct: producto = {
+      id: this.id, // Asegúrate de que `id` es number
+      nombre: this.nombre,
+      descripcion: this.descripcion,
+      precio: this.precio,
+      cantidad: this.cantidad
+    };
+  
+    try {
+      // Actualiza primero en SQLite
+      await this.sqlite.updateProduct(updatedProduct);
+  
+      // Luego, actualiza en JSON Server
+      await this.productService.updateProduct(this.id, updatedProduct).toPromise();
+      alert('Producto actualizado con éxito');
+      this.router.navigate(['/product-list']);
+    } catch (error) {
+      console.error('Error al actualizar el producto:', error);
+      alert('Error al actualizar el producto: ' + error);
+    }
   }
+  
 }

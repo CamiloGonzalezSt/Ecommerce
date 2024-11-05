@@ -1,73 +1,81 @@
 {
   "productos": [
     {
-      "id": "d80a",
-      "nombreProducto": "camilo prueba json",
-      "precio": 20000,
-      "descripcion": "prueba del json en la web",
-      "cantidad": 1
+      "id": "13",
+      "nombre": "asaasas",
+      "descripcion": "121212",
+      "precio": 12,
+      "cantidad": 12
     },
     {
-      "id": "13fd",
-      "nombreProducto": "qwert",
+      "id": "14",
+      "nombre": "asasasa",
+      "descripcion": "asasas",
+      "precio": 109,
+      "cantidad": 109
+    },
+    {
+      "id": "15",
+      "nombre": "pepe",
+      "descripcion": "dios",
       "precio": 1,
-      "descripcion": "qwert",
-      "cantidad": 1
-    {
-      "id": "6616",
-      "nombre": "acacaaac",
-      "descripcion": "dasdasda",
-      "precio": 666,
-      "fecha": "2024-10-16T23:10:59.490Z",
       "cantidad": 1
     },
     {
-      "id": "7639",
-      "nombre": "Pepiño interview",
-      "descripcion": "pepe a inrumpido",
-      "precio": 555,
-      "fecha": "2024-10-17T14:51:29.909Z",
+      "id": "16",
+      "nombre": "hola",
+      "descripcion": "raton con cola",
+      "precio": 1,
       "cantidad": 1
     },
     {
-      "id": "8674",
-      "nombre": "asasa",
-      "descripcion": "sasa",
-      "precio": 1111222,
-      "fecha": "2024-10-17T15:38:33.502Z",
+      "id": "17",
+      "nombre": "popo",
+      "descripcion": "popop",
+      "precio": 1,
       "cantidad": 1
     },
     {
-      "id": "9014",
-      "nombre": "jose soto",
-      "descripcion": "trabajador urban",
-      "precio": 10000,
-      "fecha": "2024-10-17T15:51:43.506Z",
+      "id": "18",
+      "nombre": "qwer",
+      "descripcion": "qwq",
+      "precio": 1,
       "cantidad": 1
     },
     {
-      "id": "8334",
-      "nombre": "pantalon azul",
-      "descripcion": "pantalon",
-      "precio": 5990,
-      "fecha": "2024-10-17T15:59:25.043Z",
+      "id": "19",
+      "nombre": "q",
+      "descripcion": "q",
+      "precio": 1,
       "cantidad": 1
     },
     {
-      "id": "4778",
-      "nombre": "urban",
-      "descripcion": "urban comercial spa",
-      "precio": 10,
-      "fecha": "2024-10-17T16:07:34.009Z",
-      "cantidad": 2
+      "id": "20",
+      "nombre": "test1am",
+      "descripcion": ":c",
+      "precio": 1,
+      "cantidad": 1
     },
     {
-      "id": 691,
-      "nombre": "asdasda",
-      "descripcion": "sas",
-      "precio": 0,
-      "fecha": "2024-10-18T19:25:06.269Z",
-      "cantidad": 0
+      "id": "21",
+      "nombre": "g",
+      "descripcion": "g",
+      "precio": 1,
+      "cantidad": 1
+    },
+    {
+      "id": "26",
+      "nombre": "local",
+      "descripcion": "host",
+      "precio": 3000,
+      "cantidad": 8000
+    },
+    {
+      "id": 27,
+      "nombre": "xxxxxxxx",
+      "descripcion": "xxxxxxxx",
+      "precio": 111111,
+      "cantidad": 111111
     }
   ],
   "users": [

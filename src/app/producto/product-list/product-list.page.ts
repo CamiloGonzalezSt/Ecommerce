@@ -1,69 +1,51 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+// list.page.ts
+import { Component, OnInit } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
+import { Producto } from 'src/app/services/sqlite.service';
+import { ProductServiceService } from '../product-service.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.page.html',
   styleUrls: ['./product-list.page.scss'],
 })
-export class ProductListPage implements OnInit, OnDestroy {
-  productos: Producto[] = []; // Cambia 'productos' a 'Producto'
-  private productosSubscription: Subscription;
 
-  constructor(private sqlite: SqliteService, private router: Router) {}
+export class ProductListPage implements OnInit {
+  productos: Producto[] = [];
+
+  constructor(private sqliteService: SqliteService, private productService: ProductServiceService, private router: Router) {}
 
   ngOnInit() {
-    this.productosSubscription = this.sqlite.productos$.subscribe((data: Producto[]) => {
-      // Utiliza un Set para eliminar duplicados y filtra los elementos undefined
-      const uniqueProductNames = Array.from(new Set(data.map(a => a.nombre)));
-      this.productos = uniqueProductNames
-        .map(nombre => data.find(a => a.nombre === nombre))
-        .filter((producto): producto is Producto => producto !== undefined); // Filtra 'undefined'
+    this.cargarProductos();
+  }
 
-      console.log('Productos en la lista:', this.productos);
+  cargarProductos() {
+    this.sqliteService.products$.subscribe((productos) => {
+      this.productos = productos;
     });
-
-    this.cargarProductos(); // Cargar productos al iniciar el componente
   }
 
-  ngOnDestroy() {
-    if (this.productosSubscription) {
-      this.productosSubscription.unsubscribe(); // Desuscribirse al destruir el componente
+  async eliminarProducto(productId: string) {
+    if (confirm('¿Está seguro de que desea eliminar este producto?')) {
+      try {
+        // Primero, elimina el producto de SQLite
+        await this.sqliteService.deleteProduct(productId);
+        
+        // Luego, elimina el producto de JSON Server
+        await this.productService.deleteProduct(productId).toPromise();
+        
+        alert('Producto eliminado');
+        this.cargarProductos(); // Recargar la lista de productos
+      } catch (error) {
+        console.error('Error al eliminar el producto:', error);
+        alert('Error al eliminar el producto');
+      }
     }
   }
 
-  ionViewWillEnter() {
-    this.cargarProductos(); // Recargar productos al entrar en la vista
+  editarProducto(productId: string) {
+    this.router.navigate(['/product-edit', productId]); // Pasar solo el ID como parámetro
   }
-
-  async cargarProductos() {
-    await this.sqlite.selectData();
-  }
-
-  // Método para eliminar un producto
-  async eliminarProducto(nombre: string) {
-    try {
-      await this.sqlite.deleteRecord(nombre);
-      alert('Producto eliminado con éxito');
-      this.cargarProductos();  // Recargar la lista después de eliminar
-    } catch (error) {
-      console.error('Error al eliminar el producto', error);
-    }
-  }
-
-  // Método para editar un producto
-  async editarProducto(producto: Producto) { // Cambia 'productos' a 'Producto'
-    this.router.navigate(['/product-edit', producto.nombre]);
-    alert(`Editar producto: ${producto.nombre}`);
-  }
-}
-
-// Cambia el nombre de 'productos' a 'Producto'
-export class Producto {
-  public nombre: string;
-  public descripcion: string; 
-  public precio: number;
-  public cantidad: number;
 }

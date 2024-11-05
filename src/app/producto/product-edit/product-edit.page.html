@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-title>Editar Producto</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="guardarCambios()">Guardar</ion-button>
+      <ion-button (click)="guardarCambios()" type="submit">Guardar</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -11,7 +11,7 @@
   <form (submit)="guardarCambios()">
     <ion-item>
       <ion-label position="stacked">Nombre del Producto</ion-label>
-      <ion-input type="text" [(ngModel)]="nombreProducto" name="nombre" required></ion-input>
+      <ion-input type="text" [(ngModel)]="nombre" name="nombre" required></ion-input>
     </ion-item>
     
     <ion-item>
@@ -28,5 +28,13 @@
       <ion-label position="stacked">Cantidad</ion-label>
       <ion-input type="number" [(ngModel)]="cantidad" name="cantidad" required></ion-input>
     </ion-item>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button expand="full" type="submit">Guardar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
   </form>
 </ion-content>
