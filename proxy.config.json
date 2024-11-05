@@ -1,6 +1,6 @@
 {
     "/api": {
-      "target": "http://192.168.10.20:3000",
+      "target": "https://3ced-2803-c600-d205-a104-bca5-19ea-919f-cab2.ngrok-free.app",
       "secure": false,
       "changeOrigin": true
     }
