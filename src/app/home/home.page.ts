@@ -7,7 +7,7 @@ import { IonContent } from '@ionic/angular';
 import { AnimationController } from '@ionic/angular';
 import { GoogleMap } from '@capacitor/google-maps';  // Importa GoogleMap para el mapa
 import { SqliteService } from '../services/sqlite.service';
-
+import { SyncService } from '../services/sync.service';
 
 
 
@@ -98,7 +98,8 @@ export class HomePage implements OnInit {
     private activeroute: ActivatedRoute, 
     private router: Router, 
     private animationCtrl: AnimationController,
-    private sqliteService: SqliteService
+    private sqliteService: SqliteService, 
+    private syncService: SyncService
     
   ) {
     this.loadData();  
@@ -159,7 +160,11 @@ export class HomePage implements OnInit {
     // Llama a la función para crear el mapa cuando la página se inicialice
     await this.createMap();
     await this.sqliteService.init();
-  
+    this.syncService.syncData().then(() => {
+      console.log('Datos sincronizados');
+  }).catch(error => {
+      console.error('Error en la sincronización inicial', error);
+  });
   }
 
   // Función para inicializar el mapa

@@ -22,74 +22,46 @@
       "cantidad": 1
     },
     {
-      "id": "16",
-      "nombre": "hola",
-      "descripcion": "raton con cola",
+      "id": "df8b",
+      "nombre": "sasasasdasdasd",
+      "descripcion": "asdadsa",
+      "precio": 12212121212,
+      "cantidad": 2121212112
+    },
+    {
+      "id": "e042",
+      "nombre": "loco",
+      "descripcion": "asasda",
+      "precio": 12,
+      "cantidad": 1
+    },
+    {
+      "id": "0801",
+      "nombre": "eduardo",
+      "descripcion": "caca",
       "precio": 1,
       "cantidad": 1
     },
     {
-      "id": "17",
-      "nombre": "popo",
-      "descripcion": "popop",
+      "id": "b024",
+      "nombre": "porfis",
+      "descripcion": "siiiiiiiiiiiiiiiiiiiiiiii",
       "precio": 1,
       "cantidad": 1
     },
     {
-      "id": "18",
-      "nombre": "qwer",
-      "descripcion": "qwq",
-      "precio": 1,
+      "id": "2180",
+      "nombre": "pantalon azul",
+      "descripcion": "asdasdads",
+      "precio": 12121,
       "cantidad": 1
     },
     {
-      "id": "19",
-      "nombre": "q",
-      "descripcion": "q",
-      "precio": 1,
-      "cantidad": 1
-    },
-    {
-      "id": "20",
-      "nombre": "test1am",
-      "descripcion": ":c",
-      "precio": 1,
-      "cantidad": 1
-    },
-    {
-      "id": "21",
-      "nombre": "g",
-      "descripcion": "g",
-      "precio": 1,
-      "cantidad": 1
-    },
-    {
-      "id": "26",
-      "nombre": "local",
-      "descripcion": "host",
-      "precio": 3000,
-      "cantidad": 8000
-    },
-    {
-      "id": "27",
-      "nombre": "xxxxxxxx",
-      "descripcion": "xxxxxxxx",
-      "precio": 111111,
-      "cantidad": 111111
-    },
-    {
-      "id": 28,
-      "nombre": "aa",
-      "descripcion": "aa",
-      "precio": 11,
-      "cantidad": 1
-    },
-    {
-      "id": 29,
-      "nombre": "sas",
-      "descripcion": "asa",
-      "precio": 1,
-      "cantidad": 1
+      "id": "5642",
+      "nombre": "qwqwqw",
+      "descripcion": "qwqwqwqw",
+      "precio": 121212,
+      "cantidad": 121212
     }
   ],
   "users": [

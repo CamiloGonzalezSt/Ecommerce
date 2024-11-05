@@ -121,7 +121,7 @@ async cerrarSesion() {
 
  // Método para verificar la conexión al JSON Server
  async checkServerConnection() {
-  this.http.get('http://192.168.10.20:3000').subscribe(
+  this.http.get('https://1689-152-230-70-242.ngrok-free.app:3000/').subscribe(
     (data) => {
       console.log('Datos obtenidos del JSON Server:', data);
       alert('Datos obtenidos: ' + JSON.stringify(data));
