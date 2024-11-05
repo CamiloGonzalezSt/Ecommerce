@@ -1,8 +1,20 @@
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { BehaviorSubject } from 'rxjs';
+import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
+import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { ProductServiceService } from '../producto/product-service.service';
+
+export interface Producto {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  cantidad: number;
+}
+
 import { ProductServiceService } from '../producto/product-service.service';
 
 export interface Producto {
@@ -21,13 +33,16 @@ export class SqliteService {
   private db: SQLiteObject;
   private usersSubject = new BehaviorSubject<any[]>([]);
   users$ = this.usersSubject.asObservable();
+  users$ = this.usersSubject.asObservable();
   private authenticated: boolean = false;
   private productosUrl = 'https://a66d-190-153-153-125.ngrok-free.app/productos'; // URL JSON Server
   private productsSubject = new BehaviorSubject<Producto[]>([]);
   products$ = this.productsSubject.asObservable();
 
   constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private productservice: ProductServiceService) {
+  constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private productservice: ProductServiceService) {
     this.init();
+    this.loadInitialUsers();
     this.loadInitialUsers();
   }
 
@@ -223,6 +238,18 @@ export class SqliteService {
     }
   }
 
+  login(usuario: string, password: string): string | null {
+    const user = this.usersSubject.getValue().find(u => u.usuario === usuario && u.password === password);
+    
+    if (user) {
+      this.authenticated = true;
+      const token = this.generateToken(usuario);
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('isAuthenticated', 'true');
+      return token;
+    }
+    
+    return null; 
   login(usuario: string, password: string): string | null {
     const user = this.usersSubject.getValue().find(u => u.usuario === usuario && u.password === password);
     
