@@ -4,7 +4,7 @@
 
 export const environment = {  
   production: false,
-  apiUrl: 'https://a66d-190-153-153-125.ngrok-free.app/productos',
+  apiUrl: 'https://f8ba-190-153-153-125.ngrok-free.app/productos',
   firebaseconfig:{
     apiKey: "AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU"
    }

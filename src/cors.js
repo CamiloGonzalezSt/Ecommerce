@@ -26,7 +26,7 @@ const middlewares = jsonServer.defaults();
 
 // Configuración de CORS
 const corsOptions = {
-  origin: 'https://a66d-190-153-153-125.ngrok-free.app', // Debe coincidir con la URL de tu frontend
+  origin: ' https://f8ba-190-153-153-125.ngrok-free.app ', // Debe coincidir con la URL de tu frontend
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -38,5 +38,5 @@ server.use(router);
 
 // Crear el servidor HTTPS
 https.createServer(options, server).listen(3000, () => {
-  console.log('JSON Server is running securely on https://a66d-190-153-153-125.ngrok-free.app');
+  console.log('JSON Server is running securely on  https://f8ba-190-153-153-125.ngrok-free.app ');
 });

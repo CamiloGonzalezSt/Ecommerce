@@ -6,7 +6,7 @@
   "type": "angular",
   "proxies": {
     "path":"/api",
-    "proxyUrl":"https://a66d-190-153-153-125.ngrok-free.app"
+    "proxyUrl":" https://f8ba-190-153-153-125.ngrok-free.app "
     
   }
 }

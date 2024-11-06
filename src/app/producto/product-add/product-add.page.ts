@@ -26,7 +26,7 @@ export class ProductAddPage  {
       try {
         await this.sqliteService.createProduct(this.producto);
         alert('Producto agregado exitosamente');
-        this.router.navigate(['/product-list']); // Navega a la página de lista después de agregar
+        //this.router.navigate(['/product-list']); // Navega a la página de lista después de agregar
       } catch (error) {
         console.error('Error al agregar el producto:', error);
         alert('Error al agregar el producto');

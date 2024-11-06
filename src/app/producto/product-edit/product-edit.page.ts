@@ -32,9 +32,8 @@ export class ProductEditPage implements OnInit {
   }
 
   async cargarProducto(id: string) { 
-    try {
       const productos: producto[] = await this.productService.getProducts().toPromise() || [];
-      const productoEncontrado = productos.find(p => p.id === id); // Compara como número
+      const productoEncontrado = productos.find(p => p.id === id); 
       
       if (productoEncontrado) {
         this.nombre = productoEncontrado.nombre;
@@ -43,12 +42,8 @@ export class ProductEditPage implements OnInit {
         this.cantidad = productoEncontrado.cantidad;
       } else {
         console.error('Producto no encontrado');
-        alert('Producto no encontrado');
       }
-    } catch (error) {
-      console.error('Error al cargar el producto:', error);
-      alert('Error al cargar el producto: ' + error);
-    }
+    
   }
   
   
