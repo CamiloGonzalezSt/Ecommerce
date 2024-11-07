@@ -9,6 +9,15 @@
       {
         "image-alt": "off"
       }
-    ]
+    ],
+    "compat-api/html": [
+      "default",
+      {
+        "ignore": [
+          "meta[name=color-scheme]"
+        ]
+      }
+    ],
+    "meta-viewport": "off"
   }
 }

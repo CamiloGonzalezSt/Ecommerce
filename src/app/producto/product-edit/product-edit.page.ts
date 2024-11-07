@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, AlertController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ProductServiceService } from '../product-service.service';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { lastValueFrom } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ProductServiceService } from '../product-service.service';
+import { producto } from '../model/ClProducto';
 
 @Component({
   selector: 'app-product-edit',
@@ -12,115 +10,65 @@ import { lastValueFrom } from 'rxjs';
   styleUrls: ['./product-edit.page.scss'],
 })
 export class ProductEditPage implements OnInit {
+  id: string; // ID del producto como string
+  nombre: string;
+  precio: number;
+  descripcion: string;
+  cantidad: number;
 
-  productForm: FormGroup;
-  productId: any;
-
-  // Injectamos librerías
   constructor(
-    private formBuilder: FormBuilder,
-    public restApi: ProductServiceService,
-    public loadingController: LoadingController,
-    public alertController: AlertController,
-    private route: ActivatedRoute, 
-    private sqlite: SqliteService, 
-    private router: Router
-  ) { 
-    // Inicializar el formulario
-    this.productForm = this.formBuilder.group({
-      prod_name: ['', Validators.required],
-      prod_desc: [''],
-      prod_price: [null, [Validators.required, Validators.min(0)]],
-      prod_cantidad: [null, [Validators.required, Validators.min(0)]],
-    });
-  }
+    private sqlite: SqliteService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private productService: ProductServiceService // Inyecta el servicio de productos
+  ) {}
 
   ngOnInit() {
-    // Obtener los parámetros del producto
-    this.route.paramMap.subscribe(params => {
-      const nombreProducto = params.get('nombre');
-      if (nombreProducto) {
-        this.getProduct(nombreProducto); // Llama a getProduct para cargar los datos
-      } else {
-        console.error('El nombre del producto es nulo');
-      }
+    // Obtenemos el ID del producto desde los parámetros de la ruta
+    this.route.params.subscribe(params => {
+      this.id = params['id']; // Mantener como string
+      this.cargarProducto(this.id); // Carga el producto usando el ID
     });
   }
 
-  async getProduct(nombreProducto: string) {
-    const loading = await this.loadingController.create({
-      message: 'Loading...'
-    });
-    await loading.present();
-
-    this.restApi.getProducts().subscribe({
-      next: (data) => {
-        console.log("getProduct nombre data****", data);
-        // Rescata los datos
-        this.productForm.patchValue({
-          prod_name: data.nombreProducto,
-          prod_desc: data.descripcion,
-          prod_price: data.precio,
-          prod_cantidad: data.cantidad,
-        });
-        loading.dismiss();
-      },
-      error: async (err) => {
-        console.log("getProductID Errr****", err);
-        loading.dismiss();
-        await this.presentAlert('Error al cargar el producto. Intente nuevamente.');
-      }
-    });
-  }
-
-  async saveChanges() {
-    if (this.productForm.valid) {
-      const { prod_name, prod_desc, prod_price, prod_cantidad } = this.productForm.value;
-      try {
-        await this.sqlite.updateRecord(prod_name, prod_desc, prod_price, prod_cantidad);
-        this.router.navigate(['/product-list']); // Regresar a la lista de productos
-      } catch (error) {
-        console.error('Error al guardar cambios:', error);
-        await this.presentAlert('Error al guardar cambios. Intente nuevamente.');
-      }
-    } else {
-      console.error('No se puede guardar, hay campos vacíos');
-      await this.presentAlert('Por favor, complete todos los campos.');
-    }
-  }
-
-  async presentAlert(message: string) {
-    const alert = await this.alertController.create({
-      header: 'Atención',
-      message: message,
-      buttons: ['OK']
-    });
-    await alert.present();
-  }
-  async onFormSubmit() {
-    if (this.productForm.valid) {
-      const { prod_name, prod_desc, prod_price, prod_cantidad } = this.productForm.value;
+  async cargarProducto(id: string) { 
+      const productos: producto[] = await this.productService.getProducts().toPromise() || [];
+      const productoEncontrado = productos.find(p => p.id === id); 
       
-      // Suponiendo que ya tienes el ID del producto para actualizar
-      const productId = this.productId;  // Asegúrate de tener el ID del producto en tu componente
-      const updatedProduct = {
-        nombre: prod_name,
-        descripcion: prod_desc,
-        precio: prod_price,
-        cantidad: prod_cantidad
-      };
-  
-      try {
-        // Esperar la respuesta de la actualización del producto
-        const res = await lastValueFrom(this.restApi.updateProduct(productId, updatedProduct));
-        
-        // Suponiendo que la respuesta tiene un `id`
-        const id = res['id'];  
-        this.router.navigate(['/product-detail/', id]);  // Navegar a la página de detalles del producto
-      } catch (error) {
-        console.error('Error al actualizar el producto:', error);
-        await this.presentAlert('Error al actualizar el producto. Intente nuevamente.');
+      if (productoEncontrado) {
+        this.nombre = productoEncontrado.nombre;
+        this.descripcion = productoEncontrado.descripcion;
+        this.precio = productoEncontrado.precio;
+        this.cantidad = productoEncontrado.cantidad;
+      } else {
+        console.error('Producto no encontrado');
       }
+    
+  }
+  
+  
+
+  async guardarCambios() {
+    const updatedProduct: producto = {
+      id: this.id, // Asegúrate de que `id` es number
+      nombre: this.nombre,
+      descripcion: this.descripcion,
+      precio: this.precio,
+      cantidad: this.cantidad
+    };
+  
+    try {
+      // Actualiza primero en SQLite
+      await this.sqlite.updateProduct(updatedProduct);
+  
+      // Luego, actualiza en JSON Server
+      await this.productService.updateProduct(this.id, updatedProduct).toPromise();
+      alert('Producto actualizado con éxito');
+      this.router.navigate(['/product-list']);
+    } catch (error) {
+      console.error('Error al actualizar el producto:', error);
+      alert('Error al actualizar el producto: ' + error);
     }
   }
-   }
+  
+}

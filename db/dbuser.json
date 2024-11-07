@@ -1,7 +1,11 @@
 {
-    "user": [
-        {"usuario": "camilo gonzalez", "password": "Cami3740"},
-        {"usuario": "juan perez", "password": "Juan123"}
+    "users": [
+      {
+        "id": "1",
+        "username": "camilo",
+        "password": "Cami3740asasadadsads######",
+        "email": "caj.gonzalezs"
+      }
     ]
-    
-}
+  }
+  

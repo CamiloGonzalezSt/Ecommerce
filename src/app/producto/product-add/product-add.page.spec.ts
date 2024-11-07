@@ -15,3 +15,7 @@ describe('ProductAddPage', () => {
     expect(component).toBeTruthy();
   });
 });
+function async(arg0: () => void): jasmine.ImplementationCallback {
+  throw new Error('Function not implemented.');
+}
+

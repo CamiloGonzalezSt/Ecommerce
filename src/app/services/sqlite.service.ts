@@ -1,78 +1,239 @@
 import { Injectable } from '@angular/core';
+import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
+import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs'; // Importar BehaviorSubject
 import { HttpClient } from '@angular/common/http';
-import { SQLite, SQLiteObject} from '@awesome-cordova-plugins/sqlite/ngx'
-import { environment } from 'src/environments/environment';
+import { ProductServiceService } from '../producto/product-service.service';
 
+export interface Producto {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  cantidad: number;
+}
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class SqliteService {
-  private apiUrl = environment.apiUrl;
   private db: SQLiteObject;
-  private usersSubject = new BehaviorSubject<any[]>([]); // Observable para la lista de usuarios}
-  users$ = this.usersSubject.asObservable(); // Exponer el observable
+  private usersSubject = new BehaviorSubject<any[]>([]);
+  users$ = this.usersSubject.asObservable();
   private authenticated: boolean = false;
- 
+  private productosUrl = 'https://f8ba-190-153-153-125.ngrok-free.app/productos'; // URL JSON Server
+  private productsSubject = new BehaviorSubject<Producto[]>([]);
+  products$ = this.productsSubject.asObservable();
 
-
-  // Inicializa con algunos usuarios
-  constructor(private router: Router, private http: HttpClient, private sqlite: SQLite) {
-    this.init();
-    this.loadInitialUsers(); 
+  constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private productservice: ProductServiceService) {
+    this.init().then(() => {
+      this.loadInitialUsers();
+      this.loadInitialProducts();  // Carga los productos después de inicializar la DB
+    });
   }
-
 
   async init() {
-    await this.createOpenDatabase(); // Asegurarse de que la base de datos esté abierta
-    await this.createTable(); // Crear tabla si no existe
-
+    // Inicializa la base de datos
+    try {
+      this.db = await this.sqlite.create({
+        name: 'mydb.db',
+        location: 'default'
+      });
+      
+      //await this.clearDatabase();
+      await this.createTable();
+    } catch (error) {
+      console.error('Error al inicializar la base de datos', error);
+    }
   }
 
-  // Método para verificar la conexión al JSON Server
-  async checkServerConnection() {
-    this.http.get(this.apiUrl).subscribe(
-      (data) => {
-        console.log('Datos obtenidos del JSON Server:', data);
-        alert('Datos obtenidos: ' + JSON.stringify(data));
-      },
-      (error) => {
-        console.error('Error al conectarse al JSON Server', error);
-        alert('No se pudo conectar al JSON Server');
-      }
+  //async clearDatabase(): Promise<void> {
+  //  try {
+  //    await this.db.executeSql(`DELETE FROM productos`, []);
+  //    console.log('Base de datos SQLite limpiada');
+  //  } catch (error) {
+  //    console.error('Error al limpiar la base de datos:', error);
+  //  }
+  //}
+
+  async createTable() {
+    // Crear tabla de productos
+    await this.db.executeSql(`CREATE TABLE IF NOT EXISTS productos (id TEXT PRIMARY KEY AUTOINCREMENT, nombre TEXT, descripcion TEXT, precio REAL, cantidad INTEGER)`,  []);
+  }
+
+  // Método para limpiar la tabla de productos
+ // async clearDatabase(): Promise<void> {
+ //   try {
+ //     await this.db.executeSql(`DELETE FROM productos`, []);
+ //     console.log('Base de datos SQLite limpiada');
+ //   } catch (error) {
+ //     console.error('Error al limpiar la base de datos:', error);
+ //   }
+ // }
+
+
+ async loadInitialProducts() {
+  try {
+    const localProducts = await this.getLocalProducts();
+    const serverProducts = await this.getProductsFromServer();
+
+    // Evita duplicados combinando productos de forma única
+    const combinedProducts = [
+      ...localProducts, 
+      ...serverProducts.filter(sp => !localProducts.some(lp => lp.id === sp.id))
+    ];
+
+    // Emite la lista combinada para que `products$` tenga los productos actualizados
+    this.productsSubject.next(combinedProducts);
+  } catch (error) {
+    console.error('Error al cargar productos iniciales', error);
+  }
+}
+
+
+async getProductsFromServer(): Promise<Producto[]> {
+  try {
+    const response = await this.http.get<Producto[]>(this.productosUrl).toPromise();
+    return response || [];
+  } catch (error) {
+    console.error('Error al obtener productos del JSON Server:', error);
+    return [];
+  }
+}
+
+async createProductInDb(producto: Producto): Promise<void> {
+  try {
+    await this.db.executeSql(
+      `INSERT INTO productos (id, nombre, descripcion, precio, cantidad) VALUES (?, ?, ?, ?, ?)`, 
+      [producto.id, producto.nombre, producto.descripcion, producto.precio, producto.cantidad]
     );
+  } catch (error) {
+    console.error('Error al guardar producto en SQLite:', error);
   }
+}
+
+async getLocalProducts(): Promise<Producto[]> {
+  const results = await this.db.executeSql(`SELECT * FROM productos`, []);
+  const productos: Producto[] = [];
+  for (let i = 0; i < results.rows.length; i++) {
+    productos.push(results.rows.item(i));
+  }
+  return productos;
+}
+
+async createProduct(producto: Producto): Promise<void> {
+  try {
+    const newProductId = await this.db.executeSql(
+      `INSERT INTO productos (nombre, descripcion, precio, cantidad) VALUES (?, ?, ?, ?)`, 
+      [producto.nombre, producto.descripcion, producto.precio, producto.cantidad]
+    );
+
+    producto.id = newProductId.insertId.toString();
+    await this.http.post<Producto>("https://f8ba-190-153-153-125.ngrok-free.app/productos", producto).toPromise();
+
+    this.productsSubject.next(await this.getLocalProducts());
+  } catch (error) {
+    console.error('Error al crear producto:', error);
+  }
+}
+
+async syncProductsFromServer() {
+  const serverProducts = await this.getProductsFromServer();
+  for (const producto of serverProducts) {
+    await this.createProductInDb(producto);
+  }
+  this.productsSubject.next(await this.getLocalProducts());
+}
+
+
+  // Actualizar producto en ambos (SQLite y JSON Server)
+  async updateProduct(producto: Producto): Promise<void> {
+    try {
+      // Actualizar en SQLite
+      await this.db.executeSql(`UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, cantidad = ? WHERE id = ?`, [
+        producto.nombre, 
+        producto.descripcion, 
+        producto.precio, 
+        producto.cantidad, 
+        producto.id
+      ]);
+
+      // Actualizar en JSON Server
+      await this.http.put(`${this.productosUrl}/${producto.id}`, producto).toPromise();
+
+      // Refresca la lista de productos
+      this.productsSubject.next(await this.getLocalProducts());
+    } catch (error) {
+      console.error('Error al actualizar producto:', error);
+    }
+  }
+
+  // Eliminar producto en ambos (SQLite y JSON Server)
+  async deleteProduct(productId: string): Promise<void> {
+    try {
+        // Convertir el ID a número para SQLite
+        const id = Number(productId);
+
+        // Eliminar en SQLite
+        await this.db.executeSql(`DELETE FROM productos WHERE id = ?`, [id]);
+
+        // Eliminar en JSON Server
+        await this.http.delete(`${this.productosUrl}/${productId}`).toPromise();
+
+        // Refresca la lista de productos
+        this.productsSubject.next(await this.getLocalProducts());
+    } catch (error) {
+        console.error('Error al eliminar producto:', error);
+    }
+}
+
+
+  async getProducts(): Promise<Producto[]> {
+    try {
+      // Obtener productos desde el JSON Server
+      const response = await this.http.get<Producto[]>(this.productosUrl).toPromise();
+      const productos: Producto[] = response || [];
+      
+      // Emitir los productos cargados
+      this.productsSubject.next(productos);
+      return productos;
+    } catch (error) {
+      console.error('Error al obtener los productos del JSON Server:', error);
+      return []; // Devuelve un array vacío en caso de error
+    }
+  }
+
+ 
 
   
+///////////////////////////////////////////////////
 
-  private loadInitialUsers() {
-    // Cargar usuarios iniciales al BehaviorSubject
-    this.usersSubject.next([
-      { usuario: 'camilo gonzalez', password: 'Cami3740' },
-      { usuario: 'alexander patiño', password: 'Alex2024' },
-    ]);
+  generateToken(usuario: string): string {
+    return btoa(`${usuario}:${new Date().getTime()}`);
   }
 
-  // Método para añadir un nuevo usuario
-   async createUser(usuario: string, password: string): Promise  <boolean> {
+  logout() {
+    this.authenticated = false;
+    localStorage.removeItem('authenticated');
+    localStorage.removeItem('auth_token');
+    this.router.navigate(['/login']);
+  }
+
+  async createUser(usuario: string, password: string): Promise<boolean> {
     const exists = this.usersSubject.getValue().some(u => u.usuario === usuario);
     if (exists) {
-      return false; // El usuario ya existe
+      return false; 
     }
 
     const newUser = { usuario, password };
     const currentUsers = this.usersSubject.getValue();
-    currentUsers.push(newUser); // Agregar nuevo usuario
-    this.usersSubject.next(currentUsers); // Actualizar el observable
+    currentUsers.push(newUser); 
+    this.usersSubject.next(currentUsers); 
 
-    await this.saveUserToDb(newUser); // Guardar el usuario en la base de datos
-
+    await this.saveUserToDb(newUser); 
     return true;
   }
 
-  // Método para guardar el usuario en la base de datos
   private async saveUserToDb(user: any): Promise<void> {
     try {
       await this.db.executeSql(`INSERT INTO usuarios (usuario, password) VALUES (?, ?)`, [
@@ -85,18 +246,6 @@ export class SqliteService {
     }
   }
 
-  // Obtener la lista de usuarios
-  getUsers() {
-    return this.usersSubject.getValue();
-  }
-
-  // Método para verificar el estado de autenticación
-  isAuthenticated(): boolean {
-    const isAuth = localStorage.getItem('isAuthenticated');
-    return isAuth === 'true';
-  }
-
-  // Método para verificar credenciales
   login(usuario: string, password: string): string | null {
     const user = this.usersSubject.getValue().find(u => u.usuario === usuario && u.password === password);
     
@@ -108,145 +257,33 @@ export class SqliteService {
       return token;
     }
     
-    return null; // Devuelve null si las credenciales son incorrectas
-  }
-
-  // Método para generar un token
-  generateToken(usuario: string): string {
-    return btoa(`${usuario}:${new Date().getTime()}`);
-  }
-
-  // Método para cerrar sesión
-  logout() {
-    this.authenticated = false;
-    localStorage.removeItem('authenticated');
-    localStorage.removeItem('auth_token');
-    this.router.navigate(['/login']);
-  }
+    return null; 
+   }
 
   updateUser(updatedUser: any) {
     const currentUsers = this.usersSubject.getValue();
     const index = currentUsers.findIndex(user => user.usuario === updatedUser.usuario);
     
     if (index !== -1) {
-      currentUsers[index] = updatedUser; // Actualiza el usuario
-      this.usersSubject.next(currentUsers); // Actualiza el observable
-      this.saveUserToDb(updatedUser); // Guarda el usuario en la base de datos (implementa esta lógica si es necesario)
+      currentUsers[index] = updatedUser; 
+      this.usersSubject.next(currentUsers); 
+      this.saveUserToDb(updatedUser); 
     }
   }
-// Obtener usuarios desde el servidor (usando apiUrl)
-getUsersFromApi() {
-  this.http.get<any[]>(this.apiUrl).subscribe(
-    (users) => {
-      this.usersSubject.next(users); // Actualiza el observable con los usuarios obtenidos
-      console.log('Usuarios obtenidos desde el API:', users);
-    },
-    (error) => {
-      console.log('Error al obtener usuarios desde el API', error);
-    }
-  );
-}
 
-// Guardar un usuario en el servidor (usando apiUrl)
-addUserToApi(user: any) {
-  this.http.post(this.apiUrl, user).subscribe(
-    (response) => {
-      console.log('Usuario guardado en el servidor:', response);
-    },
-    (error) => {
-      console.log('Error al guardar el usuario en el servidor', error);
-    }
-  );
-}
-  //aqui creamos la base de datos
-  async createOpenDatabase() {
-    try {
-      this.db = await this.sqlite.create({
-        name: 'data.db',
-        location: 'default'
-      });
-      console.log('Base de datos creada');
-    } catch (err) {
-      console.error('Error al crear la base de datos', err);
-    }
+  getUsers() {
+    return this.usersSubject.getValue();
   }
- 
- 
-// aqui vamos a crear la tabla con los atributos que necesitemos para esta pagina
-async createTable() {
-  try {
-    await this.db.executeSql(`
-      CREATE TABLE IF NOT EXISTS productos (
-        name VARCHAR(30),
-        descripcion VARCHAR(100),
-        precio REAL,
-        cantidad INTEGER
-      )`, []);
-    console.log('Tabla creada');
-  } catch (e) {
-    console.error('Error al crear la tabla', e);
+
+  isAuthenticated(): boolean {
+    const isAuth = localStorage.getItem('isAuthenticated');
+    return isAuth === 'true';
+  }
+
+  private loadInitialUsers() {
+    this.usersSubject.next([
+      { usuario: 'camilo gonzalez', password: 'Cami3740' },
+      { usuario: 'alexander patiño', password: 'Alex2024' },
+    ]);
   }
 }
- 
-
-// Insertar un producto
-async insertData(nombreProducto: string, descripcion: string, precio: number, cantidad: number) {
-  const query = 'INSERT INTO productos (name, descripcion, precio, cantidad) VALUES (?, ?, ?, ?)';
-  await this.db.executeSql(query, [nombreProducto, descripcion, precio, cantidad]);
-}
-
-async ejecutData(query: string, params: any[] = []): Promise<any> {
-  try {
-    if (!this.db) {
-      throw new Error('Base de datos no inicializada');
-    }
-    return await this.db.executeSql(query, params);
-  } catch (error) {
-    console.error('Error al ejecutar consulta SQL', error);
-    throw error;
-  }
-}
-
- // Seleccionar todos los productos
- async selectData(): Promise<productos[]> {
-  const productosList: productos[] = [];
-  const result = await this.db.executeSql('SELECT * FROM productos', []);
-  for (let i = 0; i < result.rows.length; i++) {
-    productosList.push({
-      nombreProducto: result.rows.item(i).name,
-      descripcion: result.rows.item(i).descripcion,
-      precio: result.rows.item(i).precio,
-      cantidad: result.rows.item(i).cantidad,
-    });
-  }
-  return productosList;
-}
-
-
-// Actualizar un producto
-async updateRecord(nombreProducto: string, descripcion: string, precio: number, cantidad: number) {
-  const query = 'UPDATE productos SET descripcion = ?, precio = ?, cantidad = ? WHERE name = ?';
-  await this.db.executeSql(query, [descripcion, precio, cantidad, nombreProducto]);
-}
-
-// Eliminar un producto
-async deleteRecord(nombreProducto: string) {
-  const query = 'DELETE FROM productos WHERE name = ?';
-  await this.db.executeSql(query, [nombreProducto]);
-}
-}
-
-
-
-
-//las clases se deben hacer afuera de todo
-class productos{
-public  nombreProducto: string;
-public descripcion: string; 
-public precio: number;
-public cantidad: number;
-
-}
-
-
-

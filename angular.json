@@ -13,9 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "allowedCommonJsDependencies": [
-        "fast-deep-equal"
-    ],
+            "allowedCommonJsDependencies": ["fast-deep-equal"],
             "outputPath": "www",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -40,7 +38,6 @@
               "src/theme/variables.scss",
               "node_modules/swiper/swiper-bundle.min.css"
             ],
-            
             "scripts": []
           },
           "configurations": {
@@ -81,6 +78,7 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          
           "configurations": {
             "production": {
               "buildTarget": "app:build:production"

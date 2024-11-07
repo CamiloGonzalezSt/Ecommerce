@@ -1,90 +1,90 @@
-import { Component, OnInit } from '@angular/core';
-import { LoadingController, AlertController } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { ProductServiceService } from '../product-service.service';
+// list.page.ts
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { SincronizarService } from 'src/app/services/sincronizar.service';
-import { productos } from '../model/ClProducto';
+import { Producto } from 'src/app/services/sqlite.service';
+import { ProductServiceService } from '../product-service.service';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.page.html',
   styleUrls: ['./product-list.page.scss'],
 })
-export class ProductListPage implements OnInit {
-  productos: productos[] = [];
+export class ProductListPage implements OnInit, OnDestroy {
+  productos: Producto[] = [];
+  private productSubscription: Subscription;
 
   constructor(
-    public restApi: ProductServiceService,
-    public loadingController: LoadingController,
-    public router: Router,
-    private sqlite: SqliteService,
-    private alertController: AlertController,
-    private sincronizar: SincronizarService
+    private sqliteService: SqliteService,
+    private productService: ProductServiceService,
+    private router: Router
   ) {}
 
-  async ngOnInit() {
-    await this.sqlite.createOpenDatabase();
-    await this.sqlite.createTable();
-    await this.syncProducts(); // Sincronizar al iniciar
+  ngOnInit() {
+    this.cargarProductos();
+    this.productSubscription = this.sqliteService.products$.subscribe(
+      (productos) => {
+        this.productos = productos;
+      }
+    );
   }
 
-  async syncProducts() {
-    await this.sincronizar.syncProducts();
-    // Después de sincronizar, cargar los productos desde SQLite y JSON
-    await this.loadProducts();
-  }
-
-  async loadProducts() {
-    try {
-      // Cargar productos de SQLite
-      const sqliteProducts = await this.sqlite.selectData();
-      // Cargar productos de la API
-      const jsonProducts = await this.getProductsFromApi();
-      // Combinar y eliminar duplicados
-      this.productos = this.mergeProducts(sqliteProducts, jsonProducts);
-    } catch (error) {
-      console.error('Error al cargar los productos:', error);
-      // Manejo de error
+  ngOnDestroy() {
+    if (this.productSubscription) {
+      this.productSubscription.unsubscribe();
     }
   }
 
-  async getProductsFromApi() {
-    return new Promise<productos[]>((resolve, reject) => {
-      this.restApi.getProducts().subscribe({
-        next: (res) => {
-          console.log("Res:", res);
-          resolve(res);
-        },
-        error: (err) => {
-          console.error("Error:", err);
-          reject(err);
+  async cargarProductos() {
+    try {
+      const localProducts = await this.sqliteService.getLocalProducts();
+      
+      const serverProducts = await this.sqliteService.getProductsFromServer();
+
+      // Filtrar productos del servidor que no estén en la base de datos local
+      const newProducts = serverProducts.filter(
+        (serverProduct) => !localProducts.some(localProduct => localProduct.id === serverProduct.id)
+      );
+
+      // Insertar los productos nuevos en la base de datos local
+      for (const product of newProducts) {
+        await this.sqliteService.createProductInDb(product);
+      }
+
+      // Actualizar la lista de productos en el componente directamente
+      this.productos = [...localProducts, ...newProducts];
+    } catch (error) {
+      console.error('Error al cargar productos:', error);
+    }
+  }
+
+  async eliminarProducto(productoId: string) {
+    try {
+      // Eliminar producto del JSON Server
+      const response = await fetch(`https://f8ba-190-153-153-125.ngrok-free.app/productos/${productoId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
         },
       });
-    });
+
+      if (!response.ok) {
+        throw new Error(`Error en la eliminación del producto: ${response.statusText}`);
+      }
+
+      // Eliminar producto de SQLite
+      await this.sqliteService.deleteProduct(productoId);
+      console.log('Producto eliminado de SQLite y JSON Server');
+
+      // Recargar la lista de productos después de la eliminación
+      this.cargarProductos();
+    } catch (error) {
+      console.error('Error al eliminar producto:', error);
+    }
   }
 
-  mergeProducts(sqliteProducts: productos[], jsonProducts: productos[]): productos[] {
-    const combinedProducts = [...sqliteProducts, ...jsonProducts];
-    // Eliminar duplicados basados en 'nombreProducto'
-    const uniqueProducts = Array.from(new Map(combinedProducts.map(product => [product.nombreProducto, product])).values());
-    return uniqueProducts;
-  }
-
-  async editProduct(producto: productos) {
-    // Navegar a la página de edición, pasando el producto como parámetro
-    this.router.navigate(['/product-edit', { nombre: producto.nombreProducto }]);
-  }
-
-  async deleteProduct(nombreProducto: string) {
-    const loading = await this.loadingController.create({
-      message: 'Eliminando...',
-    });
-    await loading.present();
-
-    await this.sqlite.deleteRecord(nombreProducto); // Eliminar producto
-    await this.loadProducts(); // Actualizar la lista de productos
-
-    loading.dismiss();
+  editarProducto(nombre: string) {
+    this.router.navigate(['/product-edit', nombre]);
   }
 }
