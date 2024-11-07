@@ -26,9 +26,10 @@ export class SqliteService {
   products$ = this.productsSubject.asObservable();
 
   constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private productservice: ProductServiceService) {
-    this.init();
-    this.loadInitialUsers();
-    this.loadInitialProducts();
+    this.init().then(() => {
+      this.loadInitialUsers();
+      this.loadInitialProducts();  // Carga los productos después de inicializar la DB
+    });
   }
 
   async init() {
@@ -38,6 +39,7 @@ export class SqliteService {
         name: 'mydb.db',
         location: 'default'
       });
+      
       //await this.clearDatabase();
       await this.createTable();
     } catch (error) {
@@ -45,9 +47,18 @@ export class SqliteService {
     }
   }
 
+  //async clearDatabase(): Promise<void> {
+  //  try {
+  //    await this.db.executeSql(`DELETE FROM productos`, []);
+  //    console.log('Base de datos SQLite limpiada');
+  //  } catch (error) {
+  //    console.error('Error al limpiar la base de datos:', error);
+  //  }
+  //}
+
   async createTable() {
     // Crear tabla de productos
-    await this.db.executeSql(`CREATE TABLE IF NOT EXISTS productos (id TEXT PRIMARY KEY AUTOINCREMENT, nombre TEXT, descripcion TEXT, precio REAL, cantidad INTEGER)`, []);
+    await this.db.executeSql(`CREATE TABLE IF NOT EXISTS productos (id TEXT PRIMARY KEY AUTOINCREMENT, nombre TEXT, descripcion TEXT, precio REAL, cantidad INTEGER)`,  []);
   }
 
   // Método para limpiar la tabla de productos
@@ -66,15 +77,19 @@ export class SqliteService {
     const localProducts = await this.getLocalProducts();
     const serverProducts = await this.getProductsFromServer();
 
-    // Combinar productos locales y del servidor sin duplicados
-    const combinedProducts = [...localProducts, ...serverProducts.filter(sp => !localProducts.some(lp => lp.id === sp.id))];
+    // Evita duplicados combinando productos de forma única
+    const combinedProducts = [
+      ...localProducts, 
+      ...serverProducts.filter(sp => !localProducts.some(lp => lp.id === sp.id))
+    ];
 
-    // Emitir la lista combinada
+    // Emite la lista combinada para que `products$` tenga los productos actualizados
     this.productsSubject.next(combinedProducts);
   } catch (error) {
     console.error('Error al cargar productos iniciales', error);
   }
 }
+
 
 async getProductsFromServer(): Promise<Producto[]> {
   try {

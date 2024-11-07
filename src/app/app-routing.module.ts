@@ -62,9 +62,15 @@ const routes: Routes = [
     canActivate: [ingresadoGuard]
   },
   {
+    path: 'users',
+    loadChildren: () => import('./users/users.module').then( m => m.UsersPageModule),canActivate: [ingresadoGuard]
+  },
+  {
     path: '**',
     component: NotFoundPage
-  }
+  },
+
+
 ];
 
 @NgModule({
