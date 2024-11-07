@@ -58,7 +58,7 @@ export class SqliteService {
 
   async createTable() {
     // Crear tabla de productos
-    await this.db.executeSql(`CREATE TABLE IF NOT EXISTS productos (id TEXT PRIMARY KEY AUTOINCREMENT, nombre TEXT, descripcion TEXT, precio REAL, cantidad INTEGER)`,  []);
+    await this.db.executeSql(`CREATE TABLE IF NOT EXISTS productos (id TEXT PRIMARY KEY, nombre TEXT, descripcion TEXT, precio REAL, cantidad INTEGER)`,  []);
   }
 
   // Método para limpiar la tabla de productos
@@ -172,10 +172,10 @@ async syncProductsFromServer() {
   async deleteProduct(productId: string): Promise<void> {
     try {
         // Convertir el ID a número para SQLite
-        const id = Number(productId);
+        //const id = Number(productId);
 
         // Eliminar en SQLite
-        await this.db.executeSql(`DELETE FROM productos WHERE id = ?`, [id]);
+        await this.db.executeSql(`DELETE FROM productos WHERE id = ?`, [productId]);
 
         // Eliminar en JSON Server
         await this.http.delete(`${this.productosUrl}/${productId}`).toPromise();
