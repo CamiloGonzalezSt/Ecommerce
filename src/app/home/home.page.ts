@@ -7,7 +7,8 @@ import { IonContent } from '@ionic/angular';
 import { AnimationController } from '@ionic/angular';
 import { GoogleMap } from '@capacitor/google-maps';  // Importa GoogleMap para el mapa
 import { SqliteService } from '../services/sqlite.service';
-
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { CarritoService } from '../services/carrito.service';
 
 
 
@@ -27,7 +28,7 @@ export class HomePage implements OnInit {
   products = [
     {
       id: 71,
-      name: 'Zapatillas Mujer New Balance 990v5',
+      name: 'Zapatillas Mujer',
       description: 'Zapatillas New Balance 990v5 para mujer, perfectas para una comodidad superior y estilo.',
       price: 119900,
       image: 'assets/images/products/mujer/zapatillas_mujer/new1.webp'
@@ -76,7 +77,7 @@ export class HomePage implements OnInit {
     },
     {
       id: 1,
-      name: 'Hoddie Hombre Urbano',
+      name: 'Hoddie Hombre',
       description: 'Polerón con capucha, suave y cómodo para el uso diario.',
       price: 25990,
       image: 'assets/images/products/hombre/poleron_hombre/hoddie1.webp'
@@ -98,7 +99,9 @@ export class HomePage implements OnInit {
     private activeroute: ActivatedRoute, 
     private router: Router, 
     private animationCtrl: AnimationController,
-    private sqliteService: SqliteService
+    private sqliteService: SqliteService,
+    private inAppBrowser: InAppBrowser,
+    private carritoService: CarritoService
     
   ) {
     this.loadData();  
@@ -180,11 +183,27 @@ export class HomePage implements OnInit {
     //Agregar un marcador en el mapa
     await this.map.addMarker({
       coordinate: {
-        lat: -33.4489,
-        lng: -70.6693,
+        lat: -33.36344,
+        lng: -70.6807601,
       },
-      title: "Santiago",
-      snippet: "Capital de Chile",
+      title: "Duoc UC Sede Plaza Norte",
+      snippet: "Instituto Profesional",
     });
   }
+
+//boton de whatsapp
+
+openWhatsApp() {
+  const phoneNumber = "56934116232"; // Reemplaza con el número de WhatsApp con el código de país sin '+'
+  const url = `https://wa.me/${phoneNumber}`;
+  this.inAppBrowser.create(url, '_system');
+}
+
+
+agregarAlCarrito(producto: any) {
+  this.carritoService.agregarAlCarrito(producto);
+  alert(`${producto.name} ha sido agregado al carrito.`);
+}
+
+
 }

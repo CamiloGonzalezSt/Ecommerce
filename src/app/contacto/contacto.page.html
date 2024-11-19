@@ -1,33 +1,43 @@
-<ion-header >
+<ion-header>
   <ion-toolbar>
-    <ion-title>contacto</ion-title>
     <ion-buttons slot="start">
-      <ion-back-button default-href="/home"></ion-back-button>
+      <ion-button href="/home">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
+    <ion-title>Carrito de Compras</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="contact-page">
-  <div class="contact-form">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Contactanos</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item lines="none">
-          <ion-label position="floating">Nombre completo</ion-label>
-          <ion-input type="text" required placeholder="tu nombre"></ion-input>
-        </ion-item>
-        <ion-item lines="none">
-          <ion-label position="floating">Email</ion-label>
-          <ion-input type="email" required placeholder="tucorreo@gmail.com"></ion-input>
-        </ion-item>
-        <ion-item lines="none">
-          <ion-label position="floating">Mensaje</ion-label>
-          <ion-textarea rows="6" required placeholder="Ingresa un mensaje relacionado con lo que necesitas que te ayudemos"></ion-textarea>
-        </ion-item>
-        <ion-button expand="block" class="submit-button">Enviar</ion-button>
-      </ion-card-content>
-    </ion-card>
-  </div>
-</ion-content>
+<form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <mat-label>Nombre Completo</mat-label>
+    <input matInput formControlName="nombre" required>
+    <mat-error *ngIf="contactForm.get('nombre')?.hasError('required')">
+      Este campo es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Correo Electrónico</mat-label>
+    <input matInput formControlName="correo" required>
+    <mat-error *ngIf="contactForm.get('correo')?.hasError('required')">
+      Este campo es obligatorio
+    </mat-error>
+    <mat-error *ngIf="contactForm.get('correo')?.hasError('email')">
+      Ingrese un correo válido
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Tu mensaje</mat-label>
+    <input matInput formControlName="mensaje" required>
+    <mat-error *ngIf="contactForm.get('mensaje')?.hasError('required')">
+      Este campo es obligatorio
+    </mat-error>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="contactForm.invalid">
+    Enviar
+  </button>
+</form>

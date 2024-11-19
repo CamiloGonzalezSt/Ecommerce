@@ -1,6 +1,6 @@
 ion-content {
     position: relative;
-    --background: #b7bcca; 
+    --background: #e5e8f0; 
     color: #000000; 
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -10,9 +10,14 @@ ion-content {
     height: 100vh;
     padding: 0;
   }
-  
+ 
+
+ion-menu ion-toolbar{
+  text-align: center;
+}
 ion-footer{
-  background-color: rgb(72, 72, 78);
+  background-color: rgb(187, 187, 237);
+  text-align: center;
  }
 
  .custom-action-sheet {

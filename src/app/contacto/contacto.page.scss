@@ -1,62 +1,79 @@
+/* Estilo general del formulario */
+form {
+  display: flex;
+  flex-direction:column;
+  align-items: center;
+  padding: 30px;
+  min-width: 350px;
+  max-width: 600px;
+  margin: auto;
+  background-color: #ffffff; /* Fondo blanco para el formulario */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
 
-  ion-toolbar {
-    text-transform: uppercase;
-    --background: #b7bcca; 
-    color: #000000; /* Color de texto blanco */
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-  }
-  .contact-page {
-    --ion-background-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  
-    .contact-form {
-      width: 100%;
-      max-width: 400px;
-      margin: auto;
-    }
-  
-    ion-card {
-      background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-  
-      ion-card-title {
-        color: black;
-        font-size: 1.5rem;
-        text-align: center;
-      }
-  
-      ion-item {
-        --background: transparent;
-        --border-color: transparent;
-        --color-focused: black;
-      }
-  
-      ion-label {
-        color: black;
-        font-weight: 500;
-        margin-bottom: 10px;
-      }
-  
-      ion-input, ion-textarea {
-        color: black;
-        border-bottom: 1px solid black;
-        --placeholder-color: rgba(0, 0, 0, 0.6);
-      }
-  
-      .submit-button {
-        --background: black;
-        --color: white;
-        border-radius: 20px;
-        margin-top: 20px;
-        font-weight: bold;
-        text-transform: uppercase;
-      }
-    }
-  }
-  
+/* Estilo para los campos de formulario */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+mat-label {
+  color: #333; /* Color de la etiqueta */
+  font-weight: 500; /* Peso de la fuente */
+}
+
+/* Estilo para el borde del campo de entrada */
+input[matInput] {
+  background: #f9f9f9; /* Fondo suave */
+  padding: 12px;
+  border-radius: 4px;
+}
+
+/* Estilo del mensaje de error */
+mat-error {
+  font-size: 0.85rem;
+  color: #d32f2f; /* Rojo suave para errores */
+}
+
+/* Estilo del botón */
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #007bff; /* Azul para el botón */
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3; /* Azul oscuro al pasar el cursor */
+}
+
+button:disabled {
+  background-color: #cccccc; /* Color gris cuando está deshabilitado */
+  cursor: not-allowed;
+}
+
+/* Estilo para el contenedor del formulario */
+.contacto-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Centrado vertical */
+  background-color: #f3f4f6
+ }
+ 
+ ion-toolbar {
+  text-transform: uppercase;
+  --background: #e5e8f0; 
+  color: #000000; 
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 2px 2px 2px #ffffff;
+}

@@ -1,14 +1,47 @@
-<ion-header >
+<ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button href="/home">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>carrito de compras</ion-title>
+    <ion-title>Carrito de Compras</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-list *ngIf="carrito.length > 0; else carritoVacio">
+    <ion-item *ngFor="let item of carrito">
+      <ion-thumbnail slot="start">
+        <img [src]="item.image" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ item.name }}</h2>
+        <p>{{ item.description }}</p>
+        <ion-badge color="primary">${{ item.price }}</ion-badge>
+        <ion-item lines="none">
+          <ion-label position="stacked">Cantidad</ion-label>
+          <ion-input 
+            type="number" 
+            [value]="item.cantidad" 
+            (ionChange)="actualizarCantidad(item, +($event.target?.value ?? 0))"
 
+
+            min="1"
+          ></ion-input>
+        </ion-item>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  
+  <ion-item>
+    <ion-label><strong>Total a pagar:</strong></ion-label>
+    <ion-badge color="success">${{ total }}</ion-badge>
+  </ion-item>
+
+  <ng-template #carritoVacio>
+    <ion-item>
+      <ion-label>El carrito está vacío.</ion-label>
+    </ion-item>
+  </ng-template>
 </ion-content>
