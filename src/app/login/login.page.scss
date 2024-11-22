@@ -1,84 +1,60 @@
-/* Estilo general de la página */
 ion-content {
-    position: relative;
-    --background: #e5e8f0; /* Fondo gris claro */
-    color: #000000; /* Color de texto oscuro */
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    height: 100vh;
-    padding: 0;
-    
-  }
-  div{
-    margin-top: 100px;
-  }
-  
-  h3 {
-    text-align: center;
-    font-size: 26px;
-    margin-bottom: 20px;
-    font-weight: 700;
-    color: #000000; /* Color del texto gris oscuro */
-  }
-
-  form {
-    background-color: transparent;
-    margin:auto;
-    padding: 30px;
-    border-radius: 12px; /* Bordes redondeados */
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.475); /* Sombra suave */
-  }
-  
-  ion-item {
-    --background: transparent;
-    color: #000000;
-    margin-bottom: 20px;
-    border: 1px solid #000000; /* Borde gris negros */
-    border-radius: 8px; /* Bordes redondeados */
-    padding: 10px;
-  }
-  
-  ion-label {
-    color: #000000; /* Color de las etiquetas gris medio */
-    font-size: 14px;
-  }
-  
-  ion-input {
-    --color: #000000; /* Color del texto oscuro */
-    --placeholder-color: #000000; /* Color del placeholder gris */
-    padding-left: 5px; /* Espaciado interno */
-  }
-
-
-  
-  ion-button {
-    --background: #54798098;
-    margin-top: 20px;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #000000; 
-    box-shadow: 0 5px 10px rgb(0, 2, 2); /* Sombra ligera */
-  }
-  ion-toolbar {
-    text-transform: uppercase;
-    --background: #e5e8f0; 
-    color: #000000; 
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-  }
-
-  .crear{
   display: flex;
   justify-content: center;
   align-items: center;
-  }
-  .validpass{
-    color: #000000;
-  }
+  height: 100vh;
+  --background: #e5e8f0; /* Fondo gris claro */
+  padding: 20px; /* Para evitar bordes cortados en pantallas pequeñas */
+}
+
+
+ion-card {
+  width: auto;
+  max-width: 400px;
+  margin-top: 200px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  background: #ffffff; /* Fondo blanco para el formulario */
+
+}
+
+ion-card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+ion-item {
+  margin-bottom: 15px;
+}
+
+ion-input {
+  border-radius: 10px;
+}
+
+ion-button {
+  margin-top: 20px;
+}
+
+.reset {
+  display: flex; /* Activa flexbox */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  width: 100%; /* Asegura que ocupe todo el ancho del card */
+  margin-top: 20px; /* Añade separación respecto a otros elementos */
+  text-align: center; /* Para centrar texto */
+}
+
+.reset ion-button {
+  font-size: 0.9rem; /* Ajusta el tamaño de la fuente */
+  padding: 0; /* Elimina relleno adicional */
+  width: auto; /* Asegura que el botón se ajuste a su contenido */
+}
+
+
+
+
+
+
+
+

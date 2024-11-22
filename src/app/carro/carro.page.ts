@@ -1,6 +1,7 @@
 // src/app/carro/carro.page.ts
 import { Component, OnInit } from '@angular/core';
 import { CarritoService } from '../services/carrito.service';
+import { SqliteService } from '../services/sqlite.service';
 
 @Component({
   selector: 'app-carro',
@@ -8,28 +9,31 @@ import { CarritoService } from '../services/carrito.service';
   styleUrls: ['./carro.page.scss'],
 })
 export class CarroPage implements OnInit {
-  carrito: any[] = [];
+  cartItems: any[] = [];
   total: number = 0;
-
-  constructor(private carritoService: CarritoService) {}
+  constructor(private dbService: SqliteService, private cartService: CarritoService) {}
 
   ngOnInit() {
-    this.carrito = this.carritoService.obtenerCarrito();
-    this.calcularTotal();
+    this.loadCartItems();
   }
 
-  // Actualiza la cantidad de un producto y el total
-  actualizarCantidad(item: any, cantidad: number) {
-    item.cantidad = cantidad;
-    item.total = item.price * item.cantidad;
-    this.actualizarTotal();
-  }
-  actualizarTotal() {
-    this.total = this.carrito.reduce((acc, item) => acc + (item.total || item.price * item.cantidad), 0);
+  
+  // Cargar los productos del carrito desde la base de datos
+  async loadCartItems() {
+    this.cartItems = await this.cartService.getCartItems();
   }
 
-  // Calcular el total a pagar
-  calcularTotal() {
-    this.total = this.carritoService.obtenerTotal();
+  // Eliminar un producto del carrito
+  async removeFromCart(productId: number) {
+    await this.cartService.removeFromCart(productId);
+    this.loadCartItems(); // Actualizar la lista del carrito
+  }
+
+  
+
+  // Función para vaciar todo el carrito
+  async clearCart() {
+    await this.cartService.clearCart();
+    this.loadCartItems(); // Recargar el carrito después de vaciarlo
   }
 }

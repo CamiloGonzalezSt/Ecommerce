@@ -62,7 +62,7 @@ export class ProductListPage implements OnInit, OnDestroy {
   async eliminarProducto(productoId: string) {
     try {
       // Eliminar producto del JSON Server
-      const response = await fetch(`https://f8ba-190-153-153-125.ngrok-free.app/productos/${productoId}`, {
+      const response = await fetch(`https://1848-190-215-154-112.ngrok-free.app//productos/${productoId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

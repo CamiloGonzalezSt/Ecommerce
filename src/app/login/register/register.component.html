@@ -1,0 +1,41 @@
+<ion-content>
+  <!-- Campo para el nombre de usuario -->
+
+  <ion-card class="animated-border-card centered-content">
+    
+    <ion-card-header>
+      <ion-card-title class="ion-text-center"> Regístrate </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form (submit)="register()">
+        <ion-item>
+          <ion-label position="floating">Nombre de Usuario</ion-label>
+          <ion-input type="text" [(ngModel)]="username"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Correo Electrónico</ion-label>
+          <ion-input type="email" [(ngModel)]="mail"></ion-input>
+        </ion-item>
+  
+        
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="password"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Repite la contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="confirmPassword"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
+
+        <ion-button class="reg" expand="block" type="submit">Registrarme</ion-button>
+  
+        
+      </form>
+      <ion-button class="volver" expand="block" color="light" [routerLink]="['/login']" color="danger" (click)="showLoading()">Volver </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

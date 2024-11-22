@@ -14,7 +14,7 @@ ion-toolbar {
 
   img{
     margin-top: 20px;
-    border-radius: 15%;
+    border-radius: 10%;
     width: 80%;
     height: 50%;
   }
@@ -44,6 +44,15 @@ ion-toolbar {
     justify-content: center;
     align-items: center;
     align-content: center;
+    background-color: #e5e8f0;
+    color:#373333;
+    font-family: sans-serif;
+    margin: auto;
+    margin-top: 20px;
+    width: 300px;
+    box-shadow: 1px 1px 1px 1px #848181;
+    font-size: 20px;
+    border-radius: 20px;
   }
 
 swiper-container {

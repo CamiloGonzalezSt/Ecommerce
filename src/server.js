@@ -9,6 +9,6 @@ server.use(cors());
 server.use(middlewares);
 server.use(router);
 server.listen(3000, () => {
-  console.log('JSON Server is running on  https://f8ba-190-153-153-125.ngrok-free.app ');
-  console.log('JSON Server is running on  https://f8ba-190-153-153-125.ngrok-free.app :3000');
+  console.log('JSON Server is running on  https://1848-190-215-154-112.ngrok-free.app/ ');
+  console.log('JSON Server is running on  https://1848-190-215-154-112.ngrok-free.app/ :3000');
 });

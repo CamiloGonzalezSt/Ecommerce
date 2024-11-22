@@ -1,40 +1,32 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Ingreso a tienda</ion-title>
+<ion-content>
+  <ion-card class="animated-border-card">
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">Inicio Sesión</ion-card-title>
+    </ion-card-header>
 
-  </ion-toolbar>
-</ion-header>
+    <ion-card-content>
+      <form (submit)="login()">
+        <ion-item>
+          <ion-label position="floating">Nombre de Usuario</ion-label>
+          <ion-input type="text" [(ngModel)]="username"></ion-input>
+        </ion-item>
 
-<ion-content padding>
-  <div>
-    <h3>Inicio de Sesión</h3>
-  <form (ngSubmit)="ingresar()" #loginForm="ngForm">
-    <ion-item>
-      <ion-label position="floating">Nombre de Usuario</ion-label>
-      <ion-input [(ngModel)]="user.usuario" name="username" required>
-        <ion-icon slot="end" name="person"></ion-icon>
-      </ion-input>
-  </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" [(ngModel)]="user.password" name="password" required>
-        <ion-icon slot="end" name="lock-closed"></ion-icon>
-      </ion-input>
-    </ion-item>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="password"></ion-input>
+        </ion-item>
 
-    <ion-item *ngIf="!passwordValid" lines="none" color="danger">
-      <ion-label class="validpass" color="danger">La contraseña debe tener al menos 4 números, 3 caracteres y 1 mayúscula.</ion-label>
-    </ion-item>
+        <ion-text color="danger" *ngIf="errorMessage">Credenciales inválidas</ion-text>
 
-    <ion-button expand="full" type="submit" [disabled]="!loginForm.form.valid">Iniciar Sesión</ion-button><br>
-    
-    <a class="crear" (click)="registrar()" routerLink="/create-user"><strong>crear cuenta</strong></a><br>
-    <a class="crear" routerLink="/restablecer"><strong>Olvidates tu contraseña</strong></a>
-    <a class="crear" (click)="mostrarLista()">mostrar lista de usuarios creados</a>
-  </form>
+        <ion-button expand="block" (click)="login()" (click)="showLoading()">Iniciar Sesión</ion-button>
 
+        <ion-button  expand="block" color="light" routerLink="/register">¡Regístrate aquí!</ion-button>
 
-</div>
+        <div class="reset" lines="none">
+          <ion-button expand="full" fill="clear" color="dark" routerLink="/reset-password"
+            (click)="showLoading()">¿Olvidaste tu contraseña?</ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
-
