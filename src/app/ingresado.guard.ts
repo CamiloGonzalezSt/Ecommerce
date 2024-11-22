@@ -1,4 +1,4 @@
-import { CanActivate, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { SqliteService } from './services/sqlite.service';
 
@@ -9,20 +9,16 @@ import { SqliteService } from './services/sqlite.service';
 export class ingresadoGuard implements CanActivate {
   constructor(private router: Router, private sqliteService: SqliteService) {}
 
-  canActivate(): boolean {
-    // Verifica si hay un token almacenado en localStorage
-    const token = localStorage.getItem('auth_token');
+  async canActivate( 
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Promise<boolean> {
 
-    // Verifica si el usuario está autenticado con SqliteService
-    const isAuthenticatedSqlite = this.sqliteService.isAuthenticated();
-
-    if (token && isAuthenticatedSqlite) {
-      
-      return true;
+    const user = await this.sqliteService.getCurrentUser(); 
+    if (user && user.isAdmin) {
+      return true; 
     } else {
-      
-      this.router.navigate(['/login']);
-      return false;
+      this.router.navigate(['/login']); // Redirigir a la página de inicio si no es admin
+      return false; 
     }
   }
 }

@@ -11,14 +11,14 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductServiceService {
 
-  private apiUrl = "https://f8ba-190-153-153-125.ngrok-free.app/productos"; // URL base para el JSON Server
+  private apiUrl = "https://1848-190-215-154-112.ngrok-free.app//productos"; // URL base para el JSON Server
 
 
   constructor(private http: HttpClient) {}
 
   // Obtener todos los productos
   getProducts(): Observable<producto[]> {
-    return this.http.get<producto[]>("https://f8ba-190-153-153-125.ngrok-free.app/productos", {
+    return this.http.get<producto[]>("https://1848-190-215-154-112.ngrok-free.app//productos", {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })

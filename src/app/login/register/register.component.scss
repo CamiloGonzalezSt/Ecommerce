@@ -1,0 +1,118 @@
+.centered-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.logo-img {
+    display: block;
+    margin: 0 auto;
+    width: 50%;
+    height: 50%;
+    margin-bottom: 20px;
+
+}
+
+ion-card-content {
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+ion-input {
+    border-color: black;
+    border-radius: 10px;
+}
+
+ion-card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+ion-item {
+    margin-bottom: 15px;
+}
+
+.reg {
+    margin-top: 10px;
+}
+
+.animated-border-card {
+    position: relative;
+    padding: 20px;
+    /* Espaciado interno de la tarjeta */
+    background-color: white;
+    /* Fondo de la tarjeta */
+    border-radius: 20px;
+    /* Bordes redondeados */
+    z-index: 1;
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        /* Alinea el borde con la parte superior */
+        left: 0;
+        /* Alinea el borde con la parte izquierda */
+        right: 0;
+        /* Alinea el borde con la parte derecha */
+        bottom: 0;
+        /* Alinea el borde con la parte inferior */
+        border-radius: 20px;
+        /* Bordes redondeados del borde */
+        border: 4px solid transparent;
+        /* El borde es inicialmente transparente */
+        background-clip: padding-box;
+        /* Evita que el gradiente cubra el contenido */
+        z-index: -1;
+        /* Mantiene el borde detrás del contenido */
+        animation: rotateBorder 5s linear infinite;
+        /* Animación continua */
+        transition: border-color 0.5s;
+        /* Transición suave para el color del borde */
+    }
+}
+
+/* Animación que hace que el borde cambie de color */
+@keyframes rotateBorder {
+    0% {
+        border-color: #df3fff;
+        /* Color inicial */
+    }
+
+    25% {
+        border-color: #ff00c8;
+        /* Segundo color */
+    }
+
+    50% {
+        border-color: #4feafe;
+        /* Tercer color */
+    }
+
+    75% {
+        border-color: #35cbd3;
+        /* Cuarto color */
+    }
+
+    100% {
+        border-color: #ff0ca2;
+        /* Regresa al color inicial */
+    }
+}
+
+.volver {
+    margin-bottom: 5px;
+    padding: 15px;
+}
+
+.gato{
+    display: block;
+    margin: 0 auto;
+    height: 30%;
+    width: 30%;
+}

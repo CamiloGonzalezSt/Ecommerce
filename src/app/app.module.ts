@@ -10,13 +10,19 @@ import { SqliteService } from './services/sqlite.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
-
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @NgModule({
   declarations: [AppComponent, LogoutConfirmationComponent, NotFoundPage],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule, FormsModule],
-  providers: [SQLite,
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule, FormsModule, BrowserAnimationsModule,   MatSelectModule,
+    MatInputModule,
+    MatFormFieldModule,],
+  providers: [SQLite, InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SqliteService],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

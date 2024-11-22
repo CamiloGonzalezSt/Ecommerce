@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ProductServiceService } from '../producto/product-service.service';
+import { MenuController } from '@ionic/angular';
 
 export interface Producto {
   id: string;
@@ -17,20 +18,22 @@ export interface Producto {
   providedIn: 'root'
 })
 export class SqliteService {
+  private currentUsername: string | null = null;
+  private currentIsAdmin: number = 0;
   private db: SQLiteObject;
   private usersSubject = new BehaviorSubject<any[]>([]);
   users$ = this.usersSubject.asObservable();
   private authenticated: boolean = false;
-  private productosUrl = 'https://f8ba-190-153-153-125.ngrok-free.app/productos'; // URL JSON Server
+  private productosUrl = 'https://1848-190-215-154-112.ngrok-free.app//productos'; // URL JSON Server
   private productsSubject = new BehaviorSubject<Producto[]>([]);
   products$ = this.productsSubject.asObservable();
 
-  constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private productservice: ProductServiceService) {
+  constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private menuCtrl: MenuController) {
     this.init().then(() => {
-      this.loadInitialUsers();
       this.loadInitialProducts();  // Carga los productos después de inicializar la DB
     });
   }
+  
 
   async init() {
     // Inicializa la base de datos
@@ -39,37 +42,297 @@ export class SqliteService {
         name: 'mydb.db',
         location: 'default'
       });
-      
-      //await this.clearDatabase();
+      console.log('base de datos creada')
       await this.createTable();
-    } catch (error) {
-      console.error('Error al inicializar la base de datos', error);
+      console.log('tablas creadas')
+    } catch(error)  {
+      console.log('Error al inicializar la base de datos', error);
     }
   }
 
-  //async clearDatabase(): Promise<void> {
-  //  try {
-  //    await this.db.executeSql(`DELETE FROM productos`, []);
-  //    console.log('Base de datos SQLite limpiada');
-  //  } catch (error) {
-  //    console.error('Error al limpiar la base de datos:', error);
-  //  }
-  //}
+
 
   async createTable() {
-    // Crear tabla de productos
-    await this.db.executeSql(`CREATE TABLE IF NOT EXISTS productos (id TEXT PRIMARY KEY AUTOINCREMENT, nombre TEXT, descripcion TEXT, precio REAL, cantidad INTEGER)`,  []);
+    try {
+      // Crear tabla de productos
+      await this.db.executeSql(`
+        CREATE TABLE IF NOT EXISTS productos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          nombre TEXT, 
+          descripcion TEXT, 
+          precio REAL, 
+          cantidad INTEGER
+        )
+      `);
+      console.log('Tabla "productos" creada exitosamente');
+    } catch (error) {
+      console.error('Error al crear la tabla "productos":', error);
+    }
+  
+    try {
+      // Crear tabla de usuarios
+      await this.db.executeSql(`
+        CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          username TEXT UNIQUE, 
+          mail TEXT UNIQUE, 
+          password TEXT, 
+          isAdmin INTEGER DEFAULT 0
+        )
+      `);
+      console.log('Tabla "users" creada exitosamente');
+    } catch (error) {
+      console.error('Error al crear la tabla "users":', error);
+    }
+  
+    try {
+      // Crear tabla de carrito
+      await this.db.executeSql(`
+        CREATE TABLE IF NOT EXISTS cart (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          productoId INTEGER, 
+          nombre TEXT, 
+          descripcion TEXT, 
+          precio REAL, 
+          cantidad INTEGER,
+          FOREIGN KEY (productoId) REFERENCES productos(id)
+        )
+      `);
+      console.log('Tabla "cart" creada exitosamente');
+    } catch (error) {
+      console.error('Error al crear la tabla "cart":', error);
+    }
+  }
+  
+
+
+
+  public getDBInstance(): Promise<SQLiteObject> {
+    return Promise.resolve(this.db);
+  }
+  // Registro de un nuevo usuario
+  public async register(mail: string, username: string, password: string, isAdmin: number) {
+    const passwordRegex = /^(?=(?:.*\d){4})(?=(?:.*[a-zA-Z]){3})(?=.*[A-Z]).{8,}$/;
+    
+    if (!passwordRegex.test(password)) {
+      alert('La contraseña no cumple con los requisitos. Debe tener al menos 8 caracteres, una letra mayúscula y 4 números.');
+      return false;
+    }
+  
+    try {
+      const data = [mail, username, password, isAdmin];
+      await this.db.executeSql(
+        `INSERT INTO users (mail, username, password, isAdmin) VALUES (?, ?, ?, ?)`,
+        data
+      );
+      alert('Usuario registrado correctamente');
+      return true;
+    } catch (error) {
+      alert('Error al registrar el usuario: ' + JSON.stringify(error));
+      return false;
+    }
+  }
+  
+  
+
+  // Iniciar sesión 
+  public async login(username: string, password: string) {
+    try {
+      const result = await this.db.executeSql(`
+        SELECT * FROM users WHERE username = ? AND password = ?
+      `, [username, password]);
+  
+      if (result.rows.length > 0) {
+        const user = result.rows.item(0);
+  
+        if (user.isBlocked === 1) {  // Verifica si el usuario está bloqueado
+          alert('Tu cuenta está bloqueada. Contacta con el administrador.');
+          return { success: false };
+        }
+  
+        this.currentUsername = user.username;
+        this.currentIsAdmin = user.isAdmin; // 1 es admin
+  
+        if (this.currentIsAdmin) {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/home']);
+        }
+  
+        return { success: true };
+      } else {
+        alert('Credenciales inválidas');
+        return { success: false };
+      }
+    } catch (error) {
+      alert('Error al iniciar sesión');
+      return { success: false };
+    }
+  }
+  
+
+  public getUsername(): string | null {
+    return this.currentUsername;
   }
 
-  // Método para limpiar la tabla de productos
- // async clearDatabase(): Promise<void> {
- //   try {
- //     await this.db.executeSql(`DELETE FROM productos`, []);
- //     console.log('Base de datos SQLite limpiada');
- //   } catch (error) {
- //     console.error('Error al limpiar la base de datos:', error);
- //   }
- // }
+  public async getUser(id: number) {
+    const sql = 'SELECT * FROM users WHERE id = ?';
+    const result = await this.db.executeSql(sql, [id]);
+    return result.rows.item(0);
+  }
+
+  public async updateUserAdminStatus(id: number, isAdmin: number) {
+    const sql = 'UPDATE users SET isAdmin = ? WHERE id = ?';
+    return this.db.executeSql(sql, [isAdmin, id]);
+  }
+
+  public async getAllUsers() {
+    try {
+      const result = await this.db.executeSql(`SELECT * FROM users`, []);
+      const users = [];
+      for (let i = 0; i < result.rows.length; i++) {
+        users.push(result.rows.item(i));
+      }
+      return users;
+    } catch (error) {
+      alert('Error al obtener los users');
+      return [];
+    }
+  }
+
+  public async updateUser(id: number, username: string, isAdmin: number, isBlocked: number) {
+    const sql = 'UPDATE users SET username = ?, isAdmin = ? WHERE id = ?';
+    await this.db.executeSql(sql, [username, isAdmin ? 1 : 0, isBlocked ? 1 : 0, id]);
+}
+
+  public async deleteUser(id: number) {
+    const sql = 'DELETE FROM users WHERE id = ?';
+    await this.db.executeSql(sql, [id]);
+  }
+
+  public async getCurrentUser() {
+    const sql = 'SELECT * FROM users WHERE username = ?';
+    const result = await this.db.executeSql(sql, [this.currentUsername]);
+    return result.rows.item(0);
+  }
+
+  public async updateUserProfile(username: string, password: string) {
+    const sql = 'UPDATE users SET username = ?, password = ? WHERE username = ?';
+    await this.db.executeSql(sql, [username, password, this.currentUsername]);
+    this.currentUsername = username;
+  }
+
+  public async getUserStatus(userId: number) {
+    const sql = 'SELECT * FROM users WHERE id = ?';
+    const result = await this.db.executeSql(sql, [userId]);
+    return result.rows.item(0);
+  }
+
+  public async findUserByEmail(mail: string): Promise<any> {
+    try {
+      const query = 'SELECT * FROM users WHERE mail = ?';
+      const result = await this.db.executeSql(query, [mail]);
+  
+      if (result.rows.length > 0) {
+        return result.rows.item(0);
+      }
+      return null;
+    } catch (error) {
+      alert('Error en findUserByEmail: ' + JSON.stringify(error));
+      throw error; 
+    }
+  }
+
+  private async getCurrentUserId(): Promise<number | null> {
+    if (!this.currentUsername) {
+      return null;
+    }
+    const result = await this.db.executeSql(
+      'SELECT id FROM users WHERE username = ?',
+      [this.currentUsername]
+    );
+    return result.rows.length > 0 ? result.rows.item(0).id : null;
+  }
+
+  async updateUsername(newUsername: string) {
+    const userId = await this.getCurrentUserId(); // Método que obtiene el ID del usuario actual
+    return this.db.executeSql(
+      `UPDATE users SET username = ? WHERE id = ?`,
+      [newUsername, userId]
+    );
+  }
+
+  async validateCurrentPassword(currentPassword: string): Promise<boolean> {
+    const currentUser = await this.getCurrentUser();
+    return currentUser?.password === currentPassword; // Compara la contraseña actual con la almacenada
+  }
+  
+  async updatePassword(newPassword: string) {
+    const userId = await this.getCurrentUserId(); // Método que obtiene el ID del usuario actual
+    return this.db.executeSql(
+      `UPDATE users SET password = ? WHERE id = ?`,
+      [newPassword, userId]
+    );
+  }
+
+
+
+// CARRITO DE COMPRAS ////////////////////////////////////////////////////////
+
+public async addToCart(producto: any) {
+  try {
+    // Verificar si el producto ya está en el carrito
+    const result = await this.db.executeSql(`
+      SELECT * FROM cart WHERE productoId = ?
+    `, [producto.id]);
+
+    if (result.rows.length > 0) {
+      // Si el producto ya está en el carrito, incrementar la cantidad
+      const currentItem = result.rows.item(0);
+      const nuevaCantidad = currentItem.cantidad + 1;
+      await this.db.executeSql(`
+        UPDATE cart SET cantidad = ? WHERE productoId = ?
+      `, [nuevaCantidad, producto.id]);
+    } else {
+      // Si el producto no está en el carrito, agregarlo
+      await this.db.executeSql(`
+        INSERT INTO cart (productoId, nombre, descripcion, precio, cantidad) 
+        VALUES (?, ?, ?, ?, ?)
+      `, [producto.id, producto.nombre, producto.descripcion, producto.precio, 1]);
+    }
+
+    alert('Producto agregado al carrito');
+  } catch (error) {
+    alert('Error al agregar producto al carrito: ' + JSON.stringify(error));
+  }
+}
+
+public async getCartItems(): Promise<any[]> {
+  try {
+    const result = await this.db.executeSql('SELECT * FROM cart', []);
+    const cartItems = [];
+    for (let i = 0; i < result.rows.length; i++) {
+      cartItems.push(result.rows.item(i));
+    }
+    return cartItems;
+  } catch (error) {
+    alert('Error al obtener los productos del carrito: ' + JSON.stringify(error));
+    return [];
+  }
+}
+
+public async removeFromCart(productoId: number) {
+  try {
+    await this.db.executeSql('DELETE FROM cart WHERE productoId = ?', [productoId]);
+    alert('Producto eliminado del carrito');
+  } catch (error) {
+    alert('Error al eliminar el producto del carrito: ' + JSON.stringify(error));
+  }
+}
+
+
+
+
 
 
  async loadInitialProducts() {
@@ -129,7 +392,7 @@ async createProduct(producto: Producto): Promise<void> {
     );
 
     producto.id = newProductId.insertId.toString();
-    await this.http.post<Producto>("https://f8ba-190-153-153-125.ngrok-free.app/productos", producto).toPromise();
+    await this.http.post<Producto>("https://1848-190-215-154-112.ngrok-free.app//productos", producto).toPromise();
 
     this.productsSubject.next(await this.getLocalProducts());
   } catch (error) {
@@ -172,10 +435,10 @@ async syncProductsFromServer() {
   async deleteProduct(productId: string): Promise<void> {
     try {
         // Convertir el ID a número para SQLite
-        const id = Number(productId);
+        //const id = Number(productId);
 
         // Eliminar en SQLite
-        await this.db.executeSql(`DELETE FROM productos WHERE id = ?`, [id]);
+        await this.db.executeSql(`DELETE FROM productos WHERE id = ?`, [productId]);
 
         // Eliminar en JSON Server
         await this.http.delete(`${this.productosUrl}/${productId}`).toPromise();
@@ -212,78 +475,19 @@ async syncProductsFromServer() {
     return btoa(`${usuario}:${new Date().getTime()}`);
   }
 
-  logout() {
-    this.authenticated = false;
-    localStorage.removeItem('authenticated');
-    localStorage.removeItem('auth_token');
+  async logout() {
+    // Cierra el menú lateral y espera a que termine antes de navegar
+  this.menuCtrl.close().then(() => {
     this.router.navigate(['/login']);
+  }).catch(error => {
+    console.error('Error al cerrar el menú:', error);
+    this.router.navigate(['/login']); // Asegurarte de navegar incluso si falla el cierre del menú
+  });
   }
 
-  async createUser(usuario: string, password: string): Promise<boolean> {
-    const exists = this.usersSubject.getValue().some(u => u.usuario === usuario);
-    if (exists) {
-      return false; 
-    }
-
-    const newUser = { usuario, password };
-    const currentUsers = this.usersSubject.getValue();
-    currentUsers.push(newUser); 
-    this.usersSubject.next(currentUsers); 
-
-    await this.saveUserToDb(newUser); 
-    return true;
-  }
-
-  private async saveUserToDb(user: any): Promise<void> {
-    try {
-      await this.db.executeSql(`INSERT INTO usuarios (usuario, password) VALUES (?, ?)`, [
-        user.usuario,
-        user.password,
-      ]);
-      console.log('Usuario guardado en la base de datos:', user);
-    } catch (error) {
-      console.log('Error al guardar el usuario en la base de datos', error);
-    }
-  }
-
-  login(usuario: string, password: string): string | null {
-    const user = this.usersSubject.getValue().find(u => u.usuario === usuario && u.password === password);
-    
-    if (user) {
-      this.authenticated = true;
-      const token = this.generateToken(usuario);
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('isAuthenticated', 'true');
-      return token;
-    }
-    
-    return null; 
-   }
-
-  updateUser(updatedUser: any) {
-    const currentUsers = this.usersSubject.getValue();
-    const index = currentUsers.findIndex(user => user.usuario === updatedUser.usuario);
-    
-    if (index !== -1) {
-      currentUsers[index] = updatedUser; 
-      this.usersSubject.next(currentUsers); 
-      this.saveUserToDb(updatedUser); 
-    }
-  }
-
-  getUsers() {
-    return this.usersSubject.getValue();
-  }
 
   isAuthenticated(): boolean {
     const isAuth = localStorage.getItem('isAuthenticated');
     return isAuth === 'true';
-  }
-
-  private loadInitialUsers() {
-    this.usersSubject.next([
-      { usuario: 'camilo gonzalez', password: 'Cami3740' },
-      { usuario: 'alexander patiño', password: 'Alex2024' },
-    ]);
   }
 }

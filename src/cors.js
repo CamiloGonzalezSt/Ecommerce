@@ -11,9 +11,10 @@ server.post('/productos', (req, res) => {
     id: uuidv4(), // Genera un ID como string
     ...req.body
   };
-  router.db.get('productos').push(nuevoProducto).write(); // Agrega el producto al JSON
+  router.db.get('productos').push(nuevoProducto).write();
   res.status(201).json(nuevoProducto);
 });
+
 
 const options = {
   key: fs.readFileSync('C:/Users/cajgo/Desktop/server.key'), // Ruta a tu clave privada
@@ -26,7 +27,7 @@ const middlewares = jsonServer.defaults();
 
 // Configuración de CORS
 const corsOptions = {
-  origin: ' https://f8ba-190-153-153-125.ngrok-free.app ', // Debe coincidir con la URL de tu frontend
+  origin: '*', // Debe coincidir con la URL de tu frontend
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -38,5 +39,5 @@ server.use(router);
 
 // Crear el servidor HTTPS
 https.createServer(options, server).listen(3000, () => {
-  console.log('JSON Server is running securely on  https://f8ba-190-153-153-125.ngrok-free.app ');
+  console.log('JSON Server is running securely on  https://1848-190-215-154-112.ngrok-free.app/ ');
 });

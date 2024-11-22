@@ -1,3 +1,95 @@
 {
-  "productos": []
+  "productos": [
+    {
+      "id": 1,
+      "nombre": "Jeans Mujer Azul",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabricado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans1.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 2,
+      "nombre": "Jeans Mujer Negro",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabricado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans2.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 3,
+      "nombre": "Jeans Mujer Azul Media Noche",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabricado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans3.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 4,
+      "nombre": "Jeans Mujer ",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabircado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans4.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 5,
+      "nombre": "Jeans Mujer Azulado",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabircado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans5.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 6,
+      "nombre": "Jeans Mujer claro",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabircado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans6.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 7,
+      "nombre": "Jeans Mujer Azul",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabircado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans7.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 8,
+      "nombre": "Jeans Mujer Azul",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabircado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans8.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 9,
+      "nombre": "Jeans Mujer Azul",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabircado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans9.webp",
+      "categoria": "Categoria mujer"
+    },
+	{
+      "id": 10,
+      "nombre": "Jeans Mujer Azul",
+      "precio": 19.990,
+      "descripcion": "Jeans de terciopelo, fabircado en usa",
+      "cantidad":1,
+      "imagen": "assets/images/products/mujer/jeans_mujer/jeans10.webp",
+      "categoria": "Categoria mujer"
+    }
+    
+  ]
 }

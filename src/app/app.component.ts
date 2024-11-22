@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActionSheetController, MenuController } from '@ionic/angular'; // Asegúrate de importar MenuController
 import { register } from 'swiper/element/bundle';
 import { SqliteService } from './services/sqlite.service';
+import { Router } from '@angular/router';
 
 register();
 
@@ -17,7 +18,8 @@ export class AppComponent {
   constructor(
     private actionSheetCtrl: ActionSheetController,
     private menuCtrl: MenuController, // Inyectamos el MenuController
-    private service: SqliteService
+    private service: SqliteService,
+    private router: Router
   ) {
 
     this.initializeApp();
@@ -49,7 +51,7 @@ export class AppComponent {
           text: 'Sí, cerrar sesión',
           role: 'destructive',
           handler: () => {
-            this.cerrarSesion();
+            this.service.logout();
           }
         },
         {
@@ -65,9 +67,5 @@ export class AppComponent {
     await actionSheet.present();
   }
 
-  // Método para cerrar sesión
-  cerrarSesion() {
-    this.service.logout(); // Llama al método de cierre de sesión del servicio
-  }
   
 }
