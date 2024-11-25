@@ -174,9 +174,17 @@ openWhatsApp() {
 
 async agregarAlCarrito(producto: Producto) {
   try {
+    // Crear un objeto compatible con el método `addToCart`
+    const productoCarrito = {
+      id: producto.id,
+      name: producto.nombre, // Mapear 'nombre' a 'name'
+      price: producto.precio, // Mapear 'precio' a 'price'
+      cantidad: producto.cantidad,
+    };
+
     // Llamamos al servicio para agregar el producto a SQLite
-    const resultado = await this.carritoservice.addToCart(producto);
-    
+    const resultado = await this.carritoservice.addToCart(productoCarrito);
+
     if (resultado.success) {
       console.log(`Producto ${producto.nombre} agregado al carrito`);
     } else {

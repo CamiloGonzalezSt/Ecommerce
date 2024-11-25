@@ -21,7 +21,26 @@ export class CarroPage implements OnInit {
   // Cargar los productos del carrito desde la base de datos
   async loadCartItems() {
     this.cartItems = await this.cartService.getCartItems();
+    console.log('Productos cargados del carrito:', this.cartItems);
+    this.calculateTotal();
   }
+  
+
+  // src/app/carro/carro.page.ts
+calculateTotal() {
+  this.total = this.cartItems.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+}
+
+  
+  
+async addToCart(product: any) {
+  try {
+    await this.cartService.addToCart(product);
+    this.loadCartItems(); // Recargar la lista del carrito
+  } catch (error) {
+    console.error('Error al agregar al carrito:', error);
+  }
+}
 
   // Eliminar un producto del carrito
   async removeFromCart(productId: number) {

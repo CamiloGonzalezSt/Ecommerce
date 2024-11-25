@@ -6,63 +6,70 @@ import { SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
   providedIn: 'root'
 })
 export class CarritoService {
+  private cartKey = 'cart';
+
   private dbInstance!: SQLiteObject;
 
   constructor(private dbService: SqliteService) { 
     this.initializeDB();
+
   }
+
+  
   
    // Inicializar la base de datos obteniendo la instancia desde SqliteService
    private async initializeDB() {
     try {
       this.dbInstance = await this.dbService.getDBInstance();
+      await this.dbService.createTable();
     } catch (error) {
       console.error('Error al inicializar la base de datos', error);
     }
   }
 
-  async addToCart(product: any): Promise<{ success: boolean }> {
-    try {
-      // Verificar si el producto ya existe en el carrito
-      const existingProduct = await this.dbInstance.executeSql(
-        'SELECT * FROM cart WHERE product_id = ?', [product.id]
-      );
-  
-      if (existingProduct.length > 0) {
-        // Si el producto ya existe, solo actualizamos la cantidad
-        await this.dbInstance.executeSql(
-          'UPDATE cart SET quantity = quantity + 1 WHERE product_id = ?', [product.id]
-        );
-      } else {
-        // Si el producto no existe, lo agregamos al carrito
-        await this.dbInstance.executeSql(
-          'INSERT INTO cart (product_id, name, price, quantity) VALUES (?, ?, ?, ?)',
-          [product.id, product.name, product.price, 1]
-        );
+  // Ejemplo de servicio
+  addToCart(product: { id: number; name: string; price: number; cantidad: number }) {
+    return new Promise<{ success: boolean }>(async (resolve, reject) => {
+      try {
+        const response = await fetch('http://localhost:3000/cart', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(product),
+        });
+        if (response.ok) {
+          resolve({ success: true });
+        } else {
+          reject('Error al agregar al carrito');
+        }
+      } catch (error) {
+        reject(error);
       }
-      return { success: true };  // Retornamos un objeto indicando éxito
-    } catch (error) {
-      console.error('Error al agregar al carrito', error);
-      return { success: false };  // En caso de error, retornamos un objeto con éxito falso
-    }
+    });
   }
+  
+
   
 
 
   // Obtener los productos del carrito
   public async getCartItems(): Promise<any[]> {
     try {
-      const result = await this.dbInstance.executeSql('SELECT * FROM cart', []);
-      const cartItems = [];
-      for (let i = 0; i < result.rows.length; i++) {
-        cartItems.push(result.rows.item(i));
+      const response = await fetch('http://localhost:3000/cart');
+      if (response.ok) {
+        const cartItems = await response.json();
+        return cartItems;
+      } else {
+        console.error('Error al obtener los productos del carrito');
+        return [];
       }
-      return cartItems;
     } catch (error) {
-      console.error('Error al obtener productos del carrito', error);
+      console.error('Error al obtener los productos del carrito:', error);
       return [];
     }
   }
+  
 
   // Eliminar un producto del carrito
   public async removeFromCart(productoId: number): Promise<any> {
