@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProductServiceService } from '../product-service.service';
-import { producto } from '../model/ClProducto';
+import { Producto } from '../model/producto'; 
 
 @Component({
   selector: 'app-product-edit',
@@ -10,7 +10,7 @@ import { producto } from '../model/ClProducto';
   styleUrls: ['./product-edit.page.scss'],
 })
 export class ProductEditPage implements OnInit {
-  id: string; // ID del producto como string
+  id: number; // Asegúrate de que `id` es de tipo `number`
   nombre: string;
   precio: number;
   descripcion: string;
@@ -26,31 +26,28 @@ export class ProductEditPage implements OnInit {
   ngOnInit() {
     // Obtenemos el ID del producto desde los parámetros de la ruta
     this.route.params.subscribe(params => {
-      this.id = params['id']; // Mantener como string
+      this.id = +params['id']; // Convertir a número con "+"
       this.cargarProducto(this.id); // Carga el producto usando el ID
     });
   }
 
-  async cargarProducto(id: string) { 
-      const productos: producto[] = await this.productService.getProducts().toPromise() || [];
-      const productoEncontrado = productos.find(p => p.id === id); 
-      
-      if (productoEncontrado) {
-        this.nombre = productoEncontrado.nombre;
-        this.descripcion = productoEncontrado.descripcion;
-        this.precio = productoEncontrado.precio;
-        this.cantidad = productoEncontrado.cantidad;
-      } else {
-        console.error('Producto no encontrado');
-      }
+  async cargarProducto(id: number) { 
+    const productos: Producto[] = await this.productService.getProducts().toPromise() || [];
+    const productoEncontrado = productos.find(p => p.id === id); 
     
+    if (productoEncontrado) {
+      this.nombre = productoEncontrado.nombre;
+      this.descripcion = productoEncontrado.descripcion;
+      this.precio = productoEncontrado.precio;
+      this.cantidad = productoEncontrado.cantidad;
+    } else {
+      console.error('Producto no encontrado');
+    }
   }
-  
-  
 
   async guardarCambios() {
-    const updatedProduct: producto = {
-      id: this.id, // Asegúrate de que `id` es number
+    const updatedProduct: Producto = {  // Asegúrate de usar el tipo correcto
+      id: this.id,
       nombre: this.nombre,
       descripcion: this.descripcion,
       precio: this.precio,
@@ -70,5 +67,4 @@ export class ProductEditPage implements OnInit {
       alert('Error al actualizar el producto: ' + error);
     }
   }
-  
 }

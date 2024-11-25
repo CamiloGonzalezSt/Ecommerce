@@ -36,7 +36,7 @@ export class HomePage implements OnInit {
     'assets/images/banner/banner3.webp',
   ];
 
-  map: GoogleMap | undefined;  // Variable para el mapa
+  map: GoogleMap;  // Variable para el mapa
 
   constructor(
     private activeroute: ActivatedRoute, 
@@ -109,30 +109,58 @@ export class HomePage implements OnInit {
   
   
 
-  // Función para inicializar el mapa
   async createMap() {
+    // Crear el mapa
     this.map = await GoogleMap.create({
-      id: 'my-map',  // Un ID único para el mapa
-      element: document.getElementById('map') as HTMLElement,  // Contenedor del mapa en el footer
-      apiKey: 'AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU',  // nuestra key
+      id: 'my-map', // Un ID único para el mapa
+      element: document.getElementById('map') as HTMLElement, // Contenedor del mapa
+      apiKey: 'AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU', // Tu API Key
       config: {
         center: {
-          lat: -33.4489, 
-          lng: -70.6693,  
+          lat: -33.4489, // Coordenadas iniciales (Santiago, Chile)
+          lng: -70.6693,
         },
-        zoom: 12,  
+        zoom: 12, // Zoom inicial
       },
     });
 
-    //Agregar un marcador en el mapa
-    await this.map.addMarker({
-      coordinate: {
-        lat: -33.36344,
-        lng: -70.6807601,
-      },
-      title: "Duoc UC Sede Plaza Norte",
-      snippet: "Instituto Profesional",
-    });
+    // Solicitar geolocalización en tiempo real
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          // Actualizar el centro del mapa a la ubicación en tiempo real
+          await this.map.setCamera({
+            coordinate: {
+              lat: latitude,
+              lng: longitude,
+            },
+            zoom: 15, // Ajusta el zoom para centrarse mejor en el usuario
+          });
+
+          // Agregar un marcador para la ubicación actual
+          await this.map.addMarker({
+            coordinate: {
+              lat: latitude,
+              lng: longitude,
+            },
+            title: "Mi ubicación",
+            snippet: "Ubicación en tiempo real",
+          });
+        },
+        (error) => {
+          console.error('Error obteniendo la ubicación:', error);
+        },
+        {
+          enableHighAccuracy: true, // Utilizar la mejor precisión disponible
+          timeout: 10000, // Tiempo máximo para obtener la ubicación
+          maximumAge: 0, // No usar una ubicación previamente almacenada
+        }
+      );
+    } else {
+      console.error('Geolocalización no es compatible con este navegador.');
+    }
   }
 
 //boton de whatsapp

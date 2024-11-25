@@ -12,7 +12,7 @@ export class ProductAllPage implements OnInit {
   buttonLeerDisabled = false
   buttonActualizarDisabled = false
   buttonCrearDisabled = false
-  producto: producto = { id: '',  nombre: '', descripcion: '', precio: 0, cantidad:0 };;
+  producto: producto = { id: 0,  nombre: '', descripcion: '', precio: 0, cantidad:0 };;
 
   constructor() { }
   ngOnInit() {  }

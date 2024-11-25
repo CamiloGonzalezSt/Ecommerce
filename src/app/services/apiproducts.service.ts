@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiproductsService {
-  private apiUrl = 'https://1848-190-215-154-112.ngrok-free.app/productos'
+  private apiUrl: string = 'http://localhost:3000/productos'
   constructor(private http: HttpClient) { }
 
   getProductos(): Observable<Producto[]> { // Asegúrate de que la función devuelva un array de Producto

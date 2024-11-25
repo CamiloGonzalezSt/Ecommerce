@@ -1,10 +1,12 @@
-// list.page.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SqliteService } from 'src/app/services/sqlite.service';
-import { Producto } from 'src/app/services/sqlite.service';
 import { ProductServiceService } from '../product-service.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ApiproductsService } from 'src/app/services/apiproducts.service';
+import { Producto } from '../model/producto';
+
+
 
 @Component({
   selector: 'app-product-list',
@@ -18,16 +20,22 @@ export class ProductListPage implements OnInit, OnDestroy {
   constructor(
     private sqliteService: SqliteService,
     private productService: ProductServiceService,
-    private router: Router
+    private router: Router,
+    private apiproducts: ApiproductsService
   ) {}
 
   ngOnInit() {
-    this.cargarProductos();
+    // Suscripción inicial a los cambios de productos
     this.productSubscription = this.sqliteService.products$.subscribe(
       (productos) => {
         this.productos = productos;
       }
     );
+  }
+
+  ionViewWillEnter() {
+    // Cargar productos cada vez que se muestra la página
+    this.cargarProducto();
   }
 
   ngOnDestroy() {
@@ -36,33 +44,52 @@ export class ProductListPage implements OnInit, OnDestroy {
     }
   }
 
+  cargarProducto() {
+    this.apiproducts.getProductos().subscribe({
+      next: (productos) => {
+        this.productos = productos; // Actualiza la lista de productos
+        console.log('Productos cargados desde la API:', this.productos);
+      },
+      error: (err) => {
+        console.error('Error al cargar productos desde la API:', err);
+      },
+    });
+  }
+  
+
   async cargarProductos() {
     try {
+      console.log('Cargando productos desde el servidor y SQLite...');
       const localProducts = await this.sqliteService.getLocalProducts();
-      
       const serverProducts = await this.sqliteService.getProductsFromServer();
-
-      // Filtrar productos del servidor que no estén en la base de datos local
+  
+      console.log('Productos locales:', localProducts);
+      console.log('Productos del servidor:', serverProducts);
+  
+      // Filtrar productos del servidor que no estén en SQLite
       const newProducts = serverProducts.filter(
-        (serverProduct) => !localProducts.some(localProduct => localProduct.id === serverProduct.id)
+        (serverProduct) =>
+          !localProducts.some((localProduct) => localProduct.id === serverProduct.id)
       );
-
-      // Insertar los productos nuevos en la base de datos local
+  
+      // Insertar los productos nuevos en SQLite
       for (const product of newProducts) {
         await this.sqliteService.createProductInDb(product);
       }
-
-      // Actualizar la lista de productos en el componente directamente
+  
+      // Actualizar la lista de productos
       this.productos = [...localProducts, ...newProducts];
+      console.log('Productos sincronizados:', this.productos);
     } catch (error) {
       console.error('Error al cargar productos:', error);
     }
   }
+  
 
-  async eliminarProducto(productoId: string) {
+  async eliminarProducto(productoId: number) {
     try {
       // Eliminar producto del JSON Server
-      const response = await fetch(`https://1848-190-215-154-112.ngrok-free.app//productos/${productoId}`, {
+      const response = await fetch(`http://localhost:3000/productos/${productoId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

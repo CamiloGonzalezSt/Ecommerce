@@ -5,14 +5,9 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ProductServiceService } from '../producto/product-service.service';
 import { MenuController } from '@ionic/angular';
+import { Producto } from '../producto/model/producto';
 
-export interface Producto {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  precio: number;
-  cantidad: number;
-}
+
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +19,7 @@ export class SqliteService {
   private usersSubject = new BehaviorSubject<any[]>([]);
   users$ = this.usersSubject.asObservable();
   private authenticated: boolean = false;
-  private productosUrl = 'https://1848-190-215-154-112.ngrok-free.app//productos'; // URL JSON Server
+  private productosUrl = 'http://localhost:3000/productos'; // URL JSON Server
   private productsSubject = new BehaviorSubject<Producto[]>([]);
   products$ = this.productsSubject.asObservable();
 
@@ -282,30 +277,34 @@ export class SqliteService {
 public async addToCart(producto: any) {
   try {
     // Verificar si el producto ya está en el carrito
-    const result = await this.db.executeSql(`
-      SELECT * FROM cart WHERE productoId = ?
-    `, [producto.id]);
+    const result = await this.db.executeSql(
+      `SELECT * FROM cart WHERE productoId = ?`,
+      [producto.id]
+    );
 
     if (result.rows.length > 0) {
       // Si el producto ya está en el carrito, incrementar la cantidad
       const currentItem = result.rows.item(0);
       const nuevaCantidad = currentItem.cantidad + 1;
-      await this.db.executeSql(`
-        UPDATE cart SET cantidad = ? WHERE productoId = ?
-      `, [nuevaCantidad, producto.id]);
+      await this.db.executeSql(
+        `UPDATE cart SET cantidad = ? WHERE productoId = ?`,
+        [nuevaCantidad, producto.id]
+      );
+      console.log('Cantidad actualizada en el carrito');
     } else {
       // Si el producto no está en el carrito, agregarlo
-      await this.db.executeSql(`
-        INSERT INTO cart (productoId, nombre, descripcion, precio, cantidad) 
-        VALUES (?, ?, ?, ?, ?)
-      `, [producto.id, producto.nombre, producto.descripcion, producto.precio, 1]);
+      await this.db.executeSql(
+        `INSERT INTO cart (productoId, nombre, descripcion, precio, cantidad) 
+         VALUES (?, ?, ?, ?, ?)`,
+        [producto.id, producto.nombre, producto.descripcion, producto.precio, 1]
+      );
+      console.log('Producto agregado al carrito');
     }
-
-    alert('Producto agregado al carrito');
   } catch (error) {
-    alert('Error al agregar producto al carrito: ' + JSON.stringify(error));
+    console.error('Error al agregar producto al carrito:', error);
   }
 }
+
 
 public async getCartItems(): Promise<any[]> {
   try {
@@ -335,37 +334,45 @@ public async removeFromCart(productoId: number) {
 
 
 
- async loadInitialProducts() {
+async loadInitialProducts() {
   try {
     const localProducts = await this.getLocalProducts();
     const serverProducts = await this.getProductsFromServer();
-
-    // Evita duplicados combinando productos de forma única
+    
     const combinedProducts = [
-      ...localProducts, 
+      ...localProducts,
       ...serverProducts.filter(sp => !localProducts.some(lp => lp.id === sp.id))
     ];
-
-    // Emite la lista combinada para que `products$` tenga los productos actualizados
+    
     this.productsSubject.next(combinedProducts);
   } catch (error) {
-    console.error('Error al cargar productos iniciales', error);
+    console.error('Error al cargar productos iniciales:', error);
   }
 }
 
 
 async getProductsFromServer(): Promise<Producto[]> {
   try {
-    const response = await this.http.get<Producto[]>(this.productosUrl).toPromise();
-    return response || [];
+    const response = await fetch('http://localhost:3000/productos');
+    if (!response.ok) {
+      throw new Error(`Error al obtener productos: ${response.statusText}`);
+    }
+    return await response.json();
   } catch (error) {
-    console.error('Error al obtener productos del JSON Server:', error);
+    console.error('Error al obtener productos del servidor:', error);
     return [];
   }
 }
 
+
 async createProductInDb(producto: Producto): Promise<void> {
   try {
+    const existingProduct = await this.db.executeSql(`SELECT * FROM productos WHERE id = ?`, [producto.id]);
+    if (existingProduct.rows.length > 0) {
+      console.warn('El producto ya existe en la base de datos.');
+      return; // Evita duplicados
+    }
+
     await this.db.executeSql(
       `INSERT INTO productos (id, nombre, descripcion, precio, cantidad) VALUES (?, ?, ?, ?, ?)`, 
       [producto.id, producto.nombre, producto.descripcion, producto.precio, producto.cantidad]
@@ -392,7 +399,7 @@ async createProduct(producto: Producto): Promise<void> {
     );
 
     producto.id = newProductId.insertId.toString();
-    await this.http.post<Producto>("https://1848-190-215-154-112.ngrok-free.app//productos", producto).toPromise();
+    await this.http.post<Producto>("http://localhost:3000//productos", producto).toPromise();
 
     this.productsSubject.next(await this.getLocalProducts());
   } catch (error) {
@@ -406,6 +413,52 @@ async syncProductsFromServer() {
     await this.createProductInDb(producto);
   }
   this.productsSubject.next(await this.getLocalProducts());
+}
+
+async syncLocalAndServerData(): Promise<void> {
+  try {
+    const localProducts = await this.getLocalProducts();
+    const serverProducts = await this.getProductsFromServer();
+
+    // Agregar productos que no estén en el servidor
+    const unsyncedProducts = localProducts.filter(lp => 
+      !serverProducts.some(sp => sp.id === lp.id)
+    );
+
+    for (const product of unsyncedProducts) {
+      await this.http.post(this.productosUrl, product).toPromise();
+    }
+
+    // Actualizar base local con datos del servidor
+    for (const product of serverProducts) {
+      await this.createProductInDb(product);
+    }
+
+    console.log('Sincronización completada.');
+  } catch (error) {
+    console.error('Error durante la sincronización:', error);
+  }
+}
+
+
+async syncWithTransaction(): Promise<void> {
+  try {
+    await this.db.transaction(async tx => {
+      const serverProducts = await this.getProductsFromServer();
+      
+      for (const product of serverProducts) {
+        tx.executeSql(
+          `INSERT OR REPLACE INTO productos (id, nombre, descripcion, precio, cantidad) 
+           VALUES (?, ?, ?, ?, ?)`,
+          [product.id, product.nombre, product.descripcion, product.precio, product.cantidad]
+        );
+      }
+    });
+
+    console.log('Sincronización con transacción completada.');
+  } catch (error) {
+    console.error('Error en la transacción:', error);
+  }
 }
 
 
@@ -432,7 +485,7 @@ async syncProductsFromServer() {
   }
 
   // Eliminar producto en ambos (SQLite y JSON Server)
-  async deleteProduct(productId: string): Promise<void> {
+  async deleteProduct(productId: number): Promise<void> {
     try {
         // Convertir el ID a número para SQLite
         //const id = Number(productId);

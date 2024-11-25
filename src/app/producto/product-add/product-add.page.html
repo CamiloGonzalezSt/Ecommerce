@@ -1,4 +1,3 @@
-<!-- add.page.html -->
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -13,17 +12,37 @@
     <ion-label position="stacked">Nombre</ion-label>
     <ion-input [(ngModel)]="producto.nombre"></ion-input>
   </ion-item>
+
   <ion-item>
     <ion-label position="stacked">Descripción</ion-label>
     <ion-input [(ngModel)]="producto.descripcion"></ion-input>
   </ion-item>
+
   <ion-item>
     <ion-label position="stacked">Precio</ion-label>
     <ion-input type="number" [(ngModel)]="producto.precio"></ion-input>
   </ion-item>
+
   <ion-item>
     <ion-label position="stacked">Cantidad</ion-label>
     <ion-input type="number" [(ngModel)]="producto.cantidad"></ion-input>
   </ion-item>
+
+  <!-- Selector de Categoría -->
+  <ion-item>
+    <ion-label class="categoria" position="stacked">Categoría</ion-label>
+    <ion-select [(ngModel)]="producto.categoria">
+      <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">
+        {{ categoria }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- Selector de Imagen -->
+  <ion-item>
+    <ion-label position="stacked">Imagen</ion-label><br>
+    <input type="file" (change)="onImageSelected($event)" accept="image/*" />
+  </ion-item>
+
   <ion-button expand="full" (click)="agregarProducto()">Agregar Producto</ion-button>
 </ion-content>

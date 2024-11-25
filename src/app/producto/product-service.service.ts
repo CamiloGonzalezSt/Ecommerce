@@ -11,14 +11,14 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductServiceService {
 
-  private apiUrl = "https://1848-190-215-154-112.ngrok-free.app//productos"; // URL base para el JSON Server
+  private apiUrl = "http://localhost:3000//productos"; // URL base para el JSON Server
 
 
   constructor(private http: HttpClient) {}
 
   // Obtener todos los productos
   getProducts(): Observable<producto[]> {
-    return this.http.get<producto[]>("https://1848-190-215-154-112.ngrok-free.app//productos", {
+    return this.http.get<producto[]>(this.apiUrl, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
@@ -47,14 +47,14 @@ export class ProductServiceService {
   
 
   // Actualizar producto
-  updateProduct(id: string, productData: producto): Observable<producto> {
+  updateProduct(id: number, productData: producto): Observable<producto> {
     return this.http.put<producto>(`${this.apiUrl}/${id}`, productData).pipe(
       catchError(this.handleError)
     );
   }
 
   // Eliminar un producto por ID
-  deleteProduct(id: string): Observable<void> {
+  deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
