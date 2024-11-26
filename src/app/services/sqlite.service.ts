@@ -1,18 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ProductServiceService } from '../producto/product-service.service';
 import { MenuController } from '@ionic/angular';
 import { Producto } from '../producto/model/producto';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Storage } from '@capacitor/storage';
 
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class SqliteService {
+export class SqliteService  implements OnInit {
   private currentUsername: string | null = null;
   private currentIsAdmin: number = 0;
   private db: SQLiteObject;
@@ -24,81 +26,138 @@ export class SqliteService {
   products$ = this.productsSubject.asObservable();
 
   constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private menuCtrl: MenuController) {
-    this.init().then(() => {
+    this.resetDatabase().then(() => {
       this.loadInitialProducts();  // Carga los productos después de inicializar la DB
     });
   }
   
+  ngOnInit() {
+    // Verifica si el usuario está autenticado
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+      const currentUsername = localStorage.getItem('currentUsername');
+      const currentIsAdmin = localStorage.getItem('currentIsAdmin');
+      
+      // Redirige al usuario según su rol (admin o no admin)
+      if (currentIsAdmin === '1') {
+        this.router.navigate(['/admin']);
+      } else {
+        this.router.navigate(['/home']);
+      }
+    } else {
+      // Si no está autenticado, redirige al login
+      this.router.navigate(['/login']);
+    }
+  }
 
-  async init() {
-    // Inicializa la base de datos
+
+  // Método para eliminar la base de datos y luego volver a crearla
+  private async resetDatabase() {
     try {
-      this.db = await this.sqlite.create({
-        name: 'mydb.db',
-        location: 'default'
+      // Eliminar la base de datos si ya existe
+      await this.deleteDatabase();
+      console.log('Base de datos eliminada');
+      
+      // Inicializar la base de datos de nuevo
+      await this.init();
+    } catch (error) {
+      console.log('Error al resetear la base de datos', error);
+    }
+  }
+
+  // Eliminar la base de datos del sistema de archivos
+  private async deleteDatabase() {
+    try {
+      // Obtener el path del archivo de la base de datos
+      const dbPath = await Filesystem.getUri({
+        directory: Directory.Data,
+        path: 'mydb.db'
       });
-      console.log('base de datos creada')
-      await this.createTable();
-      console.log('tablas creadas')
-    } catch(error)  {
-      console.log('Error al inicializar la base de datos', error);
+
+      // Eliminar el archivo de la base de datos
+      await Filesystem.deleteFile({
+        directory: Directory.Data,
+        path: 'mydb.db'
+      });
+      console.log('Archivo de base de datos eliminado:', dbPath.uri);
+    } catch (error) {
+      console.error('Error al eliminar el archivo de la base de datos', error);
     }
   }
 
-
-
-  async createTable() {
-    try {
-      // Crear tabla de productos
-      await this.db.executeSql(`
-        CREATE TABLE IF NOT EXISTS productos (
-          id INTEGER PRIMARY KEY AUTOINCREMENT, 
-          nombre TEXT, 
-          descripcion TEXT, 
-          precio REAL, 
-          cantidad INTEGER
-        )
-      `);
-      console.log('Tabla "productos" creada exitosamente');
-    } catch (error) {
-      console.error('Error al crear la tabla "productos":', error);
-    }
-  
-    try {
-      // Crear tabla de usuarios
-      await this.db.executeSql(`
-        CREATE TABLE IF NOT EXISTS users (
-          id INTEGER PRIMARY KEY AUTOINCREMENT, 
-          username TEXT UNIQUE, 
-          mail TEXT UNIQUE, 
-          password TEXT, 
-          isAdmin INTEGER DEFAULT 0
-        )
-      `);
-      console.log('Tabla "users" creada exitosamente');
-    } catch (error) {
-      console.error('Error al crear la tabla "users":', error);
-    }
-  
-    try {
-      // Crear tabla de carrito
-      await this.db.executeSql(`
-        CREATE TABLE IF NOT EXISTS cart (
-          id INTEGER PRIMARY KEY AUTOINCREMENT, 
-          productoId INTEGER, 
-          nombre TEXT, 
-          descripcion TEXT, 
-          precio REAL, 
-          cantidad INTEGER,
-          FOREIGN KEY (productoId) REFERENCES productos(id)
-        )
-      `);
-      console.log('Tabla "cart" creada exitosamente');
-    } catch (error) {
-      console.error('Error al crear la tabla "cart":', error);
-    }
+  // dbService
+async init() {
+  try {
+    this.db = await this.sqlite.create({
+      name: 'database.db',
+      location: 'default'
+    });
+    console.log('Base de datos creada');
+    await this.createTable();
+    console.log('Tablas creadas');
+    return this.db; // Asegúrate de devolver la instancia de la base de datos
+  } catch (error) {
+    console.log('Error al inicializar la base de datos', error);
+    throw new Error('Error al inicializar la base de datos');
   }
+}
+
   
+
+
+async createTable() {
+  try {
+    // Crear tabla de productos
+    await this.db.executeSql(`
+      CREATE TABLE IF NOT EXISTS productos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        nombre TEXT, 
+        descripcion TEXT, 
+        precio REAL, 
+        cantidad INTEGER,
+        imagen TEXT,
+        categoria TEXT
+      )
+    `);
+    console.log('Tabla "productos" creada exitosamente');
+  } catch (error) {
+    console.error('Error al crear la tabla "productos":', error);
+  }
+
+  try {
+    // Crear tabla de usuarios
+    await this.db.executeSql(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        username TEXT UNIQUE, 
+        mail TEXT UNIQUE, 
+        password TEXT, 
+        isAdmin INTEGER DEFAULT 0
+      )
+    `);
+    console.log('Tabla "users" creada exitosamente');
+  } catch (error) {
+    console.error('Error al crear la tabla "users":', error);
+  }
+
+  try {
+    // Crear tabla de carrito
+    await this.db.executeSql(`
+      CREATE TABLE IF NOT EXISTS cart (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        productoId INTEGER, 
+        nombre TEXT, 
+        descripcion TEXT, 
+        precio REAL, 
+        cantidad INTEGER,
+        FOREIGN KEY (productoId) REFERENCES productos(id)
+      )
+    `);
+    console.log('Tabla "cart" creada exitosamente');
+  } catch (error) {
+    console.error('Error al crear la tabla "cart":', error);
+  }
+}
+
 
 
 
@@ -145,6 +204,14 @@ export class SqliteService {
           return { success: false };
         }
   
+        // Guardar en localStorage el estado de autenticación y datos del usuario
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('currentUsername', user.username);
+        localStorage.setItem('currentIsAdmin', user.isAdmin.toString());
+  
+        // Almacenar más detalles si es necesario (como el token o ID del usuario)
+        // localStorage.setItem('userToken', user.token);
+  
         this.currentUsername = user.username;
         this.currentIsAdmin = user.isAdmin; // 1 es admin
   
@@ -164,6 +231,8 @@ export class SqliteService {
       return { success: false };
     }
   }
+  
+  
   
 
   public getUsername(): string | null {
@@ -404,27 +473,40 @@ async createProductInDb(producto: Producto): Promise<void> {
 }
 
 async getLocalProducts(): Promise<Producto[]> {
-  const results = await this.db.executeSql(`SELECT * FROM productos`, []);
-  const productos: Producto[] = [];
-  for (let i = 0; i < results.rows.length; i++) {
-    productos.push(results.rows.item(i));
+  try {
+    const result = await this.db.executeSql('SELECT * FROM productos', []);
+    const productos: Producto[] = [];
+    for (let i = 0; i < result.rows.length; i++) {
+      productos.push(result.rows.item(i));
+    }
+    return productos;
+  } catch (error) {
+    console.error('Error al obtener productos locales:', error);
+    return [];
   }
-  return productos;
 }
+
 
 async createProduct(producto: Producto): Promise<void> {
   try {
-    const newProductId = await this.db.executeSql(
-      `INSERT INTO productos (nombre, descripcion, precio, cantidad) VALUES (?, ?, ?, ?)`, 
-      [producto.nombre, producto.descripcion, producto.precio, producto.cantidad]
-    );
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'X-Master-Key': '$2a$10$ojcKOiCAcMELufbBOq8j1erYzSBWTGT0it2D7I.rjsvPMIvBTlYz6',
+    });
 
-    producto.id = newProductId.insertId.toString();
-    await this.http.post<Producto>("https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e", producto).toPromise();
+    const response = await this.http.post(
+      'https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e',
+      { record: producto }, // JSONBin requiere que envíes el objeto dentro de "record"
+      { headers }
+    ).toPromise();
 
+    console.log('Producto añadido al servidor:', response);
+
+    // Actualizar SQLite local
+    await this.createProductInDb(producto);
     this.productsSubject.next(await this.getLocalProducts());
   } catch (error) {
-    console.error('Error al crear producto:', error);
+    console.error('Error al crear producto en el servidor:', error);
   }
 }
 
@@ -540,6 +622,7 @@ async syncWithTransaction(): Promise<void> {
     }
   }
 
+  
  
 
   
@@ -550,6 +633,11 @@ async syncWithTransaction(): Promise<void> {
   }
 
   async logout() {
+    // Eliminar los datos de localStorage al cerrar sesión
+  localStorage.removeItem('isAuthenticated');
+  localStorage.removeItem('currentUsername');
+  localStorage.removeItem('currentIsAdmin');
+  
     // Cierra el menú lateral y espera a que termine antes de navegar
   this.menuCtrl.close().then(() => {
     this.router.navigate(['/login']);
@@ -562,6 +650,16 @@ async syncWithTransaction(): Promise<void> {
 
   isAuthenticated(): boolean {
     const isAuth = localStorage.getItem('isAuthenticated');
+    console.log('Is Authenticated:', isAuth);  // Verifica el valor en consola
     return isAuth === 'true';
+  }
+  
+
+  public getCurrentUsername(): string | null {
+    return localStorage.getItem('currentUsername');
+  }
+
+  public getCurrentIsAdmin(): boolean {
+    return localStorage.getItem('currentIsAdmin') === '1';
   }
 }

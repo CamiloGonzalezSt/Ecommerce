@@ -15,6 +15,8 @@ export class ProductEditPage implements OnInit {
   precio: number;
   descripcion: string;
   cantidad: number;
+  imagen: string;
+  categoria: string;
 
   constructor(
     private sqlite: SqliteService,
@@ -40,6 +42,8 @@ export class ProductEditPage implements OnInit {
       this.descripcion = productoEncontrado.descripcion;
       this.precio = productoEncontrado.precio;
       this.cantidad = productoEncontrado.cantidad;
+      this.imagen = productoEncontrado.imagen;
+      this.categoria = productoEncontrado.categoria;
     } else {
       console.error('Producto no encontrado');
     }
@@ -51,7 +55,9 @@ export class ProductEditPage implements OnInit {
       nombre: this.nombre,
       descripcion: this.descripcion,
       precio: this.precio,
-      cantidad: this.cantidad
+      cantidad: this.cantidad,
+      imagen: this.imagen,
+      categoria: this.categoria
     };
   
     try {

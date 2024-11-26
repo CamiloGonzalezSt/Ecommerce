@@ -1,67 +1,113 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { v4 as uuidv4 } from 'uuid';
-import { producto } from './model/ClProducto';
-import { environment } from 'src/environments/environment';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { Producto } from './model/producto';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductServiceService {
-
-  private apiUrl = "https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e/productos"; // URL base para el JSON Server
-
+  private apiUrl = 'https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e'; // URL del JSON bin
+  private apiKey = '$2a$10$ojcKOiCAcMELufbBOq8j1erYzSBWTGT0it2D7I.rjsvPMIvBTlYz6'; // Reemplaza con tu clave de API
 
   constructor(private http: HttpClient) {}
 
   // Obtener todos los productos
-  getProducts(): Observable<producto[]> {
-    return this.http.get<producto[]>(this.apiUrl, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
+  getProducts(): Observable<Producto[]> {
+    return this.http
+      .get<any>(this.apiUrl, {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'X-Master-Key': this.apiKey,
+        }),
       })
-    }).pipe(
-      catchError(error => {
-        console.error('Error al obtener productos', error);
-        return throwError(error); // Propaga el error
-      })
-    );
+      .pipe(
+        map((response) => response.record), // `record` contiene los datos reales
+        catchError((error) => {
+          console.error('Error al obtener productos', error);
+          return throwError(error); // Propaga el error
+        })
+      );
   }
 
   // Agregar un nuevo producto
-  addProduct(nombre: string, precio: number): Observable<producto> {
-    const newProduct = {
-      id: uuidv4(), // Genera un ID único
-      nombre,
-      precio
-    };
-
-    return this.http.post<producto>(`${this.apiUrl}`, newProduct, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    }).pipe(
-      catchError(this.handleError)
-    );
- }
-  
-
-  // Actualizar producto
-  updateProduct(id: number, productData: producto): Observable<producto> {
-    return this.http.put<producto>(`${this.apiUrl}/${id}`, productData).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  // Eliminar un producto por ID
-  deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      catchError(this.handleError)
+  addProduct(nombre: string, precio: number): Observable<Producto[]> {
+    return this.getProducts().pipe(
+      switchMap((productos) => {
+        const newProduct: Producto = {
+          id: productos.length ? productos[productos.length - 1].id + 1 : 1, // Genera un nuevo ID
+          nombre,
+          precio,
+          descripcion: '',
+          cantidad: 0,
+          imagen: '',
+          categoria: '',
+        };
+        productos.push(newProduct); // Agrega el nuevo producto
+        return this.updateBin(productos); // Actualiza el bin completo
+      }),
+      catchError((error) => {
+        console.error('Error al agregar producto', error);
+        return throwError(error);
+      })
     );
   }
 
-  private handleError(error: any) {
-    console.error('An error occurred', error);
-    return throwError(`Error: ${error.message || error}`);
+  // Actualizar un solo producto por ID
+  updateProduct(id: number, updatedProduct: Partial<Producto>): Observable<Producto[]> {
+    return this.getProducts().pipe(
+      switchMap((productos) => {
+        const index = productos.findIndex((producto) => producto.id === id); // Encuentra el índice del producto
+        if (index === -1) {
+          throw new Error(`Producto con ID ${id} no encontrado`);
+        }
+        // Actualiza solo los campos proporcionados
+        productos[index] = { ...productos[index], ...updatedProduct };
+        return this.updateBin(productos); // Actualiza el bin completo
+      }),
+      catchError((error) => {
+        console.error('Error al actualizar producto', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // Actualizar el JSON bin completo
+  private updateBin(productos: Producto[]): Observable<Producto[]> {
+    return this.http
+      .put<any>(
+        this.apiUrl,
+        { record: productos }, // Sobrescribe el bin completo
+        {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json',
+            'X-Master-Key': this.apiKey,
+          }),
+        }
+      )
+      .pipe(
+        map((response) => response.record), // Devuelve los datos actualizados
+        catchError((error) => {
+          console.error('Error al actualizar bin', error);
+          return throwError(error);
+        })
+      );
+  }
+
+  // Eliminar un producto
+  deleteProduct(id: number): Observable<Producto[]> {
+    return this.getProducts().pipe(
+      switchMap((productos) => {
+        const productosActualizados = productos.filter(
+          (producto) => producto.id !== id
+        ); // Filtra los productos
+        return this.updateBin(productosActualizados); // Actualiza el bin completo
+      }),
+      catchError((error) => {
+        console.error('Error al eliminar producto', error);
+        return throwError(error);
+      })
+    );
   }
 }

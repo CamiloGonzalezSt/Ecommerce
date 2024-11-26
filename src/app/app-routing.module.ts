@@ -34,27 +34,27 @@ const routes: Routes = [
   },
   {
     path: 'product-add',
-    loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule)
+    loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule), canActivate: [ingresadoGuard]
   },
   {
     path: 'product-list',
-    loadChildren: () => import('./producto/product-list/product-list.module').then(m => m.ProductListPageModule)
+    loadChildren: () => import('./producto/product-list/product-list.module').then(m => m.ProductListPageModule), canActivate: [ingresadoGuard]
   },
   {
     path: 'product-edit/:id',
-    loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule)
+    loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule), canActivate: [ingresadoGuard]
   },
   {
     path: 'product-all',
-    loadChildren: () => import('./producto/product-all/product-all.module').then(m => m.ProductAllPageModule)
+    loadChildren: () => import('./producto/product-all/product-all.module').then(m => m.ProductAllPageModule), canActivate: [ingresadoGuard]
   },
   {
     path: 'users',
-    loadChildren: () => import('./users/users.module').then( m => m.UsersPageModule)
+    loadChildren: () => import('./users/users.module').then( m => m.UsersPageModule), canActivate: [ingresadoGuard]
   },
   {
     path: 'client-profile',
-    loadChildren: () => import('./login/profiles/client-profile/client-profile.module').then(m => m.ClientProfilePageModule)
+    loadChildren: () => import('./login/profiles/client-profile/client-profile.module').then(m => m.ClientProfilePageModule), canActivate: [ingresadoGuard]
   },
   {
     path: 'reset-password',

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { SqliteService } from './sqlite.service';
 
 
 
@@ -9,11 +10,11 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService  {
   private isAuthenticated: boolean = false;
   private isAdmin: number = 0;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient, private sqliteService: SqliteService) { }
 
  
 

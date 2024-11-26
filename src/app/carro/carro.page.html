@@ -1,17 +1,36 @@
+<!-- carro.page.html -->
+
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button href="/home">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Carrito</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let item of cartItems">
       <ion-label>
-        <h2>{{ item.name }}</h2>
-        <p>Precio: {{ item.price | currency }}</p>
+        <h2>{{ item.nombre }}</h2>
+        <p>{{ item.descripcion }}</p>
+        <p>Precio: ${{ item.precio }}</p>
         <p>Cantidad: {{ item.cantidad }}</p>
       </ion-label>
-      <ion-button color="danger" (click)="removeFromCart(item.id)">Eliminar</ion-button>
+      <ion-buttons slot="end">
+        <ion-button (click)="removeFromCart(item.id)">Eliminar</ion-button>
+      </ion-buttons>
     </ion-item>
   </ion-list>
-  <ion-footer>
-    <ion-toolbar>
-      <ion-title>Total: {{ total | currency }}</ion-title>
-    </ion-toolbar>
-  </ion-footer>
+
+  <ion-item>
+    <ion-label>
+      <h3>Total: ${{ total }}</h3>
+    </ion-label>
+  </ion-item>
+
+  <ion-button expand="full" color="danger" (click)="clearCart()">Vaciar Carrito</ion-button>
 </ion-content>

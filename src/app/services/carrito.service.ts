@@ -1,111 +1,97 @@
+// carrito.service.ts
+
 import { Injectable } from '@angular/core';
 import { SqliteService } from './sqlite.service';
 import { SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
+import { Producto } from '../producto/model/producto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarritoService {
-  private cartKey = 'cart';
+  private carrito: Producto[] = []; // Arreglo para almacenar los productos en el carrito
+  private total: number = 0; // Total acumulado
+  private db: SQLiteObject;
 
-  private dbInstance!: SQLiteObject;
+  constructor(private dbService: SqliteService) { }
 
-  constructor(private dbService: SqliteService) { 
-    this.initializeDB();
-
-  }
-
+  // Método para agregar un producto al carrito en SQLite
+ // Método para agregar un producto al carrito en SQLite
+async addToCart(producto: Producto) {
+  const db = await this.dbService.init();
   
+  if (!db) {
+    console.error('La base de datos no está inicializada.');
+    return;
+  }
+
+  const result = await db.executeSql('SELECT * FROM cart WHERE id = ?', [producto.id]);
   
-   // Inicializar la base de datos obteniendo la instancia desde SqliteService
-   private async initializeDB() {
-    try {
-      this.dbInstance = await this.dbService.getDBInstance();
-      await this.dbService.createTable();
-    } catch (error) {
-      console.error('Error al inicializar la base de datos', error);
-    }
+  if (result.rows.length > 0) {
+    // Si el producto ya está en el carrito, incrementar la cantidad
+    const existingProduct = result.rows.item(0);
+    await db.executeSql('UPDATE cart SET cantidad = cantidad + 1 WHERE id = ?', [producto.id]);
+  } else {
+    // Si el producto no está en el carrito, insertarlo
+    await db.executeSql('INSERT INTO cart (id, nombre, precio, cantidad, descripcion) VALUES (?, ?, ?, ?, ?)', 
+                        [producto.id, producto.nombre, producto.precio, 1, producto.descripcion]);
   }
+}
 
-  // Ejemplo de servicio
-  addToCart(product: { id: number; name: string; price: number; cantidad: number }) {
-    return new Promise<{ success: boolean }>(async (resolve, reject) => {
-      try {
-        const response = await fetch('https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54ecart', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(product),
-        });
-        if (response.ok) {
-          resolve({ success: true });
-        } else {
-          reject('Error al agregar al carrito');
-        }
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
+// Método para obtener los productos del carrito desde SQLite
+async getCartItems() {
+  const db = await this.dbService.init();
   
+  if (!db) {
+    console.error('La base de datos no está inicializada.');
+    return [];
+  }
 
+  const result = await db.executeSql('SELECT * FROM cart', []);
   
-
-
-  // Obtener los productos del carrito
-  public async getCartItems(): Promise<any[]> {
-    try {
-      const response = await fetch('https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54ecart');
-      if (response.ok) {
-        const cartItems = await response.json();
-        return cartItems;
-      } else {
-        console.error('Error al obtener los productos del carrito');
-        return [];
-      }
-    } catch (error) {
-      console.error('Error al obtener los productos del carrito:', error);
-      return [];
-    }
+  this.carrito = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    this.carrito.push(result.rows.item(i));
   }
+
+  return this.carrito;
+}
+
+// Método para eliminar productos del carrito
+async removeFromCart(productId: number) {
+  const db = await this.dbService.init();
   
-
-  // Eliminar un producto del carrito
-  public async removeFromCart(productoId: number): Promise<any> {
-    try {
-      await this.dbInstance.executeSql('DELETE FROM cart WHERE productoId = ?', [productoId]);
-      return { success: true };
-    } catch (error) {
-      console.error('Error al eliminar producto del carrito', error);
-      return { success: false, error };
-    }
+  if (!db) {
+    console.error('La base de datos no está inicializada.');
+    return;
   }
 
-  // Vaciar el carrito
-  public async clearCart(): Promise<any> {
-    try {
-      await this.dbInstance.executeSql('DELETE FROM cart', []);
-      return { success: true };
-    } catch (error) {
-      console.error('Error al vaciar el carrito', error);
-      return { success: false, error };
-    }
+  await db.executeSql('DELETE FROM cart WHERE id = ?', [productId]);
+}
+
+// Limpiar carrito
+async clearCart() {
+  const db = await this.dbService.init();
+  
+  if (!db) {
+    console.error('La base de datos no está inicializada.');
+    return;
   }
 
-  // Obtener el total del carrito (suma de precios)
-  public async getCartTotal(): Promise<number> {
-    try {
-      const result = await this.dbInstance.executeSql('SELECT SUM(precio * cantidad) AS total FROM cart', []);
-      if (result.rows.length > 0) {
-        return result.rows.item(0).total;
-      } else {
-        return 0;
-      }
-    } catch (error) {
-      console.error('Error al calcular el total del carrito', error);
-      return 0;
-    }
+  await db.executeSql('DELETE FROM cart', []);
+}
+
+// Método para obtener el total
+async getTotal() {
+  const db = await this.dbService.init();
+  
+  if (!db) {
+    console.error('La base de datos no está inicializada.');
+    return 0;
   }
- 
+
+  const result = await db.executeSql('SELECT SUM(precio * cantidad) AS total FROM cart', []);
+  return result.rows.item(0).total || 0;
+}
+
 }

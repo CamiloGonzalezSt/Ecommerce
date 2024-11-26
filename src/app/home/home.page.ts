@@ -114,7 +114,6 @@ export class HomePage implements OnInit {
   }
   
   
-  
 
   async createMap() {
     // Crear el mapa
@@ -184,19 +183,19 @@ async agregarAlCarrito(producto: Producto) {
     // Crear un objeto compatible con el método `addToCart`
     const productoCarrito = {
       id: producto.id,
-      name: producto.nombre, // Mapear 'nombre' a 'name'
-      price: producto.precio, // Mapear 'precio' a 'price'
+      nombre: producto.nombre, // Mapear 'nombre' a 'name'
+      precio: producto.precio, // Mapear 'precio' a 'price'
       cantidad: producto.cantidad,
+      descripcion: producto.descripcion,
+      imagen: producto.imagen,
+      categoria: producto.categoria,
     };
 
     // Llamamos al servicio para agregar el producto a SQLite
-    const resultado = await this.carritoservice.addToCart(productoCarrito);
+    await this.carritoservice.addToCart(productoCarrito);
 
-    if (resultado.success) {
-      console.log(`Producto ${producto.nombre} agregado al carrito`);
-    } else {
-      console.error('Error al agregar producto al carrito');
-    }
+    // Si no ocurre un error, consideramos que se agregó correctamente
+    console.log(`Producto ${producto.nombre} agregado al carrito`);
   } catch (error) {
     console.error('Error al agregar al carrito', error);
   }

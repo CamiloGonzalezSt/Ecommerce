@@ -12,13 +12,26 @@ export class ingresadoGuard implements CanActivate {
   async canActivate( 
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Promise<boolean> {
-
-    const user = await this.sqliteService.getCurrentUser(); 
-    if (user && user.isAdmin) {
-      return true; 
+    
+    // Verificar si el usuario está autenticado en localStorage
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    
+    if (isAuthenticated) {
+      // Verificar si el usuario está en la base de datos (opcional, si usas SQLite)
+      const user = await this.sqliteService.getCurrentUser();
+      
+      if (user) {
+        // Si el usuario está autenticado y existe en la base de datos, permitir la navegación
+        return true;
+      } else {
+        // Si el usuario no está en la base de datos, redirigir al login
+        this.router.navigate(['/login']);
+        return false;
+      }
     } else {
-      this.router.navigate(['/login']); // Redirigir a la página de inicio si no es admin
-      return false; 
+      // Si no está autenticado, redirigir al login
+      this.router.navigate(['/login']);
+      return false;
     }
   }
 }
