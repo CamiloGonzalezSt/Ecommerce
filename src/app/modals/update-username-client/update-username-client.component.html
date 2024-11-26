@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Cambiar Nombre de Usuario</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()" color="secondary">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label position="stacked">Nuevo Nombre de Usuario</ion-label>
+    <ion-input [(ngModel)]="newUsername"></ion-input>
+  </ion-item>
+
+  <ion-button expand="full" (click)="saveUsername()">Guardar</ion-button>
+</ion-content>

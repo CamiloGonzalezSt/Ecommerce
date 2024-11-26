@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Cambiar Foto de Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="photo-preview" *ngIf="profilePhoto">
+    <img [src]="profilePhoto" alt="Foto de perfil actual">
+  </div>
+
+  <ion-button expand="full" (click)="selectPhoto()">Seleccionar Foto</ion-button>
+  <ion-button expand="full" color="primary" (click)="savePhoto()">Guardar</ion-button>
+</ion-content>

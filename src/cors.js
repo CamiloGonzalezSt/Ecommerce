@@ -39,5 +39,5 @@ server.use(router);
 
 // Crear el servidor HTTPS
 https.createServer(options, server).listen(3000, () => {
-  console.log('JSON Server is running securely on  http://localhost:3000/ ');
+  console.log('JSON Server is running securely on  https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e ');
 });

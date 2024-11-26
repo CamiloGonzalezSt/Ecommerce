@@ -89,7 +89,7 @@ export class ProductListPage implements OnInit, OnDestroy {
   async eliminarProducto(productoId: number) {
     try {
       // Eliminar producto del JSON Server
-      const response = await fetch(`http://localhost:3000/productos/${productoId}`, {
+      const response = await fetch(`https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54eproductos/${productoId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

@@ -15,13 +15,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { CommonModule } from '@angular/common';
+import { UpdateClienteComponent } from './modals/update-cliente/update-cliente.component';
+import { UpdatePasswordClientComponent } from './modals/update-password-client/update-password-client.component';
+import { UpdateUsernameClientComponent } from './modals/update-username-client/update-username-client.component';
+import { UpdateProfilePhotoComponent } from './modals/update-profile-photo/update-profile-photo.component';
 
 
 @NgModule({
-  declarations: [AppComponent, LogoutConfirmationComponent, NotFoundPage],
+  declarations: [AppComponent, LogoutConfirmationComponent, NotFoundPage, UpdateClienteComponent, UpdatePasswordClientComponent, UpdateUsernameClientComponent, UpdateProfilePhotoComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule, FormsModule, BrowserAnimationsModule,   MatSelectModule,
     MatInputModule,
-    MatFormFieldModule,],
+    MatFormFieldModule, CommonModule, IonicModule],
   providers: [SQLite, InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SqliteService],
   bootstrap: [AppComponent],

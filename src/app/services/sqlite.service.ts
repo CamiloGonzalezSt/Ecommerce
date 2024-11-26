@@ -19,7 +19,7 @@ export class SqliteService {
   private usersSubject = new BehaviorSubject<any[]>([]);
   users$ = this.usersSubject.asObservable();
   private authenticated: boolean = false;
-  private productosUrl = 'http://localhost:3000/productos'; // URL JSON Server
+  private productosUrl = 'https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e'; // URL JSON Server
   private productsSubject = new BehaviorSubject<Producto[]>([]);
   products$ = this.productsSubject.asObservable();
 
@@ -270,6 +270,27 @@ export class SqliteService {
     );
   }
 
+  async updateProfilePhoto(photo: string) {
+    const userId = await this.getCurrentUserId();
+    if (userId) {
+      const sql = 'UPDATE users SET profilePhoto = ? WHERE id = ?';
+      await this.db.executeSql(sql, [photo, userId]);
+    }
+  }
+  
+  async getCurrentProfilePhoto(): Promise<string | null> {
+    const user = await this.getCurrentUser();
+    return user?.profilePhoto || null;
+  }
+
+  async deleteProfilePhoto() {
+    const userId = await this.getCurrentUserId();
+    if (userId) {
+      const sql = 'UPDATE users SET profilePhoto = NULL WHERE id = ?';
+      await this.db.executeSql(sql, [userId]);
+    }
+  }
+
 
 
 // CARRITO DE COMPRAS ////////////////////////////////////////////////////////
@@ -353,7 +374,7 @@ async loadInitialProducts() {
 
 async getProductsFromServer(): Promise<Producto[]> {
   try {
-    const response = await fetch('http://localhost:3000/productos');
+    const response = await fetch('https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e');
     if (!response.ok) {
       throw new Error(`Error al obtener productos: ${response.statusText}`);
     }
@@ -399,7 +420,7 @@ async createProduct(producto: Producto): Promise<void> {
     );
 
     producto.id = newProductId.insertId.toString();
-    await this.http.post<Producto>("http://localhost:3000//productos", producto).toPromise();
+    await this.http.post<Producto>("https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e", producto).toPromise();
 
     this.productsSubject.next(await this.getLocalProducts());
   } catch (error) {

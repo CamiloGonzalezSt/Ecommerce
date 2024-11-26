@@ -98,14 +98,21 @@ export class HomePage implements OnInit {
 
   //aqui cargamos los productos con los id que nosotros queramos como del id 1 al 6
   cargarProductos() {
-    this.apiproducts.getProductos().subscribe((data: Producto[]) => {
-      // Asegúrate de que todos los productos tengan un id numérico
-      this.productos = data.map((producto) => ({
-        ...producto,
-        id: typeof producto.id === 'string' ? parseInt(producto.id, 10) : producto.id
-      })).filter((producto) => producto.id >= 1 && producto.id <= 6);
-    });
+    this.apiproducts.getProductos().subscribe(
+      (data: Producto[]) => {
+        if (Array.isArray(data)) {
+          this.productos = data.filter((producto) => producto.id >= 1 && producto.id <= 6);
+          console.log('Productos cargados:', this.productos);
+        } else {
+          console.error('La respuesta no es un arreglo:', data);
+        }
+      },
+      (error) => {
+        console.error('Error cargando productos:', error);
+      }
+    );
   }
+  
   
   
 

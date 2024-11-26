@@ -31,7 +31,7 @@ export class CarritoService {
   addToCart(product: { id: number; name: string; price: number; cantidad: number }) {
     return new Promise<{ success: boolean }>(async (resolve, reject) => {
       try {
-        const response = await fetch('http://localhost:3000/cart', {
+        const response = await fetch('https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54ecart', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export class CarritoService {
   // Obtener los productos del carrito
   public async getCartItems(): Promise<any[]> {
     try {
-      const response = await fetch('http://localhost:3000/cart');
+      const response = await fetch('https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54ecart');
       if (response.ok) {
         const cartItems = await response.json();
         return cartItems;

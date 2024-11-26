@@ -1,13 +1,24 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>client-profile</ion-title>
+    <ion-title>Mi Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()" color="secondary">Volver</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">client-profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="profile-container">
+    <div class="avatar-wrapper" (click)="openEditPhotoModal()">
+      <ion-avatar class="profile-avatar">
+        <img [src]="profilePhoto || '../assets/photos/perfil.jpg'" alt="Foto de perfil">
+      </ion-avatar>
+      <ion-icon class="edit-icon" name="pencil-outline"></ion-icon>
+    </div>
+    <h2>{{ username }}</h2>
+    <p>Contraseña: ******</p>
+  </div>
+  <ion-button expand="full" color="danger" *ngIf="profilePhoto" (click)="deleteProfilePhoto()">Eliminar Foto de Perfil</ion-button>
+  <ion-button expand="full" (click)="openEditUsernameModal()">Cambiar Nombre de Usuario</ion-button>
+  <ion-button expand="full" color="secondary" (click)="openEditPasswordModal()">Cambiar Contraseña</ion-button>
 </ion-content>

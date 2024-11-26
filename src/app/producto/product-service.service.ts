@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductServiceService {
 
-  private apiUrl = "http://localhost:3000//productos"; // URL base para el JSON Server
+  private apiUrl = "https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e/productos"; // URL base para el JSON Server
 
 
   constructor(private http: HttpClient) {}
