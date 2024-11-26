@@ -19,6 +19,11 @@ export class DetalleProductoPage implements OnInit {
       price: 15990,
       image:'assets/images/products/hombre/poleron_hombre/hoddie1.webp', colors: ['Negro', 'Morado']  
     },
+    {id: 100, name: 'Zapatillas Mujer New Balance 990v5', description: 'Zapatillas New Balance 990v5 para mujer, perfectas para una comodidad superior y estilo.', price: 119900, image: 'assets/images/products/mujer/zapatillas_mujer/new1.webp', colors: ['Negro', 'Morado']},
+    {id: 200, name: 'Jeans Mujer Casual', description: 'Jeans cómodos y versátiles para mujer, ideales para cualquier ocasión.', price: 17900, image: 'assets/images/products/mujer/jeans_mujer/jeans1.webp', colors: ['Negro', 'Morado']},
+    {id: 300, name: 'Polera Mujer Básica', description: 'Polera básica para mujer, cómoda y ligera, ideal para el día a día.', price: 15900, image: 'assets/images/products/mujer/polera_mujer/polera1.webp', colors: ['Negro', 'Morado']},
+    {id: 400, name: 'Polerón Mujer Casual', description: 'Polerón cómodo y ligero, perfecto para el uso diario.', price: 14990, image: 'assets/images/products/mujer/poleron_mujer/poleron1.webp', colors: ['Negro', 'Morado']},
+    
     {id: 11,
       name:'Polera regular hombre',
       description:'Confeccionado 100% algodón',
@@ -56,6 +61,8 @@ export class DetalleProductoPage implements OnInit {
       price: 25990,
       image:'assets/images/products/mujer/jeans_mujer/jeans1.webp', colors: ['Negro', 'Morado']
     },
+
+    
     {id: 71,
       name:'Zapatilla urbana mujer Nike',
       description:'Modelo: Nike Dunk Low Rosas',

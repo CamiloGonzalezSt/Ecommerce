@@ -60,10 +60,20 @@ const routes: Routes = [
     path: 'register',
     component: RegisterComponent
   },
+
+  {
+    path: 'mujer-productos',
+    loadChildren: () => import('./mujer-productos/mujer-productos.module').then( m => m.MujerProductosPageModule)
+  },
+  {
+    path: 'tecnologia',
+    loadChildren: () => import('./tecnologia/tecnologia.module').then( m => m.TecnologiaPageModule)
+  },
   {
     path: '**',
     component: NotFoundPage
   },
+  
 
 
 ];
