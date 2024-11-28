@@ -25,7 +25,7 @@ export class ClientProfilePage  implements OnInit{
 
   async loadUserProfile() {
     const user = await this.dbService.getCurrentUser();
-    this.username = user?.username || 'Usuario';
+    this.username = user?.username;
   }
 
   async openEditProfileModal() {

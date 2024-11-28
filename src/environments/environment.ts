@@ -4,17 +4,7 @@
 
 export const environment = {  
   production: false,
-  
-    firebaseConfig:{
-      apiKey: "AIzaSyBodD3Sbap7BzLJRGXHdkCEzvpRGUV3hq4",
-      authDomain: "ecommerce-ca.firebaseapp.com",
-      projectId: "ecommerce-ca",
-      storageBucket: "ecommerce-ca.firebasestorage.app",
-      messagingSenderId: "622977442857",
-      appId: "1:622977442857:web:5c8cb84684e9243423a838",
-      measurementId: "G-TFGBQ7SHC1"
-    },
-    apiKey: "AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU"
+    apiKey: "AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU",
    }
 
 

@@ -25,7 +25,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore'
-import { environment } from '../environments/environment';
+
 
 
 const firebaseConfig = {
@@ -45,7 +45,7 @@ const analytics = getAnalytics(app);
   declarations: [AppComponent, LogoutConfirmationComponent, NotFoundPage, UpdateClienteComponent, UpdatePasswordClientComponent, UpdateUsernameClientComponent, UpdateProfilePhotoComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule, FormsModule, BrowserAnimationsModule,   MatSelectModule,
     MatInputModule,
-    MatFormFieldModule, CommonModule, IonicModule, IonicStorageModule, AngularFireModule.initializeApp(firebaseConfig), AngularFireModule.initializeApp(environment.firebaseConfig),
+    MatFormFieldModule, CommonModule, IonicModule, IonicStorageModule, AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule, ],
   providers: [SQLite, InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SqliteService],

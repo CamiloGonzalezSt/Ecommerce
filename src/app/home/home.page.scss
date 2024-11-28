@@ -98,16 +98,13 @@ swiper-container {
   }
 
   .premium-footer {
-    --background: #f9f9f9; /* Fondo claro y limpio */
+    --background: 'transparent'; /* Fondo claro y limpio */
     border-top: 2px solid rgba(0, 0, 0, 0.1); /* Línea de separación tenue */
     padding: 40px 20px;
     position: relative;
     text-align: center;
   
-    /* Fondo dinámico con gradiente */
-    background: linear-gradient(135deg, #f4f4f4 50%, #ffffff 100%);
-    background-size: 400% 400%;
-    animation: gradient-animation 10s ease infinite;
+   
   
     .map-container {
       max-width: 900px;
