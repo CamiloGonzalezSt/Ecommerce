@@ -31,8 +31,11 @@ export class SqliteService  implements OnInit {
 
   constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private menuCtrl: MenuController,private firestore: AngularFirestore) {
     this.resetDatabase().then(() => {
-      this.loadInitialProducts();  // Carga los productos después de inicializar la DB
+      console.log('Base de datos reseteada correctamente');
+    }).catch(error => {
+      console.error('Error al resetear la base de datos:', error);
     });
+    this.loadInitialProducts();
   }
   
   ngOnInit() {
@@ -60,13 +63,13 @@ export class SqliteService  implements OnInit {
       // Obtener el path del archivo de la base de datos
       const dbPath = await Filesystem.getUri({
         directory: Directory.Data,
-        path: 'mydb.db'
+        path: 'database.db'
       });
 
       // Eliminar el archivo de la base de datos
       await Filesystem.deleteFile({
         directory: Directory.Data,
-        path: 'mydb.db'
+        path: 'database.db'
       });
       console.log('Archivo de base de datos eliminado:', dbPath.uri);
     } catch (error) {
@@ -182,29 +185,21 @@ async createTable() {
   // Iniciar sesión 
   public async login(username: string, password: string): Promise<{ success: boolean }> {
     try {
-      // Verificar las credenciales en la base de datos SQLite
       const result = await this.db.executeSql(
         `SELECT * FROM users WHERE username = ? AND password = ?`,
         [username, password]
       );
   
-      // Si se encuentra el usuario
       if (result.rows.length > 0) {
         const user = result.rows.item(0);
   
-        // Guardar la información del usuario en variables locales
         this.currentUsername = user.username;
-        this.currentIsAdmin = user.isAdmin;
   
-        // Generar el token (igual que en tu primer login)
         const token = this.generateToken(username);
-  
-        // Guardar token y estado de autenticación en localStorage
         localStorage.setItem('auth_token', token);
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('currentUser', username); // opcional, si quieres guardar el usuario actual
+        localStorage.setItem('currentUser', user.username); // Guardar el nombre correcto
   
-        // Redirigir según el rol del usuario
         if (this.currentIsAdmin) {
           this.router.navigate(['/admin']);
         } else {
@@ -213,16 +208,15 @@ async createTable() {
   
         return { success: true };
       } else {
-        // Si no se encuentra el usuario o las credenciales son incorrectas
         alert('Credenciales inválidas');
         return { success: false };
       }
     } catch (error) {
-      // En caso de un error en la base de datos
       alert('Error al iniciar sesión');
       return { success: false };
     }
   }
+  
   
   
   

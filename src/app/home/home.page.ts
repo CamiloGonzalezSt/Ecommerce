@@ -88,16 +88,27 @@ export class HomePage implements OnInit {
   }
 
   async ngOnInit() {
-    //aqui nos carga los productos que en esa funcion llama desde el json en apiservice
+    // Cargar productos y nombre de usuario al inicializar
     this.cargarProductosFiltrados();
     this.cargarTodosLosProductosDesdeAPI();
+    await this.cargarNombreUsuario(); // Nueva función centralizada
+    await this.createMap(); // Crear el mapa
+  }
 
-    this.nombreUsuario =  await this.sqliteService.getUsername();
+  async cargarNombreUsuario() {
+    try {
+      // Intentar obtener el nombre del usuario desde SQLite
+      const usuario = await this.sqliteService.getCurrentUser();
+      this.nombreUsuario = usuario?.username || null;
 
-    // Llama a la función para crear el mapa cuando la página se inicialice
-    await this.createMap();
-    await this.sqliteService.init();
-  
+      // Si no está en SQLite, intenta obtenerlo de localStorage
+      if (!this.nombreUsuario) {
+        this.nombreUsuario = localStorage.getItem('currentUser');
+      }
+    } catch (error) {
+      console.error('Error cargando el nombre de usuario:', error);
+      this.nombreUsuario = null;
+    }
   }
 
   
@@ -107,7 +118,7 @@ export class HomePage implements OnInit {
     (data: Producto[]) => {
       if (Array.isArray(data)) {
         // Filtra los productos para que solo se carguen los de los IDs que especificaste
-        const idsPermitidos = [1, 2, 15, 18, 23, 26, 28, 30];
+        const idsPermitidos = [1, 20, 39, 40, 61, 70, 82, 90, 45, 52];
         this.productos = data.filter(producto => idsPermitidos.includes(producto.id));
         this.productosFiltrados = [...this.productos]; // Inicializa los productos filtrados con los productos filtrados por ID
       } else {
