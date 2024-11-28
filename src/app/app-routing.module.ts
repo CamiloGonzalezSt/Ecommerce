@@ -9,7 +9,7 @@ import { RegisterComponent } from './login/register/register.component';
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)////, canActivate: [ingresadoGuard]
   },
   {
     path: '',
@@ -22,39 +22,35 @@ const routes: Routes = [
   },
   {
     path: 'carro',
-    loadChildren: () => import('./carro/carro.module').then(m => m.CarroPageModule)
+    loadChildren: () => import('./carro/carro.module').then(m => m.CarroPageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'contacto',
-    loadChildren: () => import('./contacto/contacto.module').then(m => m.ContactoPageModule)
+    loadChildren: () => import('./contacto/contacto.module').then(m => m.ContactoPageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'detalle-producto',
-    loadChildren: () => import('./detalle-producto/detalle-producto.module').then(m => m.DetalleProductoPageModule)
+    loadChildren: () => import('./detalle-producto/detalle-producto.module').then(m => m.DetalleProductoPageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'product-add',
-    loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule), canActivate: [ingresadoGuard]
+    loadChildren: () => import('./producto/product-add/product-add.module').then(m => m.ProductAddPageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'product-list',
-    loadChildren: () => import('./producto/product-list/product-list.module').then(m => m.ProductListPageModule), canActivate: [ingresadoGuard]
+    loadChildren: () => import('./producto/product-list/product-list.module').then(m => m.ProductListPageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'product-edit/:id',
-    loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule), canActivate: [ingresadoGuard]
+    loadChildren: () => import('./producto/product-edit/product-edit.module').then(m => m.ProductEditPageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'product-all',
-    loadChildren: () => import('./producto/product-all/product-all.module').then(m => m.ProductAllPageModule), canActivate: [ingresadoGuard]
-  },
-  {
-    path: 'users',
-    loadChildren: () => import('./users/users.module').then( m => m.UsersPageModule), canActivate: [ingresadoGuard]
+    loadChildren: () => import('./producto/product-all/product-all.module').then(m => m.ProductAllPageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'client-profile',
-    loadChildren: () => import('./login/profiles/client-profile/client-profile.module').then(m => m.ClientProfilePageModule), canActivate: [ingresadoGuard]
+    loadChildren: () => import('./login/profiles/client-profile/client-profile.module').then(m => m.ClientProfilePageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'reset-password',
@@ -67,16 +63,25 @@ const routes: Routes = [
 
   {
     path: 'mujer-productos',
-    loadChildren: () => import('./mujer-productos/mujer-productos.module').then( m => m.MujerProductosPageModule)
+    loadChildren: () => import('./mujer-productos/mujer-productos.module').then( m => m.MujerProductosPageModule)//, canActivate: [ingresadoGuard]
   },
   {
     path: 'tecnologia',
-    loadChildren: () => import('./tecnologia/tecnologia.module').then( m => m.TecnologiaPageModule)
+    loadChildren: () => import('./tecnologia/tecnologia.module').then( m => m.TecnologiaPageModule)//, canActivate: [ingresadoGuard]
+  },
+  {
+    path: 'hombre',
+    loadChildren: () => import('./hombre/hombre.module').then( m => m.HombrePageModule)
+  },
+  {
+    path: 'hogar',
+    loadChildren: () => import('./hogar/hogar.module').then( m => m.HogarPageModule)
   },
   {
     path: '**',
     component: NotFoundPage
-  },
+  }
+
   
 
 

@@ -8,21 +8,41 @@
 </ion-header>
 
 <ion-content>
-
-  <!-- Barra  -->
+  <!-- Barra de búsqueda -->
   <ion-item lines="none">
     <ion-searchbar 
+      [(ngModel)]="searchTerm"
+      (ionInput)="onSearchChange($event)"
       animated="true" 
-      placeholder="Buscar" 
-      style="flex: 1; --padding-start: 0; --padding-end: 0; --background: #f0f0f0;" 
+      placeholder="Buscar productos...." 
+      class="minimal-searchbar"
     ></ion-searchbar>
-    <ion-button 
-      fill="clear" 
-     
-      style="margin-left: 10px;" routerLink="/client-profile">
-      <ion-icon slot="icon-only" name="person-outline"></ion-icon>
-    </ion-button>
+    <ion-button
+  fill="clear"
+  class="custom-icon-button"
+  routerLink="/client-profile"
+>
+  <ion-icon slot="icon-only" name="person-outline"></ion-icon>
+</ion-button>
+
+
+
   </ion-item>
+
+  <!-- Contenedor de productos desplegables -->
+  <div *ngIf="productosFiltrados.length > 0 && searchTerm" class="search-dropdown">
+    <ion-list>
+      <ion-item *ngFor="let producto of productosFiltrados" (click)="verDetalle(producto.id)">
+        <ion-thumbnail slot="start">
+          <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{ producto.nombre }}</h2>
+          <p>{{ producto.precio | currency:'CLP':'symbol':'1.0-0' }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
 
   <!-- Slider de imágenes -->
   <div class="swiper-container">
@@ -32,32 +52,26 @@
       </div>
     </div>
   </div>
-  
-  
 
   <h1 class="fav"><strong>Productos más vistos</strong></h1>
   <ion-grid>
     <ion-row>
-      
-   <!--aqui estamos inyectando los productos que rescatamos del json-->
-  <ion-col size="6" size-md="6" size-lg="4" *ngFor="let producto of productos">
-  <ion-card  >
-    <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
-    <ion-card-header>
-      <ion-card-title>{{ producto.nombre }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>${{ producto.precio }}</p>
-            <ion-button class="btn" color="success" [routerLink]="['/detalle-producto']" [queryParams]="{ id: producto.id }">Ver detalles</ion-button>
-            <ion-button class="btn" color="primary" (click)="agregarAlCarrito(producto)" [queryParams]="{ nombre: producto.nombre }" >Agregar al carrito</ion-button>
-
-      
-    </ion-card-content>
-  </ion-card>
-</ion-col>
-</ion-row>
-</ion-grid>
-
+      <ion-col size="6" size-md="6" size-lg="4" *ngFor="let producto of productos">
+        <ion-card (click)="verDetalle(producto.id)" button>
+          <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
+          <ion-card-header>
+            <ion-card-title>{{ producto.nombre }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{ producto.precio | currency:'':'symbol':'1.0-0' }}</p>
+            <ion-button class="btn" color="primary" (click)="agregarAlCarrito(producto)" (click)="$event.stopPropagation()">
+              Agregar al carrito
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
   <ion-fab vertical="bottom" horizontal="start" slot="fixed">
     <ion-fab-button color="success" (click)="openWhatsApp()">
@@ -71,11 +85,16 @@
     </ion-fab-button>
   </ion-fab>
 
-  <ion-footer>
+  <ion-footer class="premium-footer">
     <div class="map-container">
-      <h2>¿Dónde ubicarnos?</h2>
-      <p>Dirección: Duoc UC Sede Plaza Norte, Santa Elena de Huechuraba S/N</p>
-      <capacitor-google-map id="map" style="height: 200px; width: 100%;"></capacitor-google-map>
+      <h2 class="footer-title">¿Dónde ubicarnos?</h2>
+      <p class="footer-address">Duoc UC Sede Plaza Norte<br>Santa Elena de Huechuraba S/N</p>
+      <div class="map-wrapper">
+        <capacitor-google-map id="map"></capacitor-google-map>
+      </div>
     </div>
   </ion-footer>
+  
+  
+  
 </ion-content>

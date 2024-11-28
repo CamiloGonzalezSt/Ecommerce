@@ -9,7 +9,7 @@ import { GoogleMap } from '@capacitor/google-maps';  // Importa GoogleMap para e
 import { SqliteService } from '../services/sqlite.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { CarritoService } from '../services/carrito.service';
-import { AuthService } from '../services/auth.service';
+
 import { Producto } from '../producto/model/producto';
 import { ApiproductsService } from '../services/apiproducts.service';
 
@@ -28,7 +28,9 @@ export class HomePage implements OnInit {
   @ViewChild(IonContent, { static: false }) content: IonContent | undefined;
   productos: Producto[] = [];
   nombreUsuario: string | null = null;
-  
+  productosApi: Producto[] = []; // Todos los productos de la API
+  productosFiltrados: Producto[] = []; // Productos filtrados para la búsqueda
+  searchTerm: string = ''; // Término de búsqueda
 
   banners: string[] = [
     'assets/images/banner/banner1.webp',
@@ -44,12 +46,13 @@ export class HomePage implements OnInit {
     private animationCtrl: AnimationController,
     private sqliteService: SqliteService,
     private inAppBrowser: InAppBrowser,
-    private authservice: AuthService,
     private apiproducts: ApiproductsService,
     private carritoservice: CarritoService
   ) {
  
-    this.nombreUsuario = this.sqliteService.getUsername();
+    this.sqliteService.getUsername().then(username => {
+      this.nombreUsuario = username;
+    });
   }
 
   
@@ -86,9 +89,10 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
     //aqui nos carga los productos que en esa funcion llama desde el json en apiservice
-    this.cargarProductos();
+    this.cargarProductosFiltrados();
+    this.cargarTodosLosProductosDesdeAPI();
 
-    this.nombreUsuario = this.sqliteService.getUsername();
+    this.nombreUsuario =  await this.sqliteService.getUsername();
 
     // Llama a la función para crear el mapa cuando la página se inicialice
     await this.createMap();
@@ -96,22 +100,67 @@ export class HomePage implements OnInit {
   
   }
 
-  //aqui cargamos los productos con los id que nosotros queramos como del id 1 al 6
-  cargarProductos() {
-    this.apiproducts.getProductos().subscribe(
-      (data: Producto[]) => {
-        if (Array.isArray(data)) {
-          this.productos = data.filter((producto) => producto.id >= 1 && producto.id <= 6);
-          console.log('Productos cargados:', this.productos);
-        } else {
-          console.error('La respuesta no es un arreglo:', data);
-        }
-      },
-      (error) => {
-        console.error('Error cargando productos:', error);
+  
+ // Función para cargar productos filtrados que se mostrarán en el home
+ cargarProductosFiltrados() {
+  this.apiproducts.getProducts().subscribe(
+    (data: Producto[]) => {
+      if (Array.isArray(data)) {
+        // Filtra los productos para que solo se carguen los de los IDs que especificaste
+        const idsPermitidos = [1, 2, 15, 18, 23, 26, 28, 30];
+        this.productos = data.filter(producto => idsPermitidos.includes(producto.id));
+        this.productosFiltrados = [...this.productos]; // Inicializa los productos filtrados con los productos filtrados por ID
+      } else {
+        console.error('La respuesta no es un arreglo:', data);
       }
+    },
+    (error) => {
+      console.error('Error cargando productos:', error);
+    }
+  );
+}
+
+// Función para cargar todos los productos de la API
+cargarTodosLosProductosDesdeAPI() {
+  this.apiproducts.getProducts().subscribe(
+    (data: Producto[]) => {
+      if (Array.isArray(data)) {
+        this.productosApi = data; // Guarda todos los productos en productosApi
+      } else {
+        console.error('La respuesta no es un arreglo:', data);
+      }
+    },
+    (error) => {
+      console.error('Error cargando productos desde API:', error);
+    }
+  );
+}
+
+// Método para filtrar productos según el término de búsqueda
+filtrarProductos() {
+  if (this.searchTerm.trim() === '') {
+    // Si no hay búsqueda, mostramos todos los productos cargados desde la API
+    this.productosFiltrados = [...this.productosApi];
+  } else {
+    // Si hay búsqueda, filtramos solo por el nombre del producto
+    this.productosFiltrados = this.productosApi.filter((producto) =>
+      producto.nombre.toLowerCase().includes(this.searchTerm.toLowerCase()) // Comparación insensible a mayúsculas
     );
   }
+}
+
+// Este método se llama cuando el valor de la barra de búsqueda cambia
+onSearchChange(event: any) {
+  this.searchTerm = event.detail.value;
+  this.filtrarProductos(); // Llama al método para filtrar
+}
+
+// Método para ver el detalle de un producto
+verDetalle(id: number) {
+  this.router.navigate(['/detalle-producto'], {
+    queryParams: { id: id },
+  });
+}
   
   
 
@@ -223,7 +272,7 @@ async obtenerProductosDesdeJSON() {
 }
 
 logout() {
-  this.authservice.logout();
+  this.sqliteService.logout();
   this.router.navigate(['/login']);
 }
 }

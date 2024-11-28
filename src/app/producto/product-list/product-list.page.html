@@ -10,20 +10,29 @@
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let producto of productos">
-      <!-- Imagen del producto -->
-      <ion-img [src]="producto.imagen" alt="{{ producto.nombre }}" style="width: 50px; height: 50px; object-fit: cover;"></ion-img>
-      
-      <ion-label>
-        <h2>{{ producto.nombre }}</h2>
-        <p>Precio: {{ producto.precio | currency }}</p>
-      </ion-label>
+      <!-- Card del producto -->
+      <ion-card class="producto-card">
+        
+        <!-- Imagen del producto -->
+        <ion-img [src]="producto.imagen" alt="{{ producto.nombre }}" class="producto-img"></ion-img>
 
-      <ion-button color="danger" (click)="eliminarProducto(producto.id)">
-        Eliminar
-      </ion-button>
-      <ion-button color="primary" (click)="editarProducto(producto.nombre)">
-        Editar
-      </ion-button>
+        <ion-card-header>
+          <ion-card-title class="producto-nombre">{{ producto.nombre }}</ion-card-title>
+          <ion-card-subtitle class="producto-precio">{{ producto.precio | currency:'':'symbol':'1.0-0' }}</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="acciones">
+            <ion-button color="danger" expand="full" (click)="onDeleteProduct(producto.id)">
+              Eliminar
+            </ion-button>
+            <ion-button  expand="full" (click)="editarProducto(producto.id)">
+              Editar
+            </ion-button>
+          </div>
+        </ion-card-content>
+
+      </ion-card>
     </ion-item>
   </ion-list>
 

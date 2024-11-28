@@ -20,13 +20,33 @@ import { UpdateClienteComponent } from './modals/update-cliente/update-cliente.c
 import { UpdatePasswordClientComponent } from './modals/update-password-client/update-password-client.component';
 import { UpdateUsernameClientComponent } from './modals/update-username-client/update-username-client.component';
 import { UpdateProfilePhotoComponent } from './modals/update-profile-photo/update-profile-photo.component';
+import { IonicStorageModule } from '@ionic/storage-angular';
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore'
+import { environment } from '../environments/environment';
 
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBodD3Sbap7BzLJRGXHdkCEzvpRGUV3hq4",
+  authDomain: "ecommerce-ca.firebaseapp.com",
+  projectId: "ecommerce-ca",
+  storageBucket: "ecommerce-ca.firebasestorage.app",
+  messagingSenderId: "622977442857",
+  appId: "1:622977442857:web:5c8cb84684e9243423a838",
+  measurementId: "G-TFGBQ7SHC1"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 @NgModule({
   declarations: [AppComponent, LogoutConfirmationComponent, NotFoundPage, UpdateClienteComponent, UpdatePasswordClientComponent, UpdateUsernameClientComponent, UpdateProfilePhotoComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule, FormsModule, BrowserAnimationsModule,   MatSelectModule,
     MatInputModule,
-    MatFormFieldModule, CommonModule, IonicModule],
+    MatFormFieldModule, CommonModule, IonicModule, IonicStorageModule, AngularFireModule.initializeApp(firebaseConfig), AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFirestoreModule, ],
   providers: [SQLite, InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SqliteService],
   bootstrap: [AppComponent],

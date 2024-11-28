@@ -9,6 +9,6 @@ server.use(cors());
 server.use(middlewares);
 server.use(router);
 server.listen(3000, () => {
-  console.log('JSON Server is running on  https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e');
-  console.log('JSON Server is running on  https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e');
+  console.log('JSON Server is running on  https://6747cf3538c8741641d7bd62.mockapi.io/api/v1/productos');
+  console.log('JSON Server is running on  https://6747cf3538c8741641d7bd62.mockapi.io/api/v1/productos');
 });

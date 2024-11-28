@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { ApiproductsService } from '../services/apiproducts.service';
 import { CarritoService } from '../services/carrito.service';
 
+
 @Component({
-  selector: 'app-tecnologia',
-  templateUrl: './tecnologia.page.html',
-  styleUrls: ['./tecnologia.page.scss'],
+  selector: 'app-hombre',
+  templateUrl: './hombre.page.html',
+  styleUrls: ['./hombre.page.scss'],
 })
-export class TecnologiaPage implements OnInit {
+export class HombrePage implements OnInit {
   productos: Producto[] = [];
   constructor(
     private router: Router,
@@ -17,11 +18,11 @@ export class TecnologiaPage implements OnInit {
     private cdr: ChangeDetectorRef,
     private carritoService: CarritoService
   ) { }
- 
+
   ngOnInit() {
     this.apiProductsService.getProducts().subscribe(
       (productos) => {
-        this.productos = productos.filter(producto => producto.categoria === 'Tecnología');
+        this.productos = productos.filter(producto => producto.categoria === 'Hombre');
         console.log('Productos filtrados:', this.productos);
         this.cdr.detectChanges(); // Fuerza la actualización de la vista
       },
@@ -64,4 +65,5 @@ verDetalle(id: number) {
       console.error('Error al agregar al carrito', error);
     }
   }
+
 }

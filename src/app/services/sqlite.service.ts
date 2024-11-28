@@ -8,6 +8,8 @@ import { MenuController } from '@ionic/angular';
 import { Producto } from '../producto/model/producto';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Storage } from '@capacitor/storage';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { query, collection, getDocs, orderBy, limit, DocumentSnapshot  } from 'firebase/firestore';
 
 
 
@@ -21,32 +23,20 @@ export class SqliteService  implements OnInit {
   private usersSubject = new BehaviorSubject<any[]>([]);
   users$ = this.usersSubject.asObservable();
   private authenticated: boolean = false;
-  private productosUrl = 'https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e'; // URL JSON Server
+  private productosUrl = 'https://6747cf3538c8741641d7bd62.mockapi.io/api/v1/productos'; // URL JSON Server
   private productsSubject = new BehaviorSubject<Producto[]>([]);
   products$ = this.productsSubject.asObservable();
+  private _storage: Storage | null = null;
 
-  constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private menuCtrl: MenuController) {
+
+  constructor(private sqlite: SQLite, private router: Router, private http: HttpClient, private menuCtrl: MenuController,private firestore: AngularFirestore) {
     this.resetDatabase().then(() => {
       this.loadInitialProducts();  // Carga los productos después de inicializar la DB
     });
   }
   
   ngOnInit() {
-    // Verifica si el usuario está autenticado
-    if (localStorage.getItem('isAuthenticated') === 'true') {
-      const currentUsername = localStorage.getItem('currentUsername');
-      const currentIsAdmin = localStorage.getItem('currentIsAdmin');
-      
-      // Redirige al usuario según su rol (admin o no admin)
-      if (currentIsAdmin === '1') {
-        this.router.navigate(['/admin']);
-      } else {
-        this.router.navigate(['/home']);
-      }
-    } else {
-      // Si no está autenticado, redirige al login
-      this.router.navigate(['/login']);
-    }
+    
   }
 
 
@@ -190,31 +180,31 @@ async createTable() {
   
 
   // Iniciar sesión 
-  public async login(username: string, password: string) {
+  public async login(username: string, password: string): Promise<{ success: boolean }> {
     try {
-      const result = await this.db.executeSql(`
-        SELECT * FROM users WHERE username = ? AND password = ?
-      `, [username, password]);
+      // Verificar las credenciales en la base de datos SQLite
+      const result = await this.db.executeSql(
+        `SELECT * FROM users WHERE username = ? AND password = ?`,
+        [username, password]
+      );
   
+      // Si se encuentra el usuario
       if (result.rows.length > 0) {
         const user = result.rows.item(0);
   
-        if (user.isBlocked === 1) {  // Verifica si el usuario está bloqueado
-          alert('Tu cuenta está bloqueada. Contacta con el administrador.');
-          return { success: false };
-        }
-  
-        // Guardar en localStorage el estado de autenticación y datos del usuario
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('currentUsername', user.username);
-        localStorage.setItem('currentIsAdmin', user.isAdmin.toString());
-  
-        // Almacenar más detalles si es necesario (como el token o ID del usuario)
-        // localStorage.setItem('userToken', user.token);
-  
+        // Guardar la información del usuario en variables locales
         this.currentUsername = user.username;
-        this.currentIsAdmin = user.isAdmin; // 1 es admin
+        this.currentIsAdmin = user.isAdmin;
   
+        // Generar el token (igual que en tu primer login)
+        const token = this.generateToken(username);
+  
+        // Guardar token y estado de autenticación en localStorage
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('currentUser', username); // opcional, si quieres guardar el usuario actual
+  
+        // Redirigir según el rol del usuario
         if (this.currentIsAdmin) {
           this.router.navigate(['/admin']);
         } else {
@@ -223,10 +213,12 @@ async createTable() {
   
         return { success: true };
       } else {
+        // Si no se encuentra el usuario o las credenciales son incorrectas
         alert('Credenciales inválidas');
         return { success: false };
       }
     } catch (error) {
+      // En caso de un error en la base de datos
       alert('Error al iniciar sesión');
       return { success: false };
     }
@@ -234,10 +226,19 @@ async createTable() {
   
   
   
+  
+  
 
-  public getUsername(): string | null {
-    return this.currentUsername;
+  public async getUsername(): Promise<string | null> {
+    const { value } = await Storage.get({ key: 'user' });
+    if (value) {
+      const user = JSON.parse(value);
+      return user.username;
+    } else {
+      return null;
+    }
   }
+  
 
   public async getUser(id: number) {
     const sql = 'SELECT * FROM users WHERE id = ?';
@@ -443,16 +444,24 @@ async loadInitialProducts() {
 
 async getProductsFromServer(): Promise<Producto[]> {
   try {
-    const response = await fetch('https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e');
-    if (!response.ok) {
-      throw new Error(`Error al obtener productos: ${response.statusText}`);
+    // Obtiene los productos de Firestore
+    const productsSnapshot = await this.firestore.collection('productos').get().toPromise();
+
+    // Verifica si el snapshot es undefined o null
+    if (!productsSnapshot) {
+      throw new Error('No se pudo obtener la información de los productos.');
     }
-    return await response.json();
+
+    // Accede a los docs dentro del QuerySnapshot
+    const productsList = productsSnapshot.docs.map(doc => doc.data() as Producto);
+
+    return productsList;
   } catch (error) {
-    console.error('Error al obtener productos del servidor:', error);
-    return [];
+    console.error('Error al obtener productos desde Firestore:', error);
+    return [];  // Devolver lista vacía si hay un error
   }
 }
+
 
 
 async createProductInDb(producto: Producto): Promise<void> {
@@ -487,54 +496,85 @@ async getLocalProducts(): Promise<Producto[]> {
 }
 
 
-async createProduct(producto: Producto): Promise<void> {
+// Función para obtener el último producto por id
+async getLastProductId(): Promise<number> {
   try {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'X-Master-Key': '$2a$10$ojcKOiCAcMELufbBOq8j1erYzSBWTGT0it2D7I.rjsvPMIvBTlYz6',
-    });
+    // Obtener todos los productos ordenados por 'id' de mayor a menor
+    const productosSnapshot = await this.firestore
+      .collection('productos', (ref) => ref.orderBy('id', 'desc').limit(1))
+      .get()
+      .toPromise();
 
-    const response = await this.http.post(
-      'https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e',
-      { record: producto }, // JSONBin requiere que envíes el objeto dentro de "record"
-      { headers }
-    ).toPromise();
+    // Verificar si productosSnapshot es válido y tiene documentos
+    if (!productosSnapshot || productosSnapshot.empty) {
+      return 1; // Si no hay productos, asignamos id 1
+    }
 
-    console.log('Producto añadido al servidor:', response);
-
-    // Actualizar SQLite local
-    await this.createProductInDb(producto);
-    this.productsSubject.next(await this.getLocalProducts());
+    // Si hay productos, obtener el último producto
+    const lastProduct = productosSnapshot.docs[0].data() as Producto;
+    return lastProduct.id + 1; // Incrementar el último id
   } catch (error) {
-    console.error('Error al crear producto en el servidor:', error);
+    console.error('Error al obtener el último producto', error);
+    throw new Error('Error al obtener el último producto');
   }
 }
+
+// Función para crear un nuevo producto
+async createProduct(producto: Producto): Promise<void> {
+  try {
+    // Obtener el próximo id para el producto
+    const newId = await this.getLastProductId();
+
+    // Crear una nueva referencia para el producto
+    const productRef = this.firestore.collection('productos').doc();
+
+    // Guardar el producto en Firestore con el nuevo id
+    await productRef.set({
+      id: newId,  // Usar el id incrementado
+      nombre: producto.nombre,
+      descripcion: producto.descripcion,
+      precio: producto.precio,
+      cantidad: producto.cantidad,
+      imagen: producto.imagen,
+      categoria: producto.categoria,
+    });
+
+    console.log('Producto añadido a Firestore con id:', newId);
+  } catch (error) {
+    console.error('Error al crear producto en Firestore:', error);
+  }
+}
+
 
 async syncProductsFromServer() {
   const serverProducts = await this.getProductsFromServer();
+  
   for (const producto of serverProducts) {
-    await this.createProductInDb(producto);
+    await this.createProductInDb(producto);  // Guardar en SQLite
   }
+
+  // Refresca la lista de productos
   this.productsSubject.next(await this.getLocalProducts());
 }
+
 
 async syncLocalAndServerData(): Promise<void> {
   try {
     const localProducts = await this.getLocalProducts();
     const serverProducts = await this.getProductsFromServer();
 
-    // Agregar productos que no estén en el servidor
+    // Agregar productos que no estén en Firestore
     const unsyncedProducts = localProducts.filter(lp => 
       !serverProducts.some(sp => sp.id === lp.id)
     );
 
     for (const product of unsyncedProducts) {
-      await this.http.post(this.productosUrl, product).toPromise();
+      await this.firestore.collection('productos').add(product);  // Agregar a Firestore
     }
 
-    // Actualizar base local con datos del servidor
+    // Actualizar base local con datos de Firestore
     for (const product of serverProducts) {
-      await this.createProductInDb(product);
+      await this.createProductInDb(product);  // Actualizar en SQLite
     }
 
     console.log('Sincronización completada.');
@@ -544,6 +584,7 @@ async syncLocalAndServerData(): Promise<void> {
 }
 
 
+
 async syncWithTransaction(): Promise<void> {
   try {
     await this.db.transaction(async tx => {
@@ -551,9 +592,9 @@ async syncWithTransaction(): Promise<void> {
       
       for (const product of serverProducts) {
         tx.executeSql(
-          `INSERT OR REPLACE INTO productos (id, nombre, descripcion, precio, cantidad) 
-           VALUES (?, ?, ?, ?, ?)`,
-          [product.id, product.nombre, product.descripcion, product.precio, product.cantidad]
+          `INSERT OR REPLACE INTO productos (id, nombre, descripcion, precio, cantidad, imagen, categoria) 
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [product.id, product.nombre, product.descripcion, product.precio, product.cantidad, product.imagen, product.categoria]
         );
       }
     });
@@ -566,100 +607,106 @@ async syncWithTransaction(): Promise<void> {
 
 
   // Actualizar producto en ambos (SQLite y JSON Server)
-  async updateProduct(producto: Producto): Promise<void> {
+  async updateProduct(id: number, producto: Producto): Promise<void> {
     try {
-      // Actualizar en SQLite
-      await this.db.executeSql(`UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, cantidad = ? WHERE id = ?`, [
-        producto.nombre, 
-        producto.descripcion, 
-        producto.precio, 
-        producto.cantidad, 
-        producto.id
-      ]);
-
-      // Actualizar en JSON Server
-      await this.http.put(`${this.productosUrl}/${producto.id}`, producto).toPromise();
-
-      // Refresca la lista de productos
-      this.productsSubject.next(await this.getLocalProducts());
+      // Verificar que los campos no sean undefined
+      const updatedProduct = {
+        nombre: producto.nombre,
+        descripcion: producto.descripcion,
+        precio: producto.precio,
+        cantidad: producto.cantidad,
+        categoria: producto.categoria,
+        imagen: producto.imagen
+      };
+  
+      // Solo agregar el campo 'imagen' si está definido
+      if (producto.imagen !== undefined) {
+        updatedProduct.imagen = producto.imagen;
+      }
+  
+      // Referencia al documento del producto en Firestore por su id
+      const productRef = this.firestore.collection('productos').doc(id.toString());
+  
+      // Actualizar el producto en Firestore
+      await productRef.update(updatedProduct);
+  
+      console.log('Producto actualizado en Firestore con id:', id);
     } catch (error) {
-      console.error('Error al actualizar producto:', error);
+      console.error('Error al actualizar producto en Firestore:', error);
     }
   }
+  
+  
+  
 
   // Eliminar producto en ambos (SQLite y JSON Server)
   async deleteProduct(productId: number): Promise<void> {
     try {
-        // Convertir el ID a número para SQLite
-        //const id = Number(productId);
-
-        // Eliminar en SQLite
-        await this.db.executeSql(`DELETE FROM productos WHERE id = ?`, [productId]);
-
-        // Eliminar en JSON Server
-        await this.http.delete(`${this.productosUrl}/${productId}`).toPromise();
-
-        // Refresca la lista de productos
-        this.productsSubject.next(await this.getLocalProducts());
+      // Eliminar en SQLite
+      await this.db.executeSql(`DELETE FROM productos WHERE id = ?`, [productId]);
+  
+      // Eliminar en Firestore
+      const productRef = this.firestore.collection('productos').doc(productId.toString());
+      await productRef.delete();
+  
+      // Refresca la lista de productos
+      this.productsSubject.next(await this.getLocalProducts());
     } catch (error) {
-        console.error('Error al eliminar producto:', error);
+      console.error('Error al eliminar producto:', error);
     }
-}
+  }
+  
 
 
   async getProducts(): Promise<Producto[]> {
     try {
-      // Obtener productos desde el JSON Server
-      const response = await this.http.get<Producto[]>(this.productosUrl).toPromise();
-      const productos: Producto[] = response || [];
-      
-      // Emitir los productos cargados
-      this.productsSubject.next(productos);
+      // Obtener los productos de Firestore (esperamos la promesa)
+      const productsSnapshot = await this.firestore.collection('productos').get().toPromise();
+  
+      // Verificar si la respuesta es válida
+      if (!productsSnapshot) {
+        throw new Error('No se pudo obtener la información de los productos.');
+      }
+  
+      // Acceder a los documentos de Firestore
+      const productos: Producto[] = productsSnapshot.docs.map((doc) => {
+        // Definir explícitamente el tipo de 'doc' para que TypeScript lo reconozca
+        const productoData = doc.data() as Producto;  // Asegúrate de que doc.data() es del tipo Producto
+        return productoData;
+      });
+  
+      this.productsSubject.next(productos);  // Emitir los productos
       return productos;
     } catch (error) {
-      console.error('Error al obtener los productos del JSON Server:', error);
-      return []; // Devuelve un array vacío en caso de error
+      console.error('Error al obtener productos desde Firestore:', error);
+      return [];  // Devuelve lista vacía en caso de error
     }
   }
-
-  
- 
-
-  
-///////////////////////////////////////////////////
-
-  generateToken(usuario: string): string {
-    return btoa(`${usuario}:${new Date().getTime()}`);
-  }
-
-  async logout() {
-    // Eliminar los datos de localStorage al cerrar sesión
-  localStorage.removeItem('isAuthenticated');
-  localStorage.removeItem('currentUsername');
-  localStorage.removeItem('currentIsAdmin');
-  
-    // Cierra el menú lateral y espera a que termine antes de navegar
-  this.menuCtrl.close().then(() => {
-    this.router.navigate(['/login']);
-  }).catch(error => {
-    console.error('Error al cerrar el menú:', error);
-    this.router.navigate(['/login']); // Asegurarte de navegar incluso si falla el cierre del menú
-  });
-  }
-
-
-  isAuthenticated(): boolean {
-    const isAuth = localStorage.getItem('isAuthenticated');
-    console.log('Is Authenticated:', isAuth);  // Verifica el valor en consola
-    return isAuth === 'true';
-  }
   
 
-  public getCurrentUsername(): string | null {
-    return localStorage.getItem('currentUsername');
-  }
+  
 
-  public getCurrentIsAdmin(): boolean {
-    return localStorage.getItem('currentIsAdmin') === '1';
-  }
+
+
+
+
+
+/// aparte
+
+isAuthenticated(): boolean {
+  const isAuth = localStorage.getItem('isAuthenticated');
+  return isAuth === 'true';
+}
+
+generateToken(usuario: string): string {
+  return btoa(`${usuario}:${new Date().getTime()}`);
+}
+
+logout() {
+  this.authenticated = false;
+  localStorage.removeItem('authenticated');
+  localStorage.removeItem('auth_token');
+  this.router.navigate(['/login']);
+}
+
 }

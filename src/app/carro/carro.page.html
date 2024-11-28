@@ -17,7 +17,7 @@
       <ion-label>
         <h2>{{ item.nombre }}</h2>
         <p>{{ item.descripcion }}</p>
-        <p>Precio: ${{ item.precio }}</p>
+        <p>Precio: {{ item.precio | currency:'':'symbol':'1.0-0'  }}</p>
         <p>Cantidad: {{ item.cantidad }}</p>
       </ion-label>
       <ion-buttons slot="end">
@@ -28,7 +28,7 @@
 
   <ion-item>
     <ion-label>
-      <h3>Total: ${{ total }}</h3>
+      <h3>Total: {{ total | currency:'':'symbol':'1.0-0'  }}</h3>
     </ion-label>
   </ion-item>
 

@@ -4,11 +4,19 @@
 
 export const environment = {  
   production: false,
-  apiUrl: 'https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e',
-  firebaseconfig:{
+  
+    firebaseConfig:{
+      apiKey: "AIzaSyBodD3Sbap7BzLJRGXHdkCEzvpRGUV3hq4",
+      authDomain: "ecommerce-ca.firebaseapp.com",
+      projectId: "ecommerce-ca",
+      storageBucket: "ecommerce-ca.firebasestorage.app",
+      messagingSenderId: "622977442857",
+      appId: "1:622977442857:web:5c8cb84684e9243423a838",
+      measurementId: "G-TFGBQ7SHC1"
+    },
     apiKey: "AIzaSyCsGGf9_VzZd7-PJldeBLq159hXp7stEcU"
    }
-};
+
 
 /*
  * For easier debugging in development mode, you can import the following file

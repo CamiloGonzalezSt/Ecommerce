@@ -16,13 +16,17 @@ import { Producto } from '../model/producto';
 export class ProductListPage implements OnInit, OnDestroy {
   productos: Producto[] = [];
   private productSubscription: Subscription;
+  
 
   constructor(
     private sqliteService: SqliteService,
     private productService: ProductServiceService,
     private router: Router,
     private apiproducts: ApiproductsService
-  ) {}
+  ) {
+    
+  }
+  
 
   ngOnInit() {
     // Suscripción inicial a los cambios de productos
@@ -45,7 +49,7 @@ export class ProductListPage implements OnInit, OnDestroy {
   }
 
   cargarProducto() {
-    this.apiproducts.getProductos().subscribe({
+    this.apiproducts.getProducts().subscribe({
       next: (productos) => {
         this.productos = productos; // Actualiza la lista de productos
         console.log('Productos cargados desde la API:', this.productos);
@@ -86,32 +90,19 @@ export class ProductListPage implements OnInit, OnDestroy {
   }
   
 
-  async eliminarProducto(productoId: number) {
-    try {
-      // Eliminar producto del JSON Server
-      const response = await fetch(`https://api.jsonbin.io/v3/b/6745f1a6ad19ca34f8d0c54e/${productoId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error en la eliminación del producto: ${response.statusText}`);
+  onDeleteProduct(productId: number) {
+    this.apiproducts.deleteProduct(productId).subscribe({
+      next: () => {
+        console.log('Producto eliminado correctamente');
+        this.cargarProducto();  // Recargar productos o actualizar la vista
+      },
+      error: (err) => {
+        console.error('Error al eliminar producto:', err);
       }
-
-      // Eliminar producto de SQLite
-      await this.sqliteService.deleteProduct(productoId);
-      console.log('Producto eliminado de SQLite y JSON Server');
-
-      // Recargar la lista de productos después de la eliminación
-      this.cargarProductos();
-    } catch (error) {
-      console.error('Error al eliminar producto:', error);
-    }
+    });
   }
-
-  editarProducto(nombre: string) {
-    this.router.navigate(['/product-edit', nombre]);
+     
+  editarProducto(id: number) {
+    this.router.navigate(['/product-edit', id]);
   }
 }

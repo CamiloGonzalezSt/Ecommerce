@@ -1,10 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <!-- Botón para regresar -->
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Productos para Mujer</ion-title>
+    <ion-title>Hogar</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -20,7 +19,7 @@
           </ion-card-header>
           <ion-card-content>
             <p>{{ producto.descripcion }}</p>
-            <ion-button expand="block" color="primary" (click)="agregarAlCarrito(producto)" (click)="$event.stopPropagation()">
+            <ion-button expand="block" color="primary" (click)="agregarAlCarrito(producto)">
               Agregar al carrito
             </ion-button>
           </ion-card-content>

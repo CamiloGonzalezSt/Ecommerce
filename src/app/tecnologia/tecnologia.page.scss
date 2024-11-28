@@ -1,26 +1,78 @@
 ion-card {
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-  }
-  
-  ion-card:hover {
-    transform: scale(1.05);
-  }
-  
-  ion-card img {
-    max-height: 150px;
-    object-fit: cover;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
-  
-  ion-card-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-  
-  ion-card-subtitle {
-    color: #3880ff;
-  }
-  
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Suaviza la transición */
+  overflow: hidden; /* Asegura que el contenido no se desborde */
+  background-color: #fff; /* Blanco para un estilo más limpio */
+}
+
+ion-card:hover {
+  transform: translateY(-5px); /* Sutil movimiento hacia arriba */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Sombra más intensa al hacer hover */
+}
+
+ion-card img {
+  max-height: 180px;
+  width: 100%;
+  object-fit: cover;
+  border-top-left-radius: 12px; /* Asegura que los bordes sean suaves */
+  border-top-right-radius: 12px;
+  transition: transform 0.3s ease; /* Transición suave para el zoom */
+}
+
+ion-card img:hover {
+  transform: scale(1.1); /* Efecto de zoom suave en la imagen al hacer hover */
+}
+
+ion-card-title {
+  font-size: 1.4rem;
+  font-weight: 600; /* Más énfasis en el título */
+  color: #333; /* Color oscuro para mejor legibilidad */
+  margin-top: 10px;
+  text-align: center; /* Centrado del título */
+}
+
+ion-card-subtitle {
+  font-size: 1.1rem;
+  color: #3880ff; /* Color azul profesional */
+  text-align: center; /* Centrado del subtítulo */
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+ion-item {
+  display: block;
+  background-color: #f8f8f8; /* Fondo suave y neutro */
+  border-radius: 8px; /* Bordes redondeados más sutiles */
+  padding: 15px;
+  margin-bottom: 10px; /* Espacio entre los items */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil para los items */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+ion-item:hover {
+  transform: translateY(-3px); /* Movimiento sutil hacia arriba */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más intensa al hacer hover */
+}
+
+ion-item ion-label {
+  font-size: 1rem;
+  color: #555; /* Color gris suave para el texto */
+  font-weight: 400;
+}
+
+ion-button {
+  background-color: #3880ff; /* Azul profesional */
+  color: white; /* Texto blanco en los botones */
+  border-radius: 8px; /* Bordes redondeados en los botones */
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+ion-button:hover {
+  background-color: #4c8dff; /* Sombra azul más clara al hacer hover */
+}
+
+ion-title{
+  text-align: center;
+}

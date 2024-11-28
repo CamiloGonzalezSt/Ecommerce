@@ -4,31 +4,50 @@
       <ion-back-button default-href="/home"></ion-back-button>
     </ion-buttons>
     <ion-title>Editar Producto</ion-title>
-    <ion-buttons slot="end">
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <form (submit)="guardarCambios()">
+    <!-- Campo Nombre del Producto -->
     <ion-item>
       <ion-label position="stacked">Nombre del Producto</ion-label>
       <ion-input type="text" [(ngModel)]="nombre" name="nombre" required></ion-input>
     </ion-item>
-    
+
+    <!-- Campo Descripción -->
     <ion-item>
       <ion-label position="stacked">Descripción</ion-label>
       <ion-input type="text" [(ngModel)]="descripcion" name="descripcion" required></ion-input>
     </ion-item>
 
+    <!-- Campo Precio -->
     <ion-item>
       <ion-label position="stacked">Precio</ion-label>
       <ion-input type="number" [(ngModel)]="precio" name="precio" required></ion-input>
     </ion-item>
 
+    <!-- Campo Cantidad -->
     <ion-item>
       <ion-label position="stacked">Cantidad</ion-label>
       <ion-input type="number" [(ngModel)]="cantidad" name="cantidad" required></ion-input>
+    </ion-item>
+
+    <!-- Selector de Categoría -->
+    <ion-item>
+      <ion-label class="categoria" position="stacked">Categoría</ion-label>
+      <ion-select [(ngModel)]="categoria" name="categoria" required>
+        <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">
+          {{ categoria }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Selector de Imagen -->
+    <ion-item>
+      <ion-label position="stacked">Imagen</ion-label>
+      <input type="file" (change)="onImageSelected($event)" accept="image/*" />
+      <ion-note *ngIf="imagen" color="primary">Imagen seleccionada: {{ imagen }}</ion-note>
     </ion-item>
 
     <ion-footer>

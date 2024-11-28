@@ -1,38 +1,32 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button default-href="/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Detalles del Producto</ion-title>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button routerLink="/home"><ion-icon name="home"></ion-icon></ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-title>{{ product?.nombre }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <!-- Verificar  -->
-  <ion-card *ngIf="product">
-    <img [src]="product.image" alt="{{product.name}}">
+
+<ion-content *ngIf="product">
+  <ion-card>
+    <img [src]="product.imagen" alt="{{ product.nombre }}" />
     <ion-card-header>
-      <ion-card-title>{{ product.name }}</ion-card-title>
+      <ion-card-title>{{ product.nombre }}</ion-card-title>
+      <ion-card-subtitle>{{ product.precio | currency:'':'symbol':'1.0-0' }}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      <p>{{ product.description }}</p>
+      <p>Descripción: {{ product.descripcion }}</p>
+      <p> categoria: {{product.categoria }} </p>
       
-      <ion-badge color="primary">${{ product.price }}</ion-badge>
-      
-      <div style="display: flex; align-items: center; margin-top: 10px;">
-        <ion-buttons>
-          <ion-button *ngFor="let color of product.colors" 
-                      shape="round" 
-                      (click)="onColorSelect(color)" 
-                      [ngStyle]="{'background-color': color.toLowerCase()}"
-                      class="color-button">
-            {{ color }}
-          </ion-button>
-        </ion-buttons>
-      </div>
-      
-      <p *ngIf="selectedColor">Color seleccionado: {{ selectedColor }}</p>
-      
+
+      <ion-button (click)="agregarAlCarrito()" color="primary">
+        Agregar al carrito
+      </ion-button>
     </ion-card-content>
   </ion-card>
 </ion-content>
+
+

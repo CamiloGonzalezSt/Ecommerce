@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { SqliteService } from 'src/app/services/sqlite.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ProductServiceService } from '../product-service.service';
+import { ApiproductsService } from 'src/app/services/apiproducts.service';
 import { Producto } from '../model/producto'; 
+import { SqliteService } from 'src/app/services/sqlite.service';
+import { firstValueFrom, from } from 'rxjs';
 
 @Component({
   selector: 'app-product-edit',
@@ -10,47 +11,75 @@ import { Producto } from '../model/producto';
   styleUrls: ['./product-edit.page.scss'],
 })
 export class ProductEditPage implements OnInit {
-  id: number; // Asegúrate de que `id` es de tipo `number`
-  nombre: string;
-  precio: number;
-  descripcion: string;
-  cantidad: number;
-  imagen: string;
-  categoria: string;
+  
+ 
+    id: number;
+    nombre: string;
+    descripcion: string;
+    precio: number;
+    cantidad: number;
+    imagen: string;
+    categoria: string;
+  
+
+  categorias: string[] = ['Hombre', 'Mujer', 'Tecnología', 'Hogar'];  // Lista de categorías
 
   constructor(
-    private sqlite: SqliteService,
     private router: Router,
     private route: ActivatedRoute,
-    private productService: ProductServiceService // Inyecta el servicio de productos
+    private productService: ApiproductsService,  // Servicio para manejar los productos
+    private sqlite: SqliteService
   ) {}
 
   ngOnInit() {
-    // Obtenemos el ID del producto desde los parámetros de la ruta
     this.route.params.subscribe(params => {
-      this.id = +params['id']; // Convertir a número con "+"
-      this.cargarProducto(this.id); // Carga el producto usando el ID
+      // Asegúrate de que params['id'] contenga un valor válido
+      console.log('ID recibido desde la URL:', params['id']);
+      this.id = Number(params['id']); // Convertirlo a número
+  
+      // Verificar si el id es válido
+      if (isNaN(this.id) || this.id <= 0) {
+        console.error('ID inválido recibido:', this.id);
+        alert('ID inválido recibido');
+        return;
+      }
+      console.log('ID validado correctamente:', this.id);
+      this.cargarProducto(this.id);
     });
   }
 
-  async cargarProducto(id: number) { 
-    const productos: Producto[] = await this.productService.getProducts().toPromise() || [];
-    const productoEncontrado = productos.find(p => p.id === id); 
-    
-    if (productoEncontrado) {
-      this.nombre = productoEncontrado.nombre;
-      this.descripcion = productoEncontrado.descripcion;
-      this.precio = productoEncontrado.precio;
-      this.cantidad = productoEncontrado.cantidad;
-      this.imagen = productoEncontrado.imagen;
-      this.categoria = productoEncontrado.categoria;
-    } else {
-      console.error('Producto no encontrado');
+  // Función para cargar el producto desde el servicio
+  async cargarProducto(id: number) {
+    try {
+      const productos: Producto[] = await this.productService.getProducts().toPromise() || [];
+      const productoEncontrado = productos.find(p => p.id === id); // Compara como número
+  
+      if (productoEncontrado) {
+        this.nombre = productoEncontrado.nombre;
+        this.descripcion = productoEncontrado.descripcion;
+        this.precio = productoEncontrado.precio;
+        this.cantidad = productoEncontrado.cantidad;
+        this.imagen = productoEncontrado.imagen;
+        this.categoria = productoEncontrado.categoria;
+      } else {
+        console.error('Producto no encontrado');
+        alert('Producto no encontrado');
+      }
+    } catch (error) {
+      console.error('Error al cargar el producto:', error);
+      alert('Error al cargar el producto: ' + error);
     }
   }
+  
 
+  // Función para guardar los cambios en el producto
   async guardarCambios() {
-    const updatedProduct: Producto = {  // Asegúrate de usar el tipo correcto
+    if (!this.imagen) {
+      alert('Por favor, selecciona una imagen');
+      return;
+    }
+  
+    const updatedProduct: Producto = {
       id: this.id,
       nombre: this.nombre,
       descripcion: this.descripcion,
@@ -62,10 +91,11 @@ export class ProductEditPage implements OnInit {
   
     try {
       // Actualiza primero en SQLite
-      await this.sqlite.updateProduct(updatedProduct);
+      await this.sqlite.updateProduct(this.id, updatedProduct);
   
-      // Luego, actualiza en JSON Server
-      await this.productService.updateProduct(this.id, updatedProduct).toPromise();
+      // Luego, actualiza en JSON Server utilizando from() para convertir la promesa en un observable
+      await firstValueFrom(from(this.productService.updateProduct(this.id, updatedProduct)));
+  
       alert('Producto actualizado con éxito');
       this.router.navigate(['/product-list']);
     } catch (error) {
@@ -73,4 +103,19 @@ export class ProductEditPage implements OnInit {
       alert('Error al actualizar el producto: ' + error);
     }
   }
+  
+  // Método para manejar la selección de la imagen
+  onImageSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagen = reader.result as string; // Asignar la imagen seleccionada al producto
+      };
+      reader.readAsDataURL(file);
+    } else {
+      this.imagen = ''; // Si no se seleccionó archivo, aseguramos que imagen no sea undefined
+    }
+  }
+  
 }

@@ -1,0 +1,108 @@
+/* Estilo general para la página */
+ion-content {
+    background-color: #f8f8f8; /* Fondo gris suave */
+    padding: 20px;
+  }
+  
+  /* Card del producto */
+  .producto-card {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 12px; /* Bordes redondeados ajustados */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Suaviza la transición */
+    overflow: hidden; /* Asegura que la imagen no sobresalga */
+    background-color: #fff; /* Fondo blanco para un estilo más limpio */
+  }
+  
+  /* Efecto hover en el card */
+  .producto-card:hover {
+    transform: translateY(-5px); /* Desplazamiento hacia arriba */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Sombra más intensa */
+  }
+  
+  /* Imagen del producto */
+  .producto-img {
+    max-height: 100vh; /* Ajusta la altura para que sea más estilizado */
+    width: 100%;
+    object-fit: cover;
+    border-top-left-radius: 12px; /* Bordes redondeados */
+    border-top-right-radius: 12px;
+    transition: transform 0.3s ease; /* Transición suave para el zoom */
+  }
+  
+  .producto-img:hover {
+    transform: scale(1.1); /* Efecto de zoom suave */
+  }
+  
+  /* Estilo del título y precio del producto */
+  ion-card-header {
+    background-color: #ffffff; /* Fondo blanco para el header */
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .producto-nombre {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-top: 10px;
+    text-align: center; /* Centrado del título */
+  }
+  
+  .producto-precio {
+    font-size: 1.2rem;
+    color: #3880ff; /* Azul profesional */
+    font-weight: 500;
+    margin-top: 5px;
+    text-align: center; /* Centrado del precio */
+  }
+  
+  /* Estilo para las acciones (botones) */
+  .acciones {
+    padding: 10px 20px;
+  }
+  
+  /* Botones de acción */
+  ion-button {
+    color: white; /* Texto blanco en los botones */
+    border-radius: 50%; /* Bordes redondeados */
+    width: 100%;
+    margin-bottom: 10px; /* Espaciado entre los botones */
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 12px 0;
+    transition: background-color 0.3s ease;
+  }
+  
+
+
+  
+  /* Mensaje "No hay productos" */
+  ng-template #noProducts ion-item {
+    background-color: #f1f1f1;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #888888;
+    border-radius: 8px;
+  }
+  
+  /* Estilo del header */
+  ion-header {
+    background-color: #34495e; /* Fondo oscuro para el header */
+  }
+  
+  ion-toolbar {
+    background-color: #2c3e50;
+  }
+  
+  ion-title {
+    color: #5d5d5d; /* Título blanco */
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+  }
+  
+ 
+  

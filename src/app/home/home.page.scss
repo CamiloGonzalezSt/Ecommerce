@@ -16,23 +16,51 @@ ion-toolbar {
     margin-top: 20px;
     border-radius: 10%;
     width: 80%;
-    height: 50%;
+    height: 100%;
   }
 
 
-  ion-card{
-    display:flexbox;
-    justify-content: flex-end;
+  ion-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Asegura que los elementos ocupen todo el espacio disponible */
+    align-items: center;
     text-align: center;
-    --background:#e5e8f0;
+    --background: #e5e8f0;
     color: #000000;
-    font-size: 10px;
-    border: 1px #000000;
-    border-radius: 30px;
-    height: 450px;
+    font-size: 14px;
+    border: 1px solid #000000;
+    border-radius: 15px;
+    height: 350px; /* Altura fija para todas las tarjetas */
+    padding: 10px;
     overflow: hidden;
-    --transition: height .5s;
-    --interpolate-size: allow-keywords;
+  }
+  
+  ion-card img {
+    width: 100%; /* Asegura que las imágenes ocupen todo el ancho de la tarjeta */
+    height: 150px; /* Altura fija para las imágenes */
+    object-fit: cover; /* Mantiene la proporción de las imágenes */
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  
+  ion-card-content {
+    flex: 1; /* Permite que el contenido crezca para ocupar espacio */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Coloca el botón en la parte inferior */
+    width: 100%;
+  }
+  
+  .btn {
+    margin-top: auto;
+    width: 100%;
+    font-size: 10px;
+    height: 40px;
+    position: relative;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
 
@@ -69,28 +97,90 @@ swiper-container {
     align-items: center;
   }
 
-  ion-footer {
-    --background: 'transparent';
-  }
-  capacitor-google-map {
-    display: inline-block;
-    width: 100%;
-    height: 200px;
-  }
-
-
-  .map-container {
-    padding: 16px;
+  .premium-footer {
+    --background: #f9f9f9; /* Fondo claro y limpio */
+    border-top: 2px solid rgba(0, 0, 0, 0.1); /* Línea de separación tenue */
+    padding: 40px 20px;
+    position: relative;
     text-align: center;
+  
+    /* Fondo dinámico con gradiente */
+    background: linear-gradient(135deg, #f4f4f4 50%, #ffffff 100%);
+    background-size: 400% 400%;
+    animation: gradient-animation 10s ease infinite;
+  
+    .map-container {
+      max-width: 900px;
+      margin: 0 auto;
+  
+      .footer-title {
+        margin-bottom: 10px;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333; /* Título oscuro para resaltar */
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        animation: fade-in 1.5s ease forwards;
+      }
+  
+      .footer-address {
+        font-size: 1rem;
+        color: #666; /* Texto complementario */
+        margin-bottom: 20px;
+        line-height: 1.6;
+        font-weight: 400;
+        animation: fade-in 2s ease forwards;
+      }
+  
+      .map-wrapper {
+        border: 2px solid rgba(0, 0, 0, 0.1); /* Borde más definido */
+        border-radius: 15px; /* Bordes redondeados */
+        overflow: hidden;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Sombra envolvente */
+        transform: scale(1);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+  
+        &:hover {
+          transform: scale(1.05); /* Aumento de escala al interactuar */
+          box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2); /* Más profundidad */
+        }
+      }
+  
+      capacitor-google-map {
+        display: block;
+        width: 100%;
+        height: 250px; /* Tamaño ajustado */
+        border-radius: inherit;
+      }
+    }
   }
   
-  .map-container h2 {
-    margin: 0 0 8px;
+  /* Animación de fondo dinámico */
+  @keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
   
-  .map-container p {
-    margin: 0 0 16px;
+  /* Animaciones de entrada */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
+  
+  
 
   .wsp{
     --background: #25D366; /* Color verde de WhatsApp */
@@ -103,10 +193,112 @@ swiper-container {
     color: #000000;
   }
 
-  .btn{
-    padding: auto;
-    margin: auto;
-    font-size: 10px;
-    width: 100%;    
-    height: 40px;
+
+  .search-dropdown {
+    position: absolute;
+    top: 65px; /* Ajusta según la altura de la barra de búsqueda */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 8px;
   }
+  
+  .search-dropdown ion-list {
+    margin: 0;
+  }
+  
+  .search-dropdown ion-item {
+    cursor: pointer;
+    padding: 10px;
+  }
+  
+  .search-dropdown ion-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .search-dropdown ion-thumbnail img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
+  
+
+  .minimal-searchbar {
+    --background: transparent; /* Fondo limpio */
+    --placeholder-color: #bbb; /* Color tenue para el placeholder */
+    --color: #333; /* Texto principal */
+    --icon-color: #666; /* Ícono de búsqueda */
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --border-radius: 50px; /* Esquinas suaves, no exageradas */
+    border: 1px solid #ccc; /* Borde simple */
+    margin: 12px 20px;
+  
+    /* Transiciones sutiles */
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  
+    /* Interacción al hacer clic */
+    &:focus-within {
+      border-color: #babdbd; /* Borde color énfasis */
+      background-color: #f9f9f9; /* Fondo tenue */
+    }
+  
+    /* Contenedor de entrada limpio */
+    .searchbar-input-container {
+      background: transparent;
+    }
+  
+    /* Placeholder dinámico */
+    .searchbar-input {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--color);
+    }
+  
+    /* Animación del ícono */
+    ion-icon {
+      transition: transform 0.2s ease, color 0.3s ease;
+      &:hover {
+        color: #0078d7; /* Cambia el color al interactuar */
+      }
+    }
+  }
+  .custom-icon-button {
+    --color: #454747; /* Color principal del ícono */
+    --ripple-color: rgba(0, 120, 215, 0.2); /* Efecto ripple */
+    padding: 2px;
+    
+    border-radius: 50%; /* Forma circular */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  
+    /* Fondo transparente */
+    background-color: transparent;
+  
+    /* Animación al interactuar */
+    &:hover {
+      background-color: rgba(0, 120, 215, 0.1); /* Fondo tenue al pasar el mouse */
+    }
+  
+    &:focus {
+      outline: none;
+      background-color: rgba(0, 120, 215, 0.2); /* Mayor realce al enfocarse */
+    }
+  
+    &:active {
+      transform: scale(0.95); /* Pequeña contracción al hacer clic */
+    }
+  
+    ion-icon {
+      font-size: 2rem; /* Ícono más grande */
+      transition: color 0.3s ease;
+    }
+  
+    &:hover ion-icon {
+      color: #0056a3; /* Cambia ligeramente el tono del ícono al interactuar */
+    }
+  }
+  

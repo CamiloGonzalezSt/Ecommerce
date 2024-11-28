@@ -1,19 +1,18 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Mi Perfil</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="goBack()" color="secondary">Volver</ion-button>
+    <ion-title class="header-title">Mi Perfil</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" color="secondary"><ion-icon name="home"></ion-icon></ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="profile-container">
-    <div class="avatar-wrapper" (click)="openEditPhotoModal()">
+    <div  class="avatar-wrapper" (click)="openEditPhotoModal()">
       <ion-avatar class="profile-avatar">
         <img [src]="profilePhoto || '../assets/photos/perfil.jpg'" alt="Foto de perfil">
       </ion-avatar>
-      <ion-icon class="edit-icon" name="pencil-outline"></ion-icon>
     </div>
     <h2>{{ username }}</h2>
     <p>Contraseña: ******</p>
