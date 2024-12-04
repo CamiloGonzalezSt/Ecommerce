@@ -25,6 +25,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore'
+import { OrderDetailsComponent } from './order-details/order-details.component';
 
 
 
@@ -42,7 +43,7 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 @NgModule({
-  declarations: [AppComponent, LogoutConfirmationComponent, NotFoundPage, UpdateClienteComponent, UpdatePasswordClientComponent, UpdateUsernameClientComponent, UpdateProfilePhotoComponent],
+  declarations: [AppComponent, LogoutConfirmationComponent, NotFoundPage, OrderDetailsComponent,UpdateClienteComponent, UpdatePasswordClientComponent, UpdateUsernameClientComponent, UpdateProfilePhotoComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule, FormsModule, BrowserAnimationsModule,   MatSelectModule,
     MatInputModule,
     MatFormFieldModule, CommonModule, IonicModule, IonicStorageModule, AngularFireModule.initializeApp(firebaseConfig),

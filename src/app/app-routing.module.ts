@@ -78,9 +78,15 @@ const routes: Routes = [
     loadChildren: () => import('./hogar/hogar.module').then( m => m.HogarPageModule)
   },
   {
+    path: 'mis-pedidos',
+    loadChildren: () => import('./mis-pedidos/mis-pedidos.module').then( m => m.MisPedidosPageModule)
+  },
+  {
     path: '**',
     component: NotFoundPage
   }
+  
+
 
   
 

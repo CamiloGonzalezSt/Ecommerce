@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="volverCliente()">
+        <ion-icon  name="arrow-back" ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+      <ion-title>Mis Pedidos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="loadPedidos()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list *ngIf="!isLoading && pedidos.length > 0">
+    <ion-item *ngFor="let pedido of pedidos">
+      <ion-label>
+        <h2>Pedido #{{ pedido.id }}</h2>
+        <p>Fecha: {{ pedido.fecha | date: 'short' }}</p>
+        <p>Total: ${{ pedido.total | number: '1.2-2' }}</p>
+      </ion-label>
+      <ion-button slot="end" (click)="viewDetails(pedido.id)">Ver Detalles</ion-button>
+    </ion-item>
+  </ion-list>
+  
+  <ion-spinner *ngIf="isLoading" slot="center"></ion-spinner>
+  <ion-text *ngIf="!isLoading && pedidos.length === 0" color="medium">
+    <p class="ion-text-center">No hay pedidos registrados.</p>
+  </ion-text>
+  
+  
+</ion-content>

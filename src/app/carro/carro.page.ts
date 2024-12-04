@@ -2,6 +2,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CarritoService } from '../services/carrito.service';
+import { SqliteService } from '../services/sqlite.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-carro',
@@ -12,7 +15,7 @@ export class CarroPage implements OnInit {
   cartItems: any[] = [];
   total: number = 0;
 
-  constructor(private cartService: CarritoService) {}
+  constructor(private cartService: CarritoService, private sqlite: SqliteService, private router: Router) { }
 
   ngOnInit() {
     this.loadCartItems();
@@ -49,5 +52,19 @@ export class CarroPage implements OnInit {
   async clearCart() {
     await this.cartService.clearCart();
     this.loadCartItems(); // Recargar el carrito después de vaciarlo
+  }
+
+  async comprar() {
+    if (this.cartItems.length > 0) {
+      const success = await this.sqlite.createOrder(this.total, this.cartItems);
+      if (success) {
+        await this.cartService.clearCart(); // Vaciar el carrito después de la compra
+        this.loadCartItems(); // Recargar el carrito
+        this.router.navigate(['/mis-pedidos']);
+       
+      }
+    } else {
+      alert('El carrito está vacío');
+    }
   }
 }

@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Detalles del Pedido</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-spinner *ngIf="isLoading" slot="center"></ion-spinner>
+
+  <ion-list *ngIf="!isLoading && orderDetails">
+    <ion-item>
+      <ion-label>
+        <h2>Pedido #{{ orderDetails.id }}</h2>
+        <p>Fecha: {{ orderDetails.fecha | date: 'short' }}</p>
+        <p>Total: ${{ orderDetails.total | number: '1.2-2' }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-list-header>Productos</ion-list-header>
+    <ion-list>
+      <ion-item *ngFor="let product of orderDetails.productos">
+        <ion-label>
+          <h3>{{ product.nombre }}</h3>
+          <p>Cantidad: {{ product.cantidad }}</p>
+          <p>Precio: ${{ product.precio | number: '1.2-2' }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-list>
+
+  <ion-text *ngIf="!isLoading && !orderDetails" color="danger">
+    <p class="ion-text-center">Error al cargar los detalles del pedido.</p>
+  </ion-text>
+</ion-content>

@@ -63,13 +63,13 @@ export class SqliteService  implements OnInit {
       // Obtener el path del archivo de la base de datos
       const dbPath = await Filesystem.getUri({
         directory: Directory.Data,
-        path: 'database.db'
+        path: 'BBDD.db'
       });
 
       // Eliminar el archivo de la base de datos
       await Filesystem.deleteFile({
         directory: Directory.Data,
-        path: 'database.db'
+        path: 'BBDD.db'
       });
       console.log('Archivo de base de datos eliminado:', dbPath.uri);
     } catch (error) {
@@ -81,7 +81,7 @@ export class SqliteService  implements OnInit {
 async init() {
   try {
     this.db = await this.sqlite.create({
-      name: 'database.db',
+      name: 'BBDD.db',
       location: 'default'
     });
     console.log('Base de datos creada');
@@ -149,6 +149,42 @@ async createTable() {
   } catch (error) {
     console.error('Error al crear la tabla "cart":', error);
   }
+  try {
+    await this.db.executeSql(
+      `CREATE TABLE IF NOT EXISTS orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT,
+        total REAL,
+        fecha TEXT,
+        productos TEXT
+        FOREIGN KEY (usuarioId) REFERENCES users(id)
+      )`,
+      []
+    );
+    //alert('Tabla de pedidos creada');
+  } catch (error) {
+    console.log('No se pudo crear la tabla de pedidos: ' + JSON.stringify(error));
+  }
+  // tabla de productos por pedido
+  try {
+    await this.db.executeSql(
+      `CREATE TABLE IF NOT EXISTS order_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        orderId INTEGER,
+        productoId INTEGER,
+        nombre TEXT,
+        cantidad INTEGER,
+        precio REAL,
+        FOREIGN KEY (orderId) REFERENCES orders(id),
+        FOREIGN KEY (productoId) REFERENCES productos(id)
+      )`, []
+    );
+    //alert('Tabla de productos por pedido creada correctamente');
+  } catch (error) {
+    console.log('Error al crear la tabla de productos por pedido: ' + JSON.stringify(error));
+  }
+
+  
 }
 
 
@@ -232,6 +268,17 @@ async createTable() {
       return null;
     }
   }
+
+  public async getUserId(): Promise<number | null> {
+    const { value } = await Storage.get({ key: 'user' });
+    if (value) {
+      const user = JSON.parse(value);
+      return user.id;  // Suponiendo que el id del usuario está en el objeto 'user'
+    } else {
+      return null;
+    }
+  }
+  
   
 
   public async getUser(id: number) {
@@ -254,7 +301,7 @@ async createTable() {
       }
       return users;
     } catch (error) {
-      alert('Error al obtener los users');
+      console.log('Error al obtener los users');
       return [];
     }
   }
@@ -297,7 +344,7 @@ async createTable() {
       }
       return null;
     } catch (error) {
-      alert('Error en findUserByEmail: ' + JSON.stringify(error));
+      console.log('Error en findUserByEmail: ' + JSON.stringify(error));
       throw error; 
     }
   }
@@ -400,7 +447,7 @@ public async getCartItems(): Promise<any[]> {
     }
     return cartItems;
   } catch (error) {
-    alert('Error al obtener los productos del carrito: ' + JSON.stringify(error));
+    console.log('Error al obtener los productos del carrito: ' + JSON.stringify(error));
     return [];
   }
 }
@@ -408,9 +455,9 @@ public async getCartItems(): Promise<any[]> {
 public async removeFromCart(productoId: number) {
   try {
     await this.db.executeSql('DELETE FROM cart WHERE productoId = ?', [productoId]);
-    alert('Producto eliminado del carrito');
+    console.log('Producto eliminado del carrito');
   } catch (error) {
-    alert('Error al eliminar el producto del carrito: ' + JSON.stringify(error));
+    console.log('Error al eliminar el producto del carrito: ' + JSON.stringify(error));
   }
 }
 
@@ -676,7 +723,120 @@ async syncWithTransaction(): Promise<void> {
       return [];  // Devuelve lista vacía en caso de error
     }
   }
+    ///logica para el historial de pedidos
+
+    public async createOrder(total: number, cartItems: any[]) {
+      try {
+        const date = new Date().toISOString();
+        const username = await this.getUsername();
   
+        // Insertar el pedido en la tabla 'orders'
+        const orderResult = await this.db.executeSql(
+          `INSERT INTO orders (total, fecha, nombre) VALUES (?, ?, ?)`,
+          [total, date, username]
+        );
+        alert('producto ok')
+  
+        const orderId = orderResult.insertId;
+  
+        // Insertar cada producto del carrito en la tabla 'order_items'
+        for (const item of cartItems) {
+          await this.db.executeSql(
+            `INSERT INTO order_items (orderId, productoId, nombre, cantidad, precio) VALUES (?, ?, ?, ?, ?)`,
+            [orderId, item.productoId, item.nombre, item.cantidad, item.precio]
+          );
+        }
+  
+        alert('Pedido registrado correctamente');
+        return true;
+      } catch (error) {
+        alert('Error al crear el pedido: ' + JSON.stringify(error));
+        return false;
+      }
+    }
+  
+    async getOrders() {
+      try {
+        const result = await this.db.executeSql('SELECT * FROM orders', []);
+        const orders = [];
+        for (let i = 0; i < result.rows.length; i++) {
+          orders.push(result.rows.item(i));
+        }
+        return orders;
+      } catch (error) {
+        console.error('Error al obtener pedidos desde SQLite:', error);
+        return [];
+      }
+    }
+    
+  
+    public async deleteOrder(id: number) {
+      const sql = 'DELETE FROM orders WHERE id = ?';
+      await this.db.executeSql(sql, [id]);
+    }
+  
+  
+    public async getOrderDetails(orderId: number) {
+      try {
+        const result = await this.db.executeSql(
+          `SELECT oi.productoId, oi.nombre, oi.cantidad, oi.precio 
+           FROM order_items AS oi
+           WHERE oi.orderId = ?`,
+          [orderId]
+        );
+    
+        const orderDetails = [];
+        for (let i = 0; i < result.rows.length; i++) {
+          orderDetails.push(result.rows.item(i));
+        }
+    
+        return orderDetails;
+      } catch (error) {
+        console.log('Error al obtener los detalles del pedido: ' + JSON.stringify(error));
+        return [];
+      }
+    }
+  
+    public async getOrdersByUser() {
+      try {
+        const result = await this.db.executeSql(
+          `SELECT * FROM orders WHERE nombre = ?`,
+          [this.currentUsername]
+        );
+    
+        const orders = [];
+        for (let i = 0; i < result.rows.length; i++) {
+          const order = result.rows.item(i);
+    
+          // Obtener productos asociados a este pedido
+          const products = await this.getOrderDetails(order.id);
+          orders.push({
+            id: order.id,
+            total: order.total,
+            fecha: order.fecha,
+            productos: products,
+          });
+        }
+    
+        return orders;
+      } catch (error) {
+        console.log('Error al obtener los pedidos: ' + JSON.stringify(error));
+        return [];
+      }
+    }
+
+    public async clearTables() {
+      try {
+        // Eliminar todos los registros de la tabla 'orders'
+        await this.db.executeSql('DELETE FROM orders', []);
+        // Eliminar todos los registros de la tabla 'order_items'
+        await this.db.executeSql('DELETE FROM order_items', []);
+        console.log('Datos de orders y order_items eliminados');
+      } catch (error) {
+        console.error('Error al eliminar los datos:', error);
+      }
+    }
+    
 
   
 

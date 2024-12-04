@@ -19,14 +19,19 @@ export class AppComponent {
     private actionSheetCtrl: ActionSheetController,
     private menuCtrl: MenuController, // Inyectamos el MenuController
     private service: SqliteService,
-    private router: Router
+    private router: Router,
+    private dbService: SqliteService
   ) {
 
     this.initializeApp();
+    this.clearDatabase();
   }
 
   async initializeApp() {
     await this.service.init();
+  }
+  async clearDatabase() {
+    await this.dbService.clearTables();  // Llamar la función que elimina los datos
   }
 
   toggleSubMenu() {
@@ -36,6 +41,7 @@ export class AppComponent {
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page') as HTMLElement;
   }
+  
 
   // Método para cerrar el menú después de navegar
   closeMenu() {
