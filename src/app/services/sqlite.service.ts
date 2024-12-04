@@ -234,7 +234,8 @@ async createTable() {
         const token = this.generateToken(username);
         localStorage.setItem('auth_token', token);
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('currentUser', user.username); // Guardar el nombre correcto
+        localStorage.setItem('currentUsername', user.username); // Guardar el nombre correcto
+        
   
         if (this.currentIsAdmin) {
           this.router.navigate(['/admin']);
