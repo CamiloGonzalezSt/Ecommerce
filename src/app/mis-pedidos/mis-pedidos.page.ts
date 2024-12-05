@@ -9,15 +9,14 @@ import { OrderDetailsComponent } from '../order-details/order-details.component'
   templateUrl: './mis-pedidos.page.html',
   styleUrls: ['./mis-pedidos.page.scss'],
 })
-export class MisPedidosPage implements OnInit {
+export class MisPedidosPage {
   pedidos: any[] = [];
   isLoading: boolean = true;
   
 
   constructor(private dbService: SqliteService, private modalController: ModalController, private router: Router) {}
 
-  async ngOnInit() {
-    await this.dbService.getOrders();
+  async ionViewWillEnter() {
     await this.loadPedidos();
   }
 
@@ -48,4 +47,6 @@ export class MisPedidosPage implements OnInit {
   volverCliente() {
     this.router.navigate(['/home']); 
   }
+
+  
 }

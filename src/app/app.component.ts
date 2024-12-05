@@ -3,6 +3,7 @@ import { ActionSheetController, MenuController } from '@ionic/angular'; // Aseg�
 import { register } from 'swiper/element/bundle';
 import { SqliteService } from './services/sqlite.service';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
 
 register();
 
@@ -20,18 +21,34 @@ export class AppComponent {
     private menuCtrl: MenuController, // Inyectamos el MenuController
     private service: SqliteService,
     private router: Router,
-    private dbService: SqliteService
+    private dbService: SqliteService,
+    private platform: Platform
   ) {
 
     this.initializeApp();
     this.clearDatabase();
   }
 
-  async initializeApp() {
-    await this.service.init();
+
+  initializeApp() {
+    this.platform.ready().then(async () => {
+      // Cuando la plataforma esté lista, resetea la base de datos
+      await this.service.init();
+      await this.resetDatabase();
+    });
   }
+ 
   async clearDatabase() {
     await this.dbService.clearTables();  // Llamar la función que elimina los datos
+  }
+
+  private async resetDatabase(): Promise<void> {
+    try {
+      await this.dbService.deleteAllOrders();
+      console.log('Base de datos reseteada correctamente.');
+    } catch (error) {
+      console.error('Error al resetear la base de datos:', error);
+    }
   }
 
   toggleSubMenu() {

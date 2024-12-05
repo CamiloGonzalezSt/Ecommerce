@@ -103,7 +103,7 @@ export class HomePage implements OnInit {
 
       // Si no está en SQLite, intenta obtenerlo de localStorage
       if (!this.nombreUsuario) {
-        this.nombreUsuario = localStorage.getItem('currentUser');
+        this.nombreUsuario = localStorage.getItem('currentUsername');
       }
     } catch (error) {
       console.error('Error cargando el nombre de usuario:', error);

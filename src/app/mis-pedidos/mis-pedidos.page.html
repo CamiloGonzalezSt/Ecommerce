@@ -18,7 +18,7 @@
   <ion-list *ngIf="!isLoading && pedidos.length > 0">
     <ion-item *ngFor="let pedido of pedidos">
       <ion-label>
-        <h2>Pedido #{{ pedido.id }}</h2>
+        <h2>N° de pedido #{{ pedido.id }}</h2>
         <p>Fecha: {{ pedido.fecha | date: 'short' }}</p>
         <p>Total: ${{ pedido.total | number: '1.2-2' }}</p>
       </ion-label>

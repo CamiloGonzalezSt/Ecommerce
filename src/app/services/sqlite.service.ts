@@ -467,6 +467,8 @@ public async removeFromCart(productoId: number) {
 
 
 
+
+
 async loadInitialProducts() {
   try {
     const localProducts = await this.getLocalProducts();
@@ -736,7 +738,7 @@ async syncWithTransaction(): Promise<void> {
           `INSERT INTO orders (total, fecha, nombre) VALUES (?, ?, ?)`,
           [total, date, username]
         );
-        alert('producto ok')
+        console.log('producto ok')
   
         const orderId = orderResult.insertId;
   
@@ -748,7 +750,7 @@ async syncWithTransaction(): Promise<void> {
           );
         }
   
-        alert('Pedido registrado correctamente');
+        console.log('Pedido registrado correctamente');
         return true;
       } catch (error) {
         alert('Error al crear el pedido: ' + JSON.stringify(error));
@@ -774,6 +776,16 @@ async syncWithTransaction(): Promise<void> {
     public async deleteOrder(id: number) {
       const sql = 'DELETE FROM orders WHERE id = ?';
       await this.db.executeSql(sql, [id]);
+    }
+    
+    async deleteAllOrders(): Promise<void> {
+      try {
+        const query = 'DELETE FROM orders';
+        await this.db.executeSql(query, []);
+        console.log('Todos los pedidos han sido eliminados.');
+      } catch (error) {
+        console.error('Error al borrar los pedidos:', error);
+      }
     }
   
   
